@@ -11,3 +11,72 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap');
+
+ol, ul {
+    list-style: disc inside;
+    margin: 0;
+    padding: 0;
+}
+h1,h2,h3,h4{
+    font-weight: 700;
+}
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 400;
+}
+
+.ant-form-item-explain-error {
+    font-size: 12px;
+}
+
+.color-blue-gray {
+    color: #78909C;
+}
+
+.ant-popover-inner-content .ant-popconfirm-buttons .ant-btn-primary {
+    background-color: #0067AA;
+}
+
+.ant-result-extra {
+    display: flex;
+    justify-content: center;
+}
+
+.ant-table-thead th {
+    font-weight: 700 !important;
+}
+
+.ant-picker-panel-layout .ant-picker-ok .ant-btn {
+    background: #0067AA;
+}
+
+.for_range_input .ant-form-item-explain {
+    margin-top: -20px;
+}
+
+.fullscreen {
+    position: fixed;
+    padding-top: 40px;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    background: #fff; /* Just to visualize the extent */
+    height: 100vh
+}
+
+.fullscreen .ce-block__content,
+.fullscreen .ce-toolbar__content {
+    max-width: 75%;
+}
+.text-container img{
+    max-width: 50%;
+    margin: 20px auto;
+}
+

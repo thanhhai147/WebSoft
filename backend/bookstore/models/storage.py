@@ -9,7 +9,7 @@ class Storage(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.StorageId)
 
 class BookStorage(models.Model):
     StorageId = models.ForeignKey(Storage, on_delete=models.CASCADE, null=False, blank=False)
@@ -19,4 +19,4 @@ class BookStorage(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.StorageId)

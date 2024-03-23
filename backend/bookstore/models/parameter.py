@@ -7,4 +7,4 @@ class Parameter(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.ParameterName)

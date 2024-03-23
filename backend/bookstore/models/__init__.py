@@ -1,4 +1,4 @@
-from .account import Account
+from .account import Account, Token
 from .book import Book, BookType, Author
 from .consumer import Consumer
 from .order import Order, BookOrder

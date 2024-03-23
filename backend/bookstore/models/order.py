@@ -14,7 +14,7 @@ class Order(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.OrderId)
 
 class BookOrder(models.Model):
     OrderId = models.ForeignKey(Order, on_delete=models.CASCADE, null=False, blank=False)
@@ -24,4 +24,4 @@ class BookOrder(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.OrderId)

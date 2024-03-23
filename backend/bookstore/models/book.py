@@ -8,7 +8,7 @@ class BookType(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.BookTypeId)
     
 class Author(models.Model):
     AuthorId = models.AutoField(primary_key=True)
@@ -16,7 +16,7 @@ class Author(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.AuthorId)
     
 class Book(models.Model):
     BookId = models.AutoField(primary_key=True)
@@ -27,4 +27,4 @@ class Book(models.Model):
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):
-        return self.code
+        return str(self.BookId)

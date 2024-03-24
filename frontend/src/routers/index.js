@@ -1,9 +1,9 @@
 import React, { lazy, useState } from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
-const LoginPage = lazy(() => import("../pages/login"))
-const BookPage = lazy(() => import("../pages/book"))
-const NotFoundPage = lazy(() => import("../pages/404"))
+const LoginPage = lazy(() => import("../pages/login.page"))
+const BookPage = lazy(() => import("../pages/book.page"))
+const NotFoundPage = lazy(() => import("../pages/404.page"))
 
 export default function AppRouter() {
 
@@ -17,7 +17,6 @@ export default function AppRouter() {
         <>
             <BrowserRouter>
                 <Routes>
-                    {/* <Route path="/login" element={<LoginPage />} /> */}
                     <Route path="/book" element={<BookPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

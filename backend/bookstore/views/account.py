@@ -13,7 +13,7 @@ from ..models import Account, Token, Parameter
 from ..messages.account import AccountMessage
 
 # Sign-in
-class SignInViewAPIView(GenericAPIView):
+class LogInAPIView(GenericAPIView):
     serializer_class = SignInSerializer
     
     def post(self, request):
@@ -90,7 +90,7 @@ class GetAccessFunctionAPIView(GenericAPIView):
         }, status=status.HTTP_200_OK)
 
 # Sign out
-class SignOutAPIView(APIView):
+class LogOutAPIView(APIView):
    
     def put(self, request):
         try:

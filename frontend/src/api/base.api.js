@@ -5,7 +5,7 @@ const BASE_API_URL = process.env.REACT_APP_API_ENDPOINT
 
 class BaseAPI {
     constructor() {
-        axios.defaults.baseURL = BASE_API_URL
+        axios.defaults.baseURL = "http://localhost:8000"
         axios.defaults.headers.common['Authorization'] = TokenUtil.getToken()
     }
 
@@ -16,16 +16,16 @@ class BaseAPI {
     }
 
     handleResponse(res) {
-        if(res.response.success == false) {
+        if(res.data.success == false) {
             // error notification
-            console.log(res.response.message)
+            console.log(res.data.message)
         }
-        return res.response
+        return res
     }
 
     handleError(err) {
         // error notification
-        console.log(err.response.message)
+        console.log(err.data.message)
         // handle token authorization error
         if(err.status === 401 || err.status === 403) {
             // reset authorization token
@@ -49,7 +49,6 @@ class BaseAPI {
 
     post(path, params) {
         let url = path
-
         return axios
                 .post(url, params)
                 .then(res => this.handleResponse(res))

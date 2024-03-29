@@ -10,7 +10,7 @@ class AuthorSerializer(serializers.Serializer):
     created = serializers.DateTimeField()
 
 
-class BookSerializer(serializers.ModelSerializer):
+class BookSerializer(serializers.Serializer):
     bookName = serializers.CharField()
     bookTypeId = serializers.IntegerField()
     authorId = serializers.IntegerField()

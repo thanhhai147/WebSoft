@@ -1,17 +1,18 @@
 from rest_framework import serializers
 from ..models.book import BookType, Author, Book
 
-class BookTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BookType
-        fields = '__all__'
+class BookTypeSerializer(serializers.Serializer):
+    bookTypeName = serializers.CharField()
+    created = serializers.DateTimeField()
 
-class AuthorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Author
-        fields = '__all__'
+class AuthorSerializer(serializers.Serializer):
+    authorName = serializers.CharField(max_length=255)
+    created = serializers.DateTimeField()
+
 
 class BookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = '__all__'
+    bookName = serializers.CharField()
+    bookTypeId = serializers.IntegerField()
+    authorId = serializers.IntegerField()
+    quantity = serializers.IntegerField()
+    created = serializers.DateTimeField()

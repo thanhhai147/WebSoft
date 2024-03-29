@@ -28,14 +28,7 @@ class AddBookTypeAPIVIew(GenericAPIView):
         bookTypeName = bookTypeData.data['bookTypeName']
         created = bookTypeData.data['created']
         
-        if len(bookTypeName) == 0 or bookTypeName is None:
-            return Response(
-                {
-                    "success": False,
-                    "message": BookMessage.MSG1001
-                }
-            )
-        if len(bookTypeName) >= 255:
+        if len(bookTypeName) == 0 or bookTypeName is None or len(bookTypeName) >= 255:
             return Response(
                 {
                     "success": False,
@@ -71,14 +64,7 @@ class AddAuthorViewAPI(GenericAPIView):
         authorName = authorData.data['authorName']
         created = authorData.data['created']
 
-        if len(authorName) == 0 or authorName is None:
-            return Response(
-                {
-                    "success": False,
-                    "message": BookMessage.MSG2001
-                }
-            )
-        if len(authorName) >= 255:
+        if len(authorName) == 0 or authorName is None or len(authorName) >= 255:
             return Response(
                 {
                     "success": False,
@@ -107,7 +93,7 @@ class AddBookViewAPI(GenericAPIView):
         if not bookData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
-                "message": BookMessage.MSG3006
+                "message": BookMessage.MSG3007
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookName = bookData.validated_data['bookName']
@@ -116,14 +102,7 @@ class AddBookViewAPI(GenericAPIView):
         quantity = bookData.validated_data['quantity']
         created = bookData.data['created']
 
-        if len(bookName) == 0 or bookName is None:
-            return Response(
-                {
-                    "success": False,
-                    "message": BookMessage.MSG2001
-                }
-            )
-        if len(bookName) >= 255:
+        if len(bookName) == 0 or bookName is None or len(bookName) >= 255:
             return Response(
                 {
                     "success": False,

@@ -1,4 +1,4 @@
-class StorageMessage():
+class BookMessage():
     #generation: MSG0xxx
     MSG0001 = "Thành công."
     MSG0002 = "Thất bại."
@@ -21,7 +21,7 @@ class StorageMessage():
     MSG3002 = "Tên sách phải nhỏ hơn 255 kí tự"
     MSG3003 = "Không tìm thấy thể loại sách"
     MSG3004 = "Không tìm thấy tác giả"
-    MSG3005 = "Số lượng phải lớn hơn 0"
+    MSG3005 = "Số lượng phải lớn hơn hoặc bằng 0"
     MSG3006 = "Tạo sách thành công"
     MSG3007 = "Tạo sách thất bại"
 

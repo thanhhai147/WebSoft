@@ -1,0 +1,23 @@
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.95), #007bff);
+}
+
+.login-form {
+    width: 80%;
+    max-width: 500px; 
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.login-form .ant-form-item {
+    margin-bottom: 16px;
+}

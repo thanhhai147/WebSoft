@@ -8,14 +8,15 @@ export default function Login () {
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
 
-    const onFinish = async () => {
+    const onFinish = async (values) => {
         try {
             let response = await LoginAPI.handleLogin({
-                "username": username,
-                "password": password
+                "username": values.username,
+                "password": values.password
             })
             if(response.success) {
                 TokenUtil.saveToken(response.data.token)
+                TokenUtil.saveUsername(response.data.account)
                 window.location.replace("/book")
             }
         } catch (err) {

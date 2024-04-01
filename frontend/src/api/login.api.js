@@ -1,12 +1,12 @@
-import BaseAPI from "./base.api"
+import BaseAPI from "./base.api";
 
 const LoginAPI = {
     handleLogin: (data) => {
         return BaseAPI.post("/account/log-in/", data)
     },
 
-    handleLogout: () => {
-        return BaseAPI.put("/account/log-out/", {})
+    handleLogout: (data) => {
+        return BaseAPI.put("/account/log-out")
     }
 }
 

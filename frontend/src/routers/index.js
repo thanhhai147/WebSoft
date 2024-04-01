@@ -1,6 +1,5 @@
 import React, { lazy, useState } from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-
 import TokenUtil from '../helpers/token.utils';
 
 const LoginPage = lazy(() => import("../pages/login.page"))
@@ -10,8 +9,9 @@ const NotFoundPage = lazy(() => import("../pages/404.page"))
 export default function AppRouter() {
 
     const [token, setToken] = useState(() => TokenUtil.getToken())
+    const [username, setUsername] = useState(() => TokenUtil.getUsername())
 
-    if(!token) {
+    if(!token || token === "undefined") {
         return <LoginPage />
     }
 

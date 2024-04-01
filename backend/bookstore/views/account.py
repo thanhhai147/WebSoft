@@ -28,7 +28,7 @@ class LoginAPIView(GenericAPIView):
         username = login_data.data['username']
         password = login_data.data['password']
         password = hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
- 
+    
         account = Account.objects.filter(AccountName=username, Password=password).first()
         # AccountName or Password does not correct
         if account is None:
@@ -40,7 +40,7 @@ class LoginAPIView(GenericAPIView):
             token = Token.objects.filter(AccountId=account.AccountId).first()
             key = hashlib.sha256((username + str(timezone.now())).encode("utf-8")).hexdigest()
             if token is None:
-                token = Token.objects.create(Key=key, AccountId=account.AccountId, Created=timezone.now())
+                token = Token.objects.create(Key=key, AccountId=account, Created=timezone.now())
             else:
                 Token.objects.filter(AccountId=account.AccountId).update(Key=key, Created=timezone.now())
                 token = Token.objects.filter(AccountId=account.AccountId).first()

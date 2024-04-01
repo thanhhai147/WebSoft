@@ -50,7 +50,6 @@ class BaseAPI {
 
     post(path, params) {
         let url = path
-
         return axios
                 .post(url, params)
                 .then(res => this.handleResponse(res))

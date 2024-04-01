@@ -7,37 +7,35 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 
-from ..serializers.account import SignInSerializer
+from ..serializers.account import LoginSerializer
 from ..models import Account, Token, Parameter
 
 from ..messages.account import AccountMessage
 
-# Sign-in
-class LogInAPIView(GenericAPIView):
-    serializer_class = SignInSerializer
+# Log-in
+class LoginAPIView(GenericAPIView):
+    serializer_class = LoginSerializer
     
     def post(self, request):
-        signin_data = SignInSerializer(data=request.data)
-        # Signin data is empty or is not valid serializer format
-        if not signin_data.is_valid(raise_exception=True):
+        login_data = LoginSerializer(data=request.data)
+        # Login data is empty or is not valid serializer format
+        if not login_data.is_valid(raise_exception=True):
             return Response({
                 "success": False,
                 "message": AccountMessage.MSG1003
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        username = signin_data.data['username']
-        password = signin_data.data['password']
+        username = login_data.data['username']
+        password = login_data.data['password']
         password = hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
  
         account = Account.objects.filter(AccountName=username, Password=password).first()
         # AccountName or Password does not correct
         if account is None:
-            return Response(
-                {
+            return Response({
                     "status": False,
                     "message": AccountMessage.MSG1004
-                }
-            )
+                }, status=status.HTTP_401_UNAUTHORIZED)
         else:
             token = Token.objects.filter(AccountId=account.AccountId).first()
             key = hashlib.sha256((username + str(timezone.now())).encode("utf-8")).hexdigest()
@@ -46,7 +44,7 @@ class LogInAPIView(GenericAPIView):
             else:
                 Token.objects.filter(AccountId=account.AccountId).update(Key=key, Created=timezone.now())
                 token = Token.objects.filter(AccountId=account.AccountId).first()
-            
+                
             return Response({
                 "success": True,
                 "message": "",
@@ -89,8 +87,8 @@ class GetAccessFunctionAPIView(GenericAPIView):
             "message": "",
         }, status=status.HTTP_200_OK)
 
-# Sign out
-class LogOutAPIView(APIView):
+# Log out
+class LogoutAPIView(APIView):
    
     def put(self, request):
         try:

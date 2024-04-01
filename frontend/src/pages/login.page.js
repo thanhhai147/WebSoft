@@ -5,9 +5,6 @@ import TokenUtil from '../helpers/token.utils';
 
 export default function Login () {
 
-    const [username, setUserName] = useState();
-    const [password, setPassword] = useState();
-
     const onFinish = async (values) => {
         try {
             let response = await LoginAPI.handleLogin({
@@ -60,7 +57,7 @@ export default function Login () {
                                 },
                             ]}
                         >
-                            <Input onChange={e => setUserName(e.target.value)} />
+                            <Input/>
                         </Form.Item>
 
                         <Form.Item
@@ -73,7 +70,7 @@ export default function Login () {
                                 },
                             ]}
                         >
-                            <Input.Password onChange={e => setPassword(e.target.value)} />
+                            <Input.Password/>
                         </Form.Item>
 
                         <Form.Item

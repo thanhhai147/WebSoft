@@ -16,16 +16,17 @@ class BaseAPI {
     }
 
     handleResponse(res) {
-        if(res.response.success == false) {
+        if(res.data.success === false) {
             // error notification
-            console.log(res.response.message)
+            console.log(res.data.message)
         }
-        return res.response
+        return res.data
     }
 
     handleError(err) {
+        if(!err) return
         // error notification
-        console.log(err.response.message)
+        console.log(err.data.message)
         // handle token authorization error
         if(err.status === 401 || err.status === 403) {
             // reset authorization token

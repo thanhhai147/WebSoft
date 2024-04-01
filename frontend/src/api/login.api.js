@@ -1,6 +1,6 @@
 import BaseAPI from "./base.api"
 
-export default {
+const LoginAPI = {
     handleLogin: (data) => {
         return BaseAPI.post("/account/log-in/", data)
     },
@@ -9,3 +9,5 @@ export default {
         return BaseAPI.put("/account/log-out/", {})
     }
 }
+
+export default LoginAPI

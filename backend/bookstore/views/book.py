@@ -26,7 +26,6 @@ class AddBookTypeAPIVIew(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookTypeName = bookTypeData.data['bookTypeName']
-        created = bookTypeData.data['created']
         
         if len(bookTypeName) == 0 or bookTypeName is None or len(bookTypeName) >= 255:
             return Response(
@@ -36,7 +35,7 @@ class AddBookTypeAPIVIew(GenericAPIView):
                 }
             )
         
-        BookType(BookTypeName = bookTypeName, Created = created).save()
+        BookType(BookTypeName = bookTypeName).save()
 
         return Response({
                 "success": True,
@@ -62,7 +61,6 @@ class AddAuthorViewAPI(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         authorName = authorData.data['authorName']
-        created = authorData.data['created']
 
         if len(authorName) == 0 or authorName is None or len(authorName) >= 255:
             return Response(
@@ -72,7 +70,7 @@ class AddAuthorViewAPI(GenericAPIView):
                 }
             )
 
-        Author(AuthorName = authorName, Created = created).save()
+        Author(AuthorName = authorName).save()
             
         return Response({
                 "success": True,
@@ -100,7 +98,6 @@ class AddBookViewAPI(GenericAPIView):
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
         quantity = bookData.validated_data['quantity']
-        created = bookData.data['created']
 
         if len(bookName) == 0 or bookName is None or len(bookName) >= 255:
             return Response(
@@ -137,7 +134,7 @@ class AddBookViewAPI(GenericAPIView):
                 }
             )
         
-        Book(BookName = bookName, BookTypeId = bookType, AuthorId = author, Quantity = quantity, Created = created).save()
+        Book(BookName = bookName, BookTypeId = bookType, AuthorId = author, Quantity = quantity).save()
 
         return Response({
                 "success": True,

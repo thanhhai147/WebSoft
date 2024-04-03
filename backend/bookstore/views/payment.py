@@ -19,7 +19,6 @@ class CreatePaymentAPIView(GenericAPIView):
         consumer_id = payment_data.data['ConsumerID']
         date = payment_data.data['Date']
         value = payment_data.data['Value']
-        created = payment_data.data['Created']
         
         try:
             consumer = Consumer.objects.get(pk=consumer_id)
@@ -38,7 +37,6 @@ class CreatePaymentAPIView(GenericAPIView):
             ConsumerID = consumer_id,
             Date = date,
             Value = value,
-            Created = created
             ).save()
 
         return Response(

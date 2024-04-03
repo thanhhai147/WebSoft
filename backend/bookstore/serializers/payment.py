@@ -5,4 +5,3 @@ class paymentSerializers (serializers.Serializer):
     ConsumerID = serializers.IntegerField()
     Date = serializers.DateField()
     Value = serializers.FloatField()
-    Created = serializers.DateTimeField()

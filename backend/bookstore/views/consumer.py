@@ -21,7 +21,6 @@ class CreateConsumerAPIView(GenericAPIView):
         phone = consumer_data.data['Phone']
         email = consumer_data.data['Email']
         debt = consumer_data.data['Debt']
-        created = consumer_data.data['Created']
 
         # Checking if the consumer already exists
         if not consumer_name or len(consumer_name) == 0 or len(consumer_name) >= 255 or not consumer_name.isalnum():
@@ -82,7 +81,6 @@ class CreateConsumerAPIView(GenericAPIView):
             Phone = phone,
             Email = email,
             Debt = debt,
-            Created = created
             ).save()
         
         return Response(
@@ -124,7 +122,6 @@ class UpdateConsumerAPIView(GenericAPIView):
             phone = consumer_data.data['Phone']
             email = consumer_data.data['Email']
             debt = consumer_data.data['Debt']
-            created = consumer_data.data['Created']
 
         # Checking if the consumer already exists
             if not consumer_name or len(consumer_name) == 0 or len(consumer_name) >= 255 or not consumer_name.isalnum():
@@ -184,7 +181,6 @@ class UpdateConsumerAPIView(GenericAPIView):
             consumer.Phone = phone
             consumer.Email = email
             consumer.Debt = debt
-            consumer.Created = created
             consumer.save()
 
             return Response(

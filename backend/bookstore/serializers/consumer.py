@@ -7,4 +7,3 @@ class ConsumerSerializer(serializers.Serializer):
     Phone = serializers.CharField(max_length = 11)
     Email = serializers.EmailField(max_Length = 320, allow_null = True, allow_blank = True)
     Debt = serializers.FloatField()
-    Created = serializers.DateTimeField(read_only=True)

@@ -6,7 +6,7 @@ const LoginAPI = {
     },
 
     handleLogout: (data) => {
-        return BaseAPI.put("/account/log-out")
+        return BaseAPI.put("/account/log-out/")
     }
 }
 

@@ -28,7 +28,7 @@ class LoginAPIView(GenericAPIView):
         username = login_data.data['username']
         password = login_data.data['password']
         password = hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
-    
+        print(password)
         account = Account.objects.filter(AccountName=username, Password=password).first()
         # AccountName or Password does not correct
         if account is None:

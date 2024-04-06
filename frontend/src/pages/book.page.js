@@ -1,5 +1,12 @@
 import React from 'react';
+import MainLayout from '../layouts/main.layout';
 
-export default function Login () {
-  return <h2>Book Page</h2>;
+const bookContent = <div>
+  <h2>Book Page</h2>
+</div>
+
+export default function BookPage() {
+  return (
+    <MainLayout pageContent={bookContent} />
+  )
 }

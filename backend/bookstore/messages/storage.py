@@ -17,7 +17,9 @@ class StorageMessage():
     MSG2006 = "Thêm Sách vào kho sách thành công"
     MSG2007 = "Thêm sách vào kho sách thất bại"
 
-
+    # functino Get Book Storage: MSG3xxx
+    MSG3001 = "Lấy thông tin kho sách thành công"
+    MSG3002 = "Lấy thông tin kho sách thất bại"
 
 
 

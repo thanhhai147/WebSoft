@@ -1,12 +1,44 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
-
+from django.core.serializers import serialize
+from django.forms.models import model_to_dict
 from ..serializers.storage import BookStorageSerializer
 from ..models import Storage, BookStorage, Book
 
 from ..messages.storage import StorageMessage
+    
+class GetBookStorageViewAPI(GenericAPIView):
+    serializer_class = BookStorageSerializer
+    queryset = BookStorage.objects.all()
+    def get(self, request):
+        queryset = BookStorage.objects.all()
 
+        return Response({
+                "success": True,
+                "message": StorageMessage.MSG3001,
+                "data": serialize("json", queryset)
+            }, status=status.HTTP_200_OK)
+
+class GetBookStorageViewWithIdAPI(GenericAPIView):
+    serializer_class = BookStorageSerializer
+    queryset = BookStorage.objects.all()
+    def get(self, request, pk):
+        try:
+            queryset = BookStorage.objects.get(pk=pk)
+        except BookStorage.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": StorageMessage.MSG3002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": StorageMessage.MSG3001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
+    
 class AddBookToStorageViewAPI(GenericAPIView):
     serializer_class = BookStorageSerializer
     queryset = BookStorage.objects.all()

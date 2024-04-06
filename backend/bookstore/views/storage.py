@@ -55,30 +55,20 @@ class AddBookToStorageViewAPI(GenericAPIView):
                 "message": StorageMessage.MSG2007
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        storageId = bookStorageData.validated_data['storageId']
         bookId = bookStorageData.validated_data['bookId']
         unitPrice = bookStorageData.validated_data['unitPrice']
         quantity = bookStorageData.validated_data['quantity']
 
         minBook = Parameter.objects.filter(ParameterName='MinBook').first()
         maxBook = Parameter.objects.filter(ParameterName='MaxBook').first()
-        if (quantity < minBook or quantity > maxBook):
+        
+        if (quantity < int(minBook.Value) or quantity > int(maxBook.Value)):
             return Response(
                 {
                     "success": False,
-                    "message": StorageMessage.MSG2002
+                    "message": StorageMessage.MSG2004
                 }
-            ) 
-            
-        try:
-            storage = Storage.objects.get(pk=storageId)
-        except Storage.DoesNotExist:
-            return Response(
-                {
-                    "success": False,
-                    "message": StorageMessage.MSG2002
-                }
-            )     
+            )   
            
         try:
             book = Book.objects.get(pk=bookId)
@@ -91,7 +81,9 @@ class AddBookToStorageViewAPI(GenericAPIView):
                     "message": StorageMessage.MSG2003
                 }
             )
-        
+
+        storage = Storage()
+        storage.save()
         BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
         
         return Response({

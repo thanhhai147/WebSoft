@@ -25,9 +25,7 @@ class AddBookToStorageViewAPI(GenericAPIView):
         
         storageId = bookStorageData.validated_data['storageId']
         bookId = bookStorageData.validated_data['bookId']
-        quantity = bookStorageData.validated_data['quantity']
         unitPrice = bookStorageData.validated_data['unitPrice']
-        created = bookStorageData.data['created']
         
         try:
             storage = Storage.objects.get(pk=storageId)
@@ -41,6 +39,7 @@ class AddBookToStorageViewAPI(GenericAPIView):
            
         try:
             book = Book.objects.get(pk=bookId)
+            quantity = book.Quantity
         except Book.DoesNotExist:
             return Response(
                 {
@@ -64,7 +63,7 @@ class AddBookToStorageViewAPI(GenericAPIView):
                 }
             )
         
-        BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice, Created = created)
+        BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
         
         return Response({
                 "success": True,

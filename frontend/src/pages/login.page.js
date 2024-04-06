@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Form, Input } from 'antd';
 import LoginAPI from  "../api/login.api";
 import TokenUtil from '../helpers/token.utils';
+import "./styles/login.page.css";
+
 
 export default function Login () {
 
     const onFinish = async (values) => {
         try {
+            console.log(values.username)
             let response = await LoginAPI.handleLogin({
                 "username": values.username,
                 "password": values.password
@@ -29,6 +32,7 @@ export default function Login () {
         <>
             <div className={"container-fluid full-screen"}>
                 <div className={"row align-items-center justify-content-center"}>
+                    <h4>Đăng Nhập</h4>
                     <Form
                         name="basic"
                         labelCol={{
@@ -48,7 +52,7 @@ export default function Login () {
                         autoComplete="off"
                     >
                         <Form.Item
-                            label="Username"
+                            label="Tên đăng nhập"
                             name="username"
                             rules={[
                                 {
@@ -61,7 +65,7 @@ export default function Login () {
                         </Form.Item>
 
                         <Form.Item
-                            label="Password"
+                            label="Mật khẩu"
                             name="password"
                             rules={[
                                 {

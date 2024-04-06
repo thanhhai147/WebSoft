@@ -204,3 +204,138 @@ class AddBookViewAPI(GenericAPIView):
                 "message": BookMessage.MSG3006,
                 "data": bookData.data
             }, status=status.HTTP_200_OK)
+
+class EditBookTypeViewAPI(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = BookType.objects.all()
+
+    def get(self, request):
+        return Response({"success": True,})
+
+    def post(self, request, id):
+        bookTypeData = BookTypeSerializer(data=request.data)
+        try:
+            queryset = BookType.objects.get(pk=id)
+        except BookType.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+        
+        if not bookTypeData.is_valid(raise_exception=True):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG2004
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        bookTypeName = bookTypeData.data['bookTypeName']
+        if (bookTypeName is not None):
+            queryset.BookTypeName = bookTypeName
+        queryset.save()
+            
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2003,
+                "data": bookTypeData.data
+            }, status=status.HTTP_200_OK)
+       
+class EditAuthorViewAPI(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = Author.objects.all()
+
+    def get(self, request):
+        return Response({"success": True,})
+
+    def post(self, request, id):
+        authorData = AuthorSerializer(data=request.data)
+        try:
+            queryset = Author.objects.get(pk=id)
+        except Author.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+        
+        if not authorData.is_valid(raise_exception=True):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG2004
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        authorName = authorData.data['authorName']
+        if (authorName is not None):
+            queryset.AuthorName = authorName
+        queryset.save()
+            
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2003,
+                "data": authorData.data
+            }, status=status.HTTP_200_OK)
+    
+class EditBookViewAPI(GenericAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+
+    def get(self, request):
+        return Response({"success": True,})
+    
+    def put(self, request, id):
+        bookData = BookSerializer(data=request.data)
+        try:
+            queryset = Book.objects.get(pk=id)
+        except Book.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+        
+        if not bookData.is_valid(raise_exception=True):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG3007
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        bookName = bookData.validated_data['bookName']
+        bookTypeId = bookData.validated_data['bookTypeId']
+        authorId = bookData.validated_data['authorId']
+        
+        queryset.BookName = bookName
+
+        if bookTypeId is not None:
+            try:
+                bookType = BookType.objects.get(pk=bookTypeId)
+            except BookType.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": BookMessage.MSG3003
+                    }
+                )
+            queryset.BookTypeId = bookType
+        
+        if authorId is not None:
+            try:
+                author = Author.objects.get(pk=authorId)
+            except Author.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": BookMessage.MSG3004
+                    }
+                )
+            queryset.AuthorId = authorId
+        
+        queryset.save()
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG3006,
+                "data": bookData.data
+            }, status=status.HTTP_200_OK)

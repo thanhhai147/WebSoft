@@ -18,5 +18,13 @@ export default class TokenUtil {
     static saveUsername(username) {
         sessionStorage.setItem('auth_username', JSON.stringify(username));
     }
+
+    static removeToken() {
+        sessionStorage.removeItem('auth_token')
+    }
+    
+    static removeUsername() {
+        sessionStorage.removeItem('auth_username')
+    }
     
 }

@@ -60,7 +60,7 @@ class BaseAPI {
         let url = path
 
         return axios
-                .post(url, params)
+                .put(url, params)
                 .then(res => this.handleResponse(res))
                 .catch(err => this.handleError(err))
     }

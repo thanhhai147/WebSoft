@@ -5,6 +5,7 @@ import TokenUtil from '../helpers/token.utils';
 const LoginPage = lazy(() => import("../pages/login.page"))
 const BookPage = lazy(() => import("../pages/book.page"))
 const NotFoundPage = lazy(() => import("../pages/404.page"))
+const LogoutPage = lazy(() => import("../pages/logout.page"))
 
 export default function AppRouter() {
 
@@ -21,6 +22,7 @@ export default function AppRouter() {
                 <Routes>
                     <Route path="/" element={<BookPage />} />
                     <Route path="/book" element={<BookPage />} />
+                    <Route path="/logout" element={<LogoutPage />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </BrowserRouter>

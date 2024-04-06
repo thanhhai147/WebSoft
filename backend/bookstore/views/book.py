@@ -176,7 +176,6 @@ class AddBookViewAPI(GenericAPIView):
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
-        quantity = bookData.validated_data['quantity']
         
         try:
             bookType = BookType.objects.get(pk=bookTypeId)
@@ -198,7 +197,7 @@ class AddBookViewAPI(GenericAPIView):
                 }
             )
         
-        Book(BookName = bookName, BookTypeId = bookType, AuthorId = author, Quantity = quantity).save()
+        Book(BookName = bookName, BookTypeId = bookType, AuthorId = author).save()
 
         return Response({
                 "success": True,

@@ -25,7 +25,17 @@ class BookMessage():
     MSG3006 = "Tạo sách thành công"
     MSG3007 = "Tạo sách thất bại"
 
+    # function Get Book Type: MSG4xxx
+    MSG4001 = "Lấy thông tin loại sách thành công"
+    MSG4002 = "Lấy thông tin loại sách thất bại"
 
+    # function Get Author: MSG5xxx
+    MSG5001 = "Lấy thông tin tác giả thành công"
+    MSG5002 = "Lấy thông tin tác giả thất bại"
+
+    # function Get Book: MSG6xxx
+    MSG6001 = "Lấy thông tin sách thành công"
+    MSG6002 = "Lấy thông tin sách thất bại"
 
 
 

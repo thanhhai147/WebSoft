@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from ..models.storage import Storage, BookStorage
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class StorageSerializer(serializers.Serializer):
     date = serializers.DateField()
 
 class BookStorageSerializer(serializers.Serializer):
-    storageId = serializers.IntegerField()
-    bookId = serializers.IntegerField()
-    unitPrice = serializers.IntegerField()
+    bookId = serializers.IntegerField(required=True, allow_null=False)
+    unitPrice = serializers.IntegerField(validators=[MinValueValidator(0)], required=True, allow_null=False)
+    quantity = serializers.IntegerField(validators=[MinValueValidator(0)], required=True, allow_null=False)

@@ -1,15 +1,13 @@
 from rest_framework import serializers
-from ..models.book import BookType, Author, Book
+from django.core.validators import MinValueValidator
 
 class BookTypeSerializer(serializers.Serializer):
-    bookTypeName = serializers.CharField()
+    bookTypeName = serializers.CharField(max_length=255)
 
 class AuthorSerializer(serializers.Serializer):
     authorName = serializers.CharField(max_length=255)
 
-
 class BookSerializer(serializers.Serializer):
-    bookName = serializers.CharField()
+    bookName = serializers.CharField(max_length=255)
     bookTypeId = serializers.IntegerField()
     authorId = serializers.IntegerField()
-    quantity = serializers.IntegerField()

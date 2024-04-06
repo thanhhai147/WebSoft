@@ -26,7 +26,7 @@ class AddBookToStorageViewAPI(GenericAPIView):
         storageId = bookStorageData.validated_data['storageId']
         bookId = bookStorageData.validated_data['bookId']
         unitPrice = bookStorageData.validated_data['unitPrice']
-        
+        quantity = bookStorageData.validated_data['quantity']
         try:
             storage = Storage.objects.get(pk=storageId)
         except Storage.DoesNotExist:
@@ -39,27 +39,13 @@ class AddBookToStorageViewAPI(GenericAPIView):
            
         try:
             book = Book.objects.get(pk=bookId)
-            quantity = book.Quantity
+            book.Quantity = book.Quantity + quantity
+            book.save()
         except Book.DoesNotExist:
             return Response(
                 {
                     "success": False,
                     "message": StorageMessage.MSG2003
-                }
-            )
-
-        if quantity < 0:
-            return Response(
-                {
-                    "success": False,
-                    "message": StorageMessage.MSG2004
-                }
-            )
-        if unitPrice < 0:
-            return Response(
-                {
-                    "success": False,
-                    "message": StorageMessage.MSG2005
                 }
             )
         

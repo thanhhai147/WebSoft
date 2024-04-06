@@ -8,3 +8,4 @@ class BookStorageSerializer(serializers.Serializer):
     storageId = serializers.IntegerField()
     bookId = serializers.IntegerField()
     unitPrice = serializers.IntegerField()
+    quantity = serializers.IntegerField()

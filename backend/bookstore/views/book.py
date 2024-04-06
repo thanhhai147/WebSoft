@@ -339,3 +339,79 @@ class EditBookViewAPI(GenericAPIView):
                 "message": BookMessage.MSG3006,
                 "data": bookData.data
             }, status=status.HTTP_200_OK)
+
+class DeleteBookTypeViewAPI(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = BookType.objects.all()
+
+    def get(self, request):
+        return Response({"success": True,})
+
+    def delete(self, request, id):
+        try:
+            queryset = BookType.objects.get(pk=id)
+        except BookType.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+
+        queryset.delete()
+            
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2003,
+            }, status=status.HTTP_200_OK)
+    
+class DeleteAuthorViewAPI(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = Author.objects.all()
+
+    def get(self, request):
+        return Response({"success": True,})
+
+    def delete(self, request, id):
+        try:
+            queryset = Author.objects.get(pk=id)
+        except Author.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+
+        queryset.delete()
+            
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2003,
+            }, status=status.HTTP_200_OK)
+    
+class DeleteBookViewAPI(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = Book.objects.all()
+
+    def get(self, request):
+        return Response({"success": True,})
+
+    def delete(self, request, id):
+        try:
+            queryset = Book.objects.get(pk=id)
+        except Book.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+
+        queryset.delete()
+            
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2003,
+            }, status=status.HTTP_200_OK)
+    

@@ -4,11 +4,106 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 
+from django.core.serializers import serialize
+from django.forms.models import model_to_dict
 from ..serializers.book import BookTypeSerializer, AuthorSerializer, BookSerializer
 from ..models import BookType, Author, Book
 
 from ..messages.book import BookMessage
 
+class GetBookType(GenericAPIView):
+    serializer_class = BookTypeSerializer
+    queryset = BookType.objects.all()
+
+    def get(self, request):
+        queryset = BookType.objects.all()
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG4001,
+                "data": serialize("json", queryset)
+            }, status=status.HTTP_200_OK)
+    
+class GetBookTypeWithId(GenericAPIView):
+    serializer_class = BookTypeSerializer
+    queryset = BookType.objects.all()
+    def get(self, request, id):
+        try:
+            queryset = BookType.objects.get(pk=id)
+        except BookType.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG4002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG4001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
+    
+class GetAuthor(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = Author.objects.all()
+
+    def get(self, request):
+        queryset = Author.objects.all()
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG5001,
+                "data": serialize("json", queryset)
+            }, status=status.HTTP_200_OK)
+class GetAuthorWithId(GenericAPIView):
+    serializer_class = AuthorSerializer
+    queryset = Author.objects.all()
+    def get(self, request, id):
+        try:
+            queryset = Author.objects.get(pk=id)
+        except Author.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG5002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG5001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
+
+class GetBook(GenericAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+
+    def get(self, request):
+        queryset = Book.objects.all()
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG6001,
+                "data": serialize("json", queryset)
+            }, status=status.HTTP_200_OK)
+class GetBookWithId(GenericAPIView):
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    def get(self, request, id):
+        try:
+            queryset = Book.objects.get(pk=id)
+        except Book.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG6002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG6001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
 class AddBookTypeAPIVIew(GenericAPIView):
     serializer_class = BookTypeSerializer
     queryset = BookType.objects.all()

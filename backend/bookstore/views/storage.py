@@ -23,9 +23,9 @@ class GetBookStorageViewAPI(GenericAPIView):
 class GetBookStorageViewWithIdAPI(GenericAPIView):
     serializer_class = BookStorageSerializer
     queryset = BookStorage.objects.all()
-    def get(self, request, pk):
+    def get(self, request, id):
         try:
-            queryset = BookStorage.objects.get(pk=pk)
+            queryset = BookStorage.objects.get(pk=id)
         except BookStorage.DoesNotExist:
             return Response(
                 {

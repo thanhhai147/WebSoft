@@ -4,6 +4,6 @@ from ..views.storage import AddBookToStorageViewAPI, GetBookStorageViewWithIdAPI
 
 urlpatterns = [
     path('', GetBookStorageViewAPI.as_view(), name='get-book-storage'),
-    path('<int:pk>', GetBookStorageViewWithIdAPI.as_view(), name='get-book-storage-with-id'),
+    path('<int:id>', GetBookStorageViewWithIdAPI.as_view(), name='get-book-storage-with-id'),
     path('book/new', AddBookToStorageViewAPI.as_view(), name='add-book-to-storage'),
 ]

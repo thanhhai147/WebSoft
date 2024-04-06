@@ -4,7 +4,7 @@ from rest_framework import status
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from ..serializers.storage import BookStorageSerializer
-from ..models import Storage, BookStorage, Book
+from ..models import Storage, BookStorage, Book, Parameter
 
 from ..messages.storage import StorageMessage
     
@@ -59,6 +59,17 @@ class AddBookToStorageViewAPI(GenericAPIView):
         bookId = bookStorageData.validated_data['bookId']
         unitPrice = bookStorageData.validated_data['unitPrice']
         quantity = bookStorageData.validated_data['quantity']
+
+        minBook = Parameter.objects.filter(ParameterName='MinBook').first()
+        maxBook = Parameter.objects.filter(ParameterName='MaxBook').first()
+        if (quantity < minBook or quantity > maxBook):
+            return Response(
+                {
+                    "success": False,
+                    "message": StorageMessage.MSG2002
+                }
+            ) 
+            
         try:
             storage = Storage.objects.get(pk=storageId)
         except Storage.DoesNotExist:

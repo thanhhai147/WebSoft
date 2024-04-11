@@ -212,7 +212,7 @@ class EditBookTypeViewAPI(GenericAPIView):
     def get(self, request):
         return Response({"success": True,})
 
-    def post(self, request, id):
+    def put(self, request, id):
         bookTypeData = BookTypeSerializer(data=request.data)
         try:
             queryset = BookType.objects.get(pk=id)
@@ -248,7 +248,7 @@ class EditAuthorViewAPI(GenericAPIView):
     def get(self, request):
         return Response({"success": True,})
 
-    def post(self, request, id):
+    def put(self, request, id):
         authorData = AuthorSerializer(data=request.data)
         try:
             queryset = Author.objects.get(pk=id)

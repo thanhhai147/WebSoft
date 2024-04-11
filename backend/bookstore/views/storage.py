@@ -16,7 +16,7 @@ class GetBookStorageViewAPI(GenericAPIView):
 
         return Response({
                 "success": True,
-                "message": StorageMessage.MSG3001,
+                "message": StorageMessage.MSG1001,
                 "data": serialize("json", queryset)
             }, status=status.HTTP_200_OK)
 
@@ -30,12 +30,12 @@ class GetBookStorageViewWithIdAPI(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": StorageMessage.MSG3002
+                    "message": StorageMessage.MSG1002
                 }
             )  
         return Response({
                 "success": True,
-                "message": StorageMessage.MSG3001,
+                "message": StorageMessage.MSG1001,
                 "data": model_to_dict(queryset)
             }, status=status.HTTP_200_OK)
     
@@ -44,50 +44,71 @@ class AddBookToStorageViewAPI(GenericAPIView):
     queryset = BookStorage.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        queryset = BookStorage.objects.all()
+
+        bookStorageData = {}
+        for iter, bookStorage in enumerate(queryset):
+            bookStorageData[f"{iter+1}"] = model_to_dict(bookStorage)
+
+        return Response({
+                "success": True,
+                "message": StorageMessage.MSG1001,
+                "data": bookStorageData
+            }, status=status.HTTP_200_OK)
     
     def post(self, request):
-        bookStorageData = BookStorageSerializer(data=request.data)
+        bookStorageData = BookStorageSerializer(data=request.data, many=True)
 
         if not bookStorageData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
-                "message": StorageMessage.MSG2007
+                "message": StorageMessage.MSG2008
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        bookId = bookStorageData.validated_data['bookId']
-        unitPrice = bookStorageData.validated_data['unitPrice']
-        quantity = bookStorageData.validated_data['quantity']
-
-        minBook = Parameter.objects.filter(ParameterName='MinBook').first()
-        maxBook = Parameter.objects.filter(ParameterName='MaxBook').first()
-        
-        if (quantity < int(minBook.Value) or quantity > int(maxBook.Value)):
-            return Response(
-                {
-                    "success": False,
-                    "message": StorageMessage.MSG2004
-                }
-            )   
-           
-        try:
-            book = Book.objects.get(pk=bookId)
+        bookStorages = []
+        for bookStorage in bookStorageData.validated_data:
+            bookId = bookStorage['bookId']
+            unitPrice = bookStorage['unitPrice']
+            quantity = bookStorage['quantity']
+            try:
+                book = Book.objects.get(pk=bookId)
+            except Book.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": StorageMessage.MSG2003 + str(bookId)
+                    }
+                )
+            minBook = Parameter.objects.filter(ParameterName='MinBook').first()
+            maxBook = Parameter.objects.filter(ParameterName='MaxBook').first()
+            
+            if quantity < int(minBook.Value):
+                return Response(
+                    {
+                        "success": False,
+                        "message": StorageMessage.MSG2004
+                    }
+                )   
+            if book.Quantity > int(maxBook.Value):
+                return Response(
+                    {
+                        "success": False,
+                        "message": StorageMessage.MSG2005
+                    }
+                )   
+            bookStorages.append(bookStorage)
+        for bookStorage in bookStorages:
+            bookId = bookStorage['bookId']
+            unitPrice = bookStorage['unitPrice']
+            quantity = bookStorage['quantity']
             book.Quantity = book.Quantity + quantity
             book.save()
-        except Book.DoesNotExist:
-            return Response(
-                {
-                    "success": False,
-                    "message": StorageMessage.MSG2003
-                }
-            )
-
-        storage = Storage()
-        storage.save()
-        BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
+            storage = Storage()
+            storage.save()
+            BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
         
         return Response({
                 "success": True,
-                "message": StorageMessage.MSG2006,
-                "data": bookStorageData.data
+                "message": StorageMessage.MSG2007,
+                "data": bookStorages
             }, status=status.HTTP_200_OK)

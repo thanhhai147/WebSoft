@@ -7,7 +7,7 @@ from rest_framework import status
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from ..serializers.book import BookTypeSerializer, AuthorSerializer, BookSerializer
-from ..models import BookType, Author, Book
+from ..models import BookType, Author, Book, Parameter
 
 from ..messages.book import BookMessage
 
@@ -18,15 +18,20 @@ class GetBookType(GenericAPIView):
     def get(self, request):
         queryset = BookType.objects.all()
 
+        bookTypeData = {}
+        for bookType in queryset:
+            bookTypeData[bookType.BookTypeId] = model_to_dict(bookType)
+
         return Response({
                 "success": True,
-                "message": BookMessage.MSG4001,
-                "data": serialize("json", queryset)
+                "message": BookMessage.MSG1001,
+                "data": bookTypeData
             }, status=status.HTTP_200_OK)
     
 class GetBookTypeWithId(GenericAPIView):
     serializer_class = BookTypeSerializer
     queryset = BookType.objects.all()
+
     def get(self, request, id):
         try:
             queryset = BookType.objects.get(pk=id)
@@ -34,12 +39,12 @@ class GetBookTypeWithId(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG4002
+                    "message": BookMessage.MSG1002
                 }
             )  
         return Response({
                 "success": True,
-                "message": BookMessage.MSG4001,
+                "message": BookMessage.MSG1001,
                 "data": model_to_dict(queryset)
             }, status=status.HTTP_200_OK)
     
@@ -50,14 +55,20 @@ class GetAuthor(GenericAPIView):
     def get(self, request):
         queryset = Author.objects.all()
 
+        authorData = {}
+        for author in queryset:
+            authorData[author.AuthorId] = model_to_dict(author)
+
         return Response({
                 "success": True,
-                "message": BookMessage.MSG5001,
-                "data": serialize("json", queryset)
+                "message": BookMessage.MSG2001,
+                "data": authorData
             }, status=status.HTTP_200_OK)
+    
 class GetAuthorWithId(GenericAPIView):
     serializer_class = AuthorSerializer
     queryset = Author.objects.all()
+
     def get(self, request, id):
         try:
             queryset = Author.objects.get(pk=id)
@@ -65,12 +76,12 @@ class GetAuthorWithId(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG5002
+                    "message": BookMessage.MSG2002
                 }
             )  
         return Response({
                 "success": True,
-                "message": BookMessage.MSG5001,
+                "message": BookMessage.MSG2001,
                 "data": model_to_dict(queryset)
             }, status=status.HTTP_200_OK)
 
@@ -81,14 +92,20 @@ class GetBook(GenericAPIView):
     def get(self, request):
         queryset = Book.objects.all()
 
+        bookData = {}
+        for book in queryset:
+            bookData[book.BookId] = model_to_dict(book)
+
         return Response({
                 "success": True,
-                "message": BookMessage.MSG6001,
-                "data": serialize("json", queryset)
+                "message": BookMessage.MSG3001,
+                "data": bookData
             }, status=status.HTTP_200_OK)
+    
 class GetBookWithId(GenericAPIView):
     serializer_class = BookSerializer
     queryset = Book.objects.all()
+
     def get(self, request, id):
         try:
             queryset = Book.objects.get(pk=id)
@@ -96,20 +113,31 @@ class GetBookWithId(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG3002
                 }
             )  
         return Response({
                 "success": True,
-                "message": BookMessage.MSG6001,
+                "message": BookMessage.MSG3001,
                 "data": model_to_dict(queryset)
             }, status=status.HTTP_200_OK)
+    
 class AddBookTypeAPIVIew(GenericAPIView):
     serializer_class = BookTypeSerializer
     queryset = BookType.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        queryset = BookType.objects.all()
+
+        bookTypeData = {}
+        for bookType in queryset:
+            bookTypeData[bookType.BookTypeId] = model_to_dict(bookType)
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG1001,
+                "data": bookTypeData
+            }, status=status.HTTP_200_OK)
     
     def post(self, request):
         bookTypeData = BookTypeSerializer(data=request.data)
@@ -122,6 +150,22 @@ class AddBookTypeAPIVIew(GenericAPIView):
         
         bookTypeName = bookTypeData.data['bookTypeName']
         
+        if (bookTypeName is None):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG1009
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(bookTypeName) < minBNameLength or
+            len(bookTypeName) > maxNameLength):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG1010
+            }, status=status.HTTP_400_BAD_REQUEST)
+
         BookType(BookTypeName = bookTypeName).save()
 
         return Response({
@@ -136,7 +180,17 @@ class AddAuthorViewAPI(GenericAPIView):
     queryset = Author.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        queryset = Author.objects.all()
+
+        authorData = {}
+        for author in queryset:
+            authorData[author.AuthorId] = model_to_dict(author)
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2001,
+                "data": authorData
+            }, status=status.HTTP_200_OK)
 
     def post(self, request):
         authorData = AuthorSerializer(data=request.data)
@@ -149,6 +203,22 @@ class AddAuthorViewAPI(GenericAPIView):
         
         authorName = authorData.data['authorName']
 
+        if (authorName is None):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG2009
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(authorName) < minBNameLength or
+            len(authorName) > maxNameLength):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG2010
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         Author(AuthorName = authorName).save()
             
         return Response({
@@ -162,7 +232,18 @@ class AddBookViewAPI(GenericAPIView):
     queryset = Book.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        queryset = Book.objects.all()
+
+        bookData = {}
+        for book in queryset:
+            bookData[book.BookId] = model_to_dict(book)
+
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG3001,
+                "data": bookData
+            }, status=status.HTTP_200_OK)
+    
     
     def post(self, request):
         bookData = BookSerializer(data=request.data)
@@ -170,38 +251,54 @@ class AddBookViewAPI(GenericAPIView):
         if not bookData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
-                "message": BookMessage.MSG3007
+                "message": BookMessage.MSG3004
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
         
+        if (bookName is None or
+            bookTypeId is None or
+            authorId is None):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG3009
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         try:
             bookType = BookType.objects.get(pk=bookTypeId)
+            author = Author.objects.get(pk=authorId)
         except BookType.DoesNotExist:
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG3003
+                    "message": BookMessage.MSG3011
                 }
             )
-        
-        try:
-            author = Author.objects.get(pk=authorId)
         except Author.DoesNotExist:
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG3004
+                    "message": BookMessage.MSG3012
                 }
             )
+        
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(bookName) < minBNameLength or
+            len(bookName) > maxNameLength):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG3010
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         Book(BookName = bookName, BookTypeId = bookType, AuthorId = author).save()
 
         return Response({
                 "success": True,
-                "message": BookMessage.MSG3006,
+                "message": BookMessage.MSG3003,
                 "data": bookData.data
             }, status=status.HTTP_200_OK)
 
@@ -209,35 +306,64 @@ class EditBookTypeViewAPI(GenericAPIView):
     serializer_class = AuthorSerializer
     queryset = BookType.objects.all()
 
-    def get(self, request):
-        return Response({"success": True,})
-
-    def put(self, request, id):
-        bookTypeData = BookTypeSerializer(data=request.data)
+    def get(self, request, id):
         try:
             queryset = BookType.objects.get(pk=id)
         except BookType.DoesNotExist:
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG1002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG1001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
+
+    def put(self, request, id):
+        bookTypeData = BookTypeSerializer(data=request.data)
+
+        try:
+            queryset = BookType.objects.get(pk=id)
+        except BookType.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG1002
                 }
             )  
         
         if not bookTypeData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
-                "message": BookMessage.MSG2004
+                "message": BookMessage.MSG1006
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookTypeName = bookTypeData.data['bookTypeName']
-        if (bookTypeName is not None):
-            queryset.BookTypeName = bookTypeName
+        if (bookTypeName is None):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG1009
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(bookTypeName) < minBNameLength or
+            len(bookTypeName) > maxNameLength):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG1010
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        queryset.BookTypeName = bookTypeName
         queryset.save()
             
         return Response({
                 "success": True,
-                "message": BookMessage.MSG2003,
+                "message": BookMessage.MSG1005,
                 "data": bookTypeData.data
             }, status=status.HTTP_200_OK)
        
@@ -245,8 +371,24 @@ class EditAuthorViewAPI(GenericAPIView):
     serializer_class = AuthorSerializer
     queryset = Author.objects.all()
 
-    def get(self, request):
-        return Response({"success": True,})
+    def get(self, request, id):
+        try:
+            queryset = Author.objects.get(pk=id)
+        except Author.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG2002
+                }
+            )
+        authorName = queryset.AuthorName
+        return Response({
+            "success": True,
+            "message": BookMessage.MSG2001,
+            "data": {
+                "authorName": authorName,
+            }
+        }, status=status.HTTP_200_OK)
 
     def put(self, request, id):
         authorData = AuthorSerializer(data=request.data)
@@ -256,87 +398,132 @@ class EditAuthorViewAPI(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG2002
                 }
             )  
         
         if not authorData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
-                "message": BookMessage.MSG2004
+                "message": BookMessage.MSG2006
             }, status=status.HTTP_400_BAD_REQUEST)
         
         authorName = authorData.data['authorName']
-        if (authorName is not None):
-            queryset.AuthorName = authorName
+
+        if (authorName is None):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG2009
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(authorName) < minBNameLength or
+            len(authorName) > maxNameLength):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG2010
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
         queryset.save()
             
         return Response({
                 "success": True,
-                "message": BookMessage.MSG2003,
-                "data": authorData.data
+                "message": BookMessage.MSG2005,
+                "data": {
+                    "authorName": authorName
+                }
             }, status=status.HTTP_200_OK)
     
 class EditBookViewAPI(GenericAPIView):
     serializer_class = BookSerializer
     queryset = Book.objects.all()
 
-    def get(self, request):
-        return Response({"success": True,})
-    
-    def put(self, request, id):
-        bookData = BookSerializer(data=request.data)
+    def get(self, request, id):
         try:
             queryset = Book.objects.get(pk=id)
         except Book.DoesNotExist:
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG3002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG3001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
+    
+    def put(self, request, id):
+        bookData = BookSerializer(data=request.data)
+
+        try:
+            queryset = Book.objects.get(pk=id)
+        except Book.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG3002
                 }
             )  
         
         if not bookData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
-                "message": BookMessage.MSG3007
+                "message": BookMessage.MSG3006
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
         
+        if (bookName is None or
+            bookTypeId is None or
+            authorId is None):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG3009
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
         queryset.BookName = bookName
+        queryset.BookTypeId = bookType
+        queryset.AuthorId = author
 
-        if bookTypeId is not None:
-            try:
-                bookType = BookType.objects.get(pk=bookTypeId)
-            except BookType.DoesNotExist:
-                return Response(
-                    {
-                        "success": False,
-                        "message": BookMessage.MSG3003
-                    }
-                )
-            queryset.BookTypeId = bookType
-        
-        if authorId is not None:
-            try:
-                author = Author.objects.get(pk=authorId)
-            except Author.DoesNotExist:
-                return Response(
-                    {
-                        "success": False,
-                        "message": BookMessage.MSG3004
-                    }
-                )
-            queryset.AuthorId = authorId
+        try:
+            bookType = BookType.objects.get(pk=bookTypeId)
+            author = Author.objects.get(pk=authorId)
+        except BookType.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG3011
+                }
+            )
+        except Author.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG3012
+                }
+            )
+
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(bookName) < minBNameLength or
+            len(bookName) > maxNameLength):
+            return Response({
+                "success": False,
+                "message": BookMessage.MSG3010
+            }, status=status.HTTP_400_BAD_REQUEST)
         
         queryset.save()
 
         return Response({
                 "success": True,
-                "message": BookMessage.MSG3006,
+                "message": BookMessage.MSG3005,
                 "data": bookData.data
             }, status=status.HTTP_200_OK)
 
@@ -345,7 +532,20 @@ class DeleteBookTypeViewAPI(GenericAPIView):
     queryset = BookType.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        try:
+            queryset = BookType.objects.get(pk=id)
+        except BookType.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG1002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG1001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
 
     def delete(self, request, id):
         try:
@@ -354,7 +554,7 @@ class DeleteBookTypeViewAPI(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG1002
                 }
             )  
 
@@ -362,7 +562,7 @@ class DeleteBookTypeViewAPI(GenericAPIView):
             
         return Response({
                 "success": True,
-                "message": BookMessage.MSG2003,
+                "message": BookMessage.MSG1007,
             }, status=status.HTTP_200_OK)
     
 class DeleteAuthorViewAPI(GenericAPIView):
@@ -370,7 +570,20 @@ class DeleteAuthorViewAPI(GenericAPIView):
     queryset = Author.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        try:
+            queryset = Author.objects.get(pk=id)
+        except Author.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG2002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG2001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
 
     def delete(self, request, id):
         try:
@@ -379,7 +592,7 @@ class DeleteAuthorViewAPI(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG2002
                 }
             )  
 
@@ -387,7 +600,7 @@ class DeleteAuthorViewAPI(GenericAPIView):
             
         return Response({
                 "success": True,
-                "message": BookMessage.MSG2003,
+                "message": BookMessage.MSG2007,
             }, status=status.HTTP_200_OK)
     
 class DeleteBookViewAPI(GenericAPIView):
@@ -395,7 +608,20 @@ class DeleteBookViewAPI(GenericAPIView):
     queryset = Book.objects.all()
 
     def get(self, request):
-        return Response({"success": True,})
+        try:
+            queryset = Book.objects.get(pk=id)
+        except Book.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": BookMessage.MSG3002
+                }
+            )  
+        return Response({
+                "success": True,
+                "message": BookMessage.MSG3001,
+                "data": model_to_dict(queryset)
+            }, status=status.HTTP_200_OK)
 
     def delete(self, request, id):
         try:
@@ -404,7 +630,7 @@ class DeleteBookViewAPI(GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": BookMessage.MSG6002
+                    "message": BookMessage.MSG3002
                 }
             )  
 
@@ -412,6 +638,6 @@ class DeleteBookViewAPI(GenericAPIView):
             
         return Response({
                 "success": True,
-                "message": BookMessage.MSG2003,
+                "message": BookMessage.MSG3007,
             }, status=status.HTTP_200_OK)
     

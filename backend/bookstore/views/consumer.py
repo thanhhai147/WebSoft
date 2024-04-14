@@ -7,6 +7,8 @@ from ..messages.consumer import ConsumerMessage
 from ..models.consumer import Consumer
 
 class CreateConsumerAPIView(GenericAPIView):
+    serializer_class = ConsumerSerializer
+    queryset = Consumer.objects.all()
     def post(self, request):
         consumer_data = ConsumerSerializer(data=request.data)
 
@@ -64,6 +66,14 @@ class CreateConsumerAPIView(GenericAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
+            if Consumer.objects.filter(Email=email).exists():
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG1006
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         Consumer(
             Name= consumer_name,
@@ -76,7 +86,7 @@ class CreateConsumerAPIView(GenericAPIView):
             {
                 "success": True,
                 "message": ConsumerMessage.MSG0001,
-                "data": ConsumerSerializer(consumer_data).data
+                "data": consumer_data.data
             },
             status=status.HTTP_200_OK
         )
@@ -96,6 +106,8 @@ class GetConsumerDetailAPIView(GenericAPIView):
 
 
 class UpdateConsumerAPIView(GenericAPIView):
+    serializer_class = ConsumerSerializer
+    queryset = Consumer.objects.all()
     def put(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
@@ -146,7 +158,7 @@ class UpdateConsumerAPIView(GenericAPIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
             
             if email:
-                if len(email) >= 320 or ' ' in email or '@' not in email:
+                if len(email) >= 320 in email or '@' not in email:
                     return Response(
                         {
                             "success": False,
@@ -165,7 +177,7 @@ class UpdateConsumerAPIView(GenericAPIView):
                 {
                     "success": True,
                     "message": ConsumerMessage.MSG0001,
-                    "data": ConsumerSerializer(consumer_data.instance).data
+                    "data": consumer_data.instance.data
                 },
                 status=status.HTTP_200_OK
             )

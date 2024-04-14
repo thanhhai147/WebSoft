@@ -11,3 +11,4 @@ class ConsumerMessage():
     MSG1003 = "Số điện thoại không chính xác"
     MSG1004 = "Số điện thoại đã được đăng ký"
     MSG1005 = "email không đúng định dạng"
+    MSG1006 = "email đã được đăng ký"

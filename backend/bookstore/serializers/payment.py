@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ..models.payment import Payment
 
-class paymentSerializers (serializers.Serializer):
-    ConsumerID = serializers.IntegerField()
+class PaymentSerializers (serializers.Serializer):
+    ConsumerId = serializers.Field()
     Date = serializers.DateField()
     Value = serializers.FloatField()

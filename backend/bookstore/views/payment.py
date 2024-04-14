@@ -3,12 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models.payment import Payment
 from ..models.consumer import Consumer
-from ..serializers.payment import PaymentSerializer
+from ..models.parameter import  Parameter
+from ..serializers.payment import PaymentSerializers
 from ..messages.payment import PaymentMessage
 
 class CreatePaymentAPIView(GenericAPIView):
+    serializer_class = PaymentSerializers
     def post(self, request):
-        payment_data = PaymentSerializer(data=request.data)
+        payment_data = PaymentSerializers(data=request.data)
 
         if not payment_data.is_valid(raise_exception=True):
             return Response({
@@ -16,7 +18,7 @@ class CreatePaymentAPIView(GenericAPIView):
                 "message": PaymentMessage.MSG0003
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        consumer_id = payment_data.data['ConsumerID']
+        consumer_id = payment_data.data['ConsumerId']
         date = payment_data.data['Date']
         value = payment_data.data['Value']
         
@@ -34,7 +36,7 @@ class CreatePaymentAPIView(GenericAPIView):
         consumer.save()
 
         Payment(
-            ConsumerID = consumer_id,
+            ConsumerId = consumer_id,
             Date = date,
             Value = value,
             ).save()
@@ -43,23 +45,34 @@ class CreatePaymentAPIView(GenericAPIView):
             {
                 "success": True,
                 "message": PaymentMessage.MSG0001,
-                "data": PaymentSerializer(payment_data).data
+                "data": payment_data.data
             },
             status=status.HTTP_200_OK
         )
 
-
+class GetAllPaymentDetailAPIView(GenericAPIView):
+    serializer_class = PaymentSerializers
+    def get(self, request):
+        try:
+            payment = Payment.objects.all()
+            payment_data = PaymentSerializers(payment, many=True)
+            return Response(payment_data.data)
+        except Payment.DoesNotExist:
+            return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)
+        
 class GetPaymentDetailAPIView(GenericAPIView):
+    serializer_class = PaymentSerializers
     def get(self, request, pk):
         try:
             payment = Payment.objects.get(pk=pk)
-            payment_data = PaymentSerializer(payment)
+            payment_data = PaymentSerializers(payment)
             return Response(payment_data.data)
         except Payment.DoesNotExist:
             return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)
 
 
 class DeletePaymentAPIView(GenericAPIView):
+    serializer_class = PaymentSerializers 
     def delete(self, request, pk):
         try:
             payment = Payment.objects.get(pk=pk)

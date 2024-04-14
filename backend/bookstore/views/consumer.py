@@ -5,6 +5,7 @@ from rest_framework import status
 from ..serializers.consumer import ConsumerSerializer
 from ..messages.consumer import ConsumerMessage
 from ..models.consumer import Consumer
+from ..models.parameter import Parameter
 
 class CreateConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
@@ -23,42 +24,50 @@ class CreateConsumerAPIView(GenericAPIView):
         phone = consumer_data.data['Phone']
         email = consumer_data.data['Email']
 
+        maxConsumerNameLength = Parameter.objects.filter(ParameterName='maxConsumerNameLength').first()
+        minConsumerNameLength = Parameter.objects.filter(ParameterName='minConsumerNameLength').first()
+        maxAddressLength = Parameter.objects.filter(ParameterName='maxAddressLength').first()
+        minAddressLength = Parameter.objects.filter(ParameterName='minAddressLength').first()
+        maxPhoneLength = Parameter.objects.filter(ParameterName='maxPhoneLength').first()
+        minPhoneLength = Parameter.objects.filter(ParameterName='minPhoneLength').first()
+        maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
+
         # Checking if the consumer already exists
-        if not consumer_name or len(consumer_name) == 0 or len(consumer_name) >= 255 or not consumer_name.isalnum():
+        if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or not consumer_name.isalnum():
             return Response(
                 {
-                    "success": False,
-                    "message": ConsumerMessage.MSG1001
+                     "success": False,
+                     "message": ConsumerMessage.MSG1001
                 },
-                status=status.HTTP_400_BAD_REQUEST
-            )
+                  status=status.HTTP_400_BAD_REQUEST
+             )
         
-        if not address or len(address) == 0 or len(address) >= 255:
-            return Response(
-                {
-                    "success": False,
-                    "message": ConsumerMessage.MSG1002
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        if not address or len(address) < int(minAddressLength.Value) or len(address) > int(maxAddressLength.Value):
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG1002
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         
-        if not phone or len(phone) >= 11 or len(phone) <= 0 or not phone.isdigit():
-            return Response(
-                {
-                    "success": False,
-                    "message": ConsumerMessage.MSG1003
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
+        if not phone or len(phone) > int(maxPhoneLength.Value) or len(phone) <  int(minPhoneLength.Value) or not phone.isdigit():
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG1003
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
         if Consumer.objects.filter(Phone=phone).exists():
-            return Response({
-                "success": False,
-                "message": ConsumerMessage.MSG1004
-            }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    "success": False,
+                    "message": ConsumerMessage.MSG1004
+                }, status=status.HTTP_400_BAD_REQUEST)
         
         if email:
-            if len(email) >= 320 or ' ' in email or '@' not in email:
+            if len(email) > int(maxEmailLength.Value) or ' ' in email or '@' not in email:
                 return Response(
                     {
                         "success": False,
@@ -126,7 +135,7 @@ class UpdateConsumerAPIView(GenericAPIView):
     def put(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
-            consumer_data = ConsumerSerializer(consumer, data=request.data)
+            consumer_data = ConsumerSerializer(consumer, data=request.data, partial=True)
             if not consumer_data.is_valid(raise_exception=True):
                 return Response({
                 "success": False,
@@ -138,8 +147,25 @@ class UpdateConsumerAPIView(GenericAPIView):
             phone = consumer_data.data['Phone']
             email = consumer_data.data['Email']
 
+            maxConsumerNameLength = Parameter.objects.filter(ParameterName='maxConsumerNameLength').first()
+            minConsumerNameLength = Parameter.objects.filter(ParameterName='minConsumerNameLength').first()
+            maxAddressLength = Parameter.objects.filter(ParameterName='maxAddressLength').first()
+            minAddressLength = Parameter.objects.filter(ParameterName='minAddressLength').first()
+            maxPhoneLength = Parameter.objects.filter(ParameterName='maxPhoneLength').first()
+            minPhoneLength = Parameter.objects.filter(ParameterName='minPhoneLength').first()
+            maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
+
         # Checking if the consumer already exists
-            if not consumer_name or len(consumer_name) == 0 or len(consumer_name) >= 255 or not consumer_name.isalnum():
+            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or not consumer_name.isalnum():
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG1001
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+            if not address or len(address) < int(minAddressLength.Value) or len(address) > int(maxAddressLength.Value):
                 return Response(
                     {
                         "success": False,
@@ -148,7 +174,7 @@ class UpdateConsumerAPIView(GenericAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
-            if not address or len(address) == 0 or len(address) >= 255:
+            if not phone or len(phone) > int(maxPhoneLength.Value) or len(phone) <  int(minPhoneLength.Value) or not phone.isdigit():
                 return Response(
                     {
                         "success": False,
@@ -156,24 +182,22 @@ class UpdateConsumerAPIView(GenericAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            
-            if not phone or len(phone) >= 11 or len(phone) <= 0 or not phone.isdigit():
-                return Response(
-                    {
-                        "success": False,
-                        "message": ConsumerMessage.MSG1004
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            if Consumer.objects.filter(Phone=phone).exists():
+            if Consumer.objects.filter(Phone=phone).exclude(pk=pk).exists():
                 return Response({
                     "success": False,
-                    "message": ConsumerMessage.MSG1005
+                    "message": ConsumerMessage.MSG1004
                 }, status=status.HTTP_400_BAD_REQUEST)
             
             if email:
-                if len(email) >= 320 in email or '@' not in email:
+                if len(email) > int(maxEmailLength.Value) or ' ' in email or '@' not in email:
+                    return Response(
+                        {
+                            "success": False,
+                            "message": ConsumerMessage.MSG1005
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                if Consumer.objects.filter(Email=email).exclude(pk=pk).exists():
                     return Response(
                         {
                             "success": False,
@@ -192,7 +216,7 @@ class UpdateConsumerAPIView(GenericAPIView):
                 {
                     "success": True,
                     "message": ConsumerMessage.MSG0001,
-                    "data": consumer_data.instance.data
+                    "data": consumer_data.data
                 },
                 status=status.HTTP_200_OK
             )

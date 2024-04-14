@@ -20,7 +20,6 @@ class CreateConsumerAPIView(GenericAPIView):
         address = consumer_data.data['Address']
         phone = consumer_data.data['Phone']
         email = consumer_data.data['Email']
-        debt = consumer_data.data['Debt']
 
         # Checking if the consumer already exists
         if not consumer_name or len(consumer_name) == 0 or len(consumer_name) >= 255 or not consumer_name.isalnum():
@@ -66,21 +65,11 @@ class CreateConsumerAPIView(GenericAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        if debt < 0:
-            return Response(
-                {
-                    "success": False,
-                    "message": ConsumerMessage.MSG1006
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
         Consumer(
             Name= consumer_name,
             Address = address,
             Phone = phone,
-            Email = email,
-            Debt = debt,
+            Email = email
             ).save()
         
         return Response(
@@ -121,7 +110,6 @@ class UpdateConsumerAPIView(GenericAPIView):
             address = consumer_data.data['Address']
             phone = consumer_data.data['Phone']
             email = consumer_data.data['Email']
-            debt = consumer_data.data['Debt']
 
         # Checking if the consumer already exists
             if not consumer_name or len(consumer_name) == 0 or len(consumer_name) >= 255 or not consumer_name.isalnum():
@@ -167,20 +155,10 @@ class UpdateConsumerAPIView(GenericAPIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            if debt < 0:
-                return Response(
-                    {
-                        "success": False,
-                        "message": ConsumerMessage.MSG1007
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
             consumer.Name = consumer_name
             consumer.Address = address
             consumer.Phone = phone
             consumer.Email = email
-            consumer.Debt = debt
             consumer.save()
 
             return Response(

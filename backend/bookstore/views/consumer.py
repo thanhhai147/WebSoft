@@ -91,8 +91,23 @@ class CreateConsumerAPIView(GenericAPIView):
             status=status.HTTP_200_OK
         )
 
-
+class GetAllConsumerDetailAPIView(GenericAPIView):
+    serializer_class = ConsumerSerializer
+    queryset = Consumer.objects.all()
+    def get(self, request):
+        try:
+            consumers = Consumer.objects.all()
+            consumer_data = ConsumerSerializer(consumers, many=True)
+            return Response(consumer_data.data)
+        except Consumer.DoesNotExist:
+            return Response(
+                {"message": ConsumerMessage.MSG0004},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
 class GetConsumerDetailAPIView(GenericAPIView):
+    serializer_class = ConsumerSerializer
+    queryset = Consumer.objects.all()
     def get(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
@@ -190,6 +205,8 @@ class UpdateConsumerAPIView(GenericAPIView):
 
 
 class DeleteConsumerAPIView(GenericAPIView):
+    serializer_class = ConsumerSerializer
+    queryset = Consumer.objects.all()
     def delete(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)

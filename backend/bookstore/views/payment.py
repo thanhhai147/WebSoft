@@ -38,7 +38,7 @@ class CreatePaymentAPIView(GenericAPIView):
         Payment(
             ConsumerId = consumer_id,
             Date = date,
-            Value = value,
+            Value = value
             ).save()
 
         return Response(

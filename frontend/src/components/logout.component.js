@@ -3,7 +3,7 @@ import LoginAPI from "../api/login.api";
 import { Button } from 'antd';
 import TokenUtil from "../helpers/token.utils";
 
-export default function Logout() {
+export default function LogoutComponent() {
     const handleLogout = async () => {
         try {
             await LoginAPI.handleLogout();

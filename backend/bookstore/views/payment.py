@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..models.payment import Payment
 from ..models.consumer import Consumer
-from ..models.parameter import  Parameter
 from ..serializers.payment import PaymentSerializers
 from ..messages.payment import PaymentMessage
 
@@ -54,9 +53,16 @@ class GetAllPaymentDetailAPIView(GenericAPIView):
     serializer_class = PaymentSerializers
     def get(self, request):
         try:
-            payment = Payment.objects.all()
-            payment_data = PaymentSerializers(payment, many=True)
-            return Response(payment_data.data)
+            payments = Payment.objects.all()
+            payment_data = PaymentSerializers(payments, many=True)
+            return Response(
+            {
+                "success": True,
+                "message": PaymentMessage.MSG0001,
+                "data": payment_data.data
+            },
+            status=status.HTTP_200_OK    
+            )
         except Payment.DoesNotExist:
             return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)
         
@@ -66,17 +72,14 @@ class GetPaymentDetailAPIView(GenericAPIView):
         try:
             payment = Payment.objects.get(pk=pk)
             payment_data = PaymentSerializers(payment)
-            return Response(payment_data.data)
+            return Response(
+            {
+                "success": True,
+                "message": PaymentMessage.MSG0001,
+                "data": payment_data.data
+            },
+            status=status.HTTP_200_OK
+            )
         except Payment.DoesNotExist:
             return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)
 
-
-class DeletePaymentAPIView(GenericAPIView):
-    serializer_class = PaymentSerializers 
-    def delete(self, request, pk):
-        try:
-            payment = Payment.objects.get(pk=pk)
-            payment.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Payment.DoesNotExist:
-            return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)

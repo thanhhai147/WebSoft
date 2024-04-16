@@ -9,7 +9,6 @@ from ..models.parameter import Parameter
 
 class CreateConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
-    queryset = Consumer.objects.all()
     def post(self, request):
         consumer_data = ConsumerSerializer(data=request.data)
 
@@ -33,7 +32,7 @@ class CreateConsumerAPIView(GenericAPIView):
         maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
 
         # Checking if the consumer already exists
-        if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or not consumer_name.isalnum():
+        if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or consumer_name.isalnum():
             return Response(
                 {
                      "success": False,
@@ -102,12 +101,18 @@ class CreateConsumerAPIView(GenericAPIView):
 
 class GetAllConsumerDetailAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
-    queryset = Consumer.objects.all()
     def get(self, request):
         try:
             consumers = Consumer.objects.all()
             consumer_data = ConsumerSerializer(consumers, many=True)
-            return Response(consumer_data.data)
+            return Response(
+                {
+                    "success": True,
+                    "message": ConsumerMessage.MSG0001,
+                    "data": consumer_data.data
+                },
+                status=status.HTTP_200_OK
+                )
         except Consumer.DoesNotExist:
             return Response(
                 {"message": ConsumerMessage.MSG0004},
@@ -116,12 +121,18 @@ class GetAllConsumerDetailAPIView(GenericAPIView):
         
 class GetConsumerDetailAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
-    queryset = Consumer.objects.all()
     def get(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
             consumer_data = ConsumerSerializer(consumer)
-            return Response(consumer_data.data)
+            return Response(
+                {
+                    "success": True,
+                    "message": ConsumerMessage.MSG0001,
+                    "data": consumer_data.data
+                },
+                status=status.HTTP_200_OK
+            )
         except Consumer.DoesNotExist:
             return Response(
                 {"message": ConsumerMessage.MSG0004},
@@ -131,7 +142,6 @@ class GetConsumerDetailAPIView(GenericAPIView):
 
 class UpdateConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
-    queryset = Consumer.objects.all()
     def put(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
@@ -156,7 +166,7 @@ class UpdateConsumerAPIView(GenericAPIView):
             maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
 
         # Checking if the consumer already exists
-            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or not consumer_name.isalnum():
+            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or consumer_name.isalnum():
                 return Response(
                     {
                         "success": False,
@@ -230,12 +240,11 @@ class UpdateConsumerAPIView(GenericAPIView):
 
 class DeleteConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
-    queryset = Consumer.objects.all()
     def delete(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
             consumer.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_200_OK)
         except Consumer.DoesNotExist:
             return Response(
                 {"message": ConsumerMessage.MSG0004},

@@ -1,7 +1,9 @@
-import MainLayout from "../layouts/main.layout";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { Button, Table, Input } from "antd";
-
-const { Search } = Input;
 
 const columns = [
   {
@@ -23,16 +25,20 @@ const columns = [
     title: "Price",
     dataIndex: "price",
     key: "price",
+    sorter: (a, b) => a.price - b.price,
   },
   {
     title: "Action",
     key: "action",
     render: (text, record) => (
       <span>
-        <Button type="primary" style={{ marginRight: 16 }}>
-          Edit
+        <Button
+          type="primary"
+          style={{ marginRight: 16 }}
+          icon={<EditOutlined />}
+        >
+          Sửa
         </Button>
-        <Button danger>Delete</Button>
       </span>
     ),
   },
@@ -62,25 +68,43 @@ const data = [
   },
 ];
 
-const bookContent = (
-  <div>
-    <h1>Danh sách sản phẩm</h1>
+const BookPage = () => {
+  const onChange = (pagination, filters, sorter, extra) => {
+    console.log("params", pagination, filters, sorter, extra);
+  };
 
-    <div style={{ marginBottom: 16, display: "flex", gap: "20px" }}>
-      <Search
-        placeholder="Tìm kiếm sản phẩm"
-        enterButton="Tìm kiếm"
-        onSearch={(value) => console.log(value)}
+  return (
+    <div>
+      <h1 style={{ marginBottom: 32 }}>Danh sách sản phẩm</h1>
+
+      <div style={{ marginBottom: 64, display: "flex", gap: "20px" }}>
+        <Input.Search
+          placeholder="Tìm kiếm sản phẩm"
+          onSearch={(value) => console.log(value)}
+          style={{
+            backgroundColor: "#CFD8DC",
+            width: 800,
+            borderRadius: 20,
+          }}
+        />
+
+        <Button danger icon={<DeleteOutlined />}>
+          Xóa bỏ
+        </Button>
+        <Button type="primary" icon={<PlusCircleOutlined />}>
+          Tạo mới
+        </Button>
+      </div>
+
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey={(record) => record.key}
+        rowSelection={{ type: "checkbox" }}
+        onChange={onChange}
       />
-
-      <Button danger>Xóa bỏ</Button>
-      <Button type="primary">Tạo mới</Button>
     </div>
+  );
+};
 
-    <Table columns={columns} dataSource={data} />
-  </div>
-);
-
-export default function BookPage() {
-  return <MainLayout pageContent={bookContent} />;
-}
+export default BookPage;

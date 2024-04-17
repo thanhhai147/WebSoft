@@ -1,6 +1,7 @@
 import React, { lazy, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import TokenUtil from "../helpers/token.utils";
+import MainLayout from "../layouts/main.layout";
 
 const LoginPage = lazy(() => import("../pages/login.page"));
 const BookPage = lazy(() => import("../pages/book.page"));
@@ -11,17 +12,18 @@ export default function AppRouter() {
   const [token, setToken] = useState(() => TokenUtil.getToken());
   const [username, setUsername] = useState(() => TokenUtil.getUsername());
 
-  // if(!token || token === "undefined") {
-  //     return <LoginPage />
-  // }
+  if (!token || token === "undefined") {
+    return <LoginPage />;
+  }
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<BookPage />} />
-          <Route path="/book" element={<BookPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/" element={<MainLayout />}>
+            <Route path="/book" element={<BookPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

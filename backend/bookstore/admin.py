@@ -8,6 +8,11 @@ class AccountAdmin(admin.ModelAdmin):
     list_filter = ['Created']
     search_fields = ['AccountName', 'AccountId']
 
+class TokenAdmin(admin.ModelAdmin):
+    list_display = ('Key', 'AccountId', 'Created')
+    list_filter = ['Created']
+    search_fields = ['Key', 'AccountId']
+
 class BookTypeAdmin(admin.ModelAdmin):
     list_display = ('BookTypeId', 'BookTypeName', 'Created')
     list_filter = ['BookTypeId', 'BookTypeName', 'Created']
@@ -59,6 +64,7 @@ class BookStorageAdmin(admin.ModelAdmin):
     search_fields = ['StorageId', 'BookId']
 
 admin.site.register(account.Account, AccountAdmin)
+admin.site.register(account.Token, TokenAdmin)
 admin.site.register(book.BookType, BookTypeAdmin)
 admin.site.register(book.Author, AuthorAdmin)
 admin.site.register(book.Book, BookAdmin)

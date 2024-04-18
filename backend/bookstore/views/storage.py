@@ -101,6 +101,7 @@ class AddBookToStorageViewAPI(GenericAPIView):
 
         
         storage = Storage()
+        storage.save()
         for bookStorage in bookStorages:
             bookId = bookStorage['bookId']
             unitPrice = bookStorage['unitPrice']
@@ -108,7 +109,6 @@ class AddBookToStorageViewAPI(GenericAPIView):
             book = Book.objects.get(pk=bookId)
             book.Quantity = book.Quantity + quantity
             book.save()
-            storage.save()
             BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
         
         return Response({

@@ -474,7 +474,7 @@ class EditBookViewAPI(GenericAPIView):
                 "success": False,
                 "message": BookMessage.MSG3006
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+              
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
@@ -486,10 +486,6 @@ class EditBookViewAPI(GenericAPIView):
                 "success": False,
                 "message": BookMessage.MSG3009
             }, status=status.HTTP_400_BAD_REQUEST)
-    
-        queryset.BookName = bookName
-        queryset.BookTypeId = bookType
-        queryset.AuthorId = author
 
         try:
             bookType = BookType.objects.get(pk=bookTypeId)
@@ -518,6 +514,10 @@ class EditBookViewAPI(GenericAPIView):
                 "success": False,
                 "message": BookMessage.MSG3010
             }, status=status.HTTP_400_BAD_REQUEST)
+            
+        queryset.BookName = bookName
+        queryset.BookTypeId = bookType
+        queryset.AuthorId = author
         
         queryset.save()
 

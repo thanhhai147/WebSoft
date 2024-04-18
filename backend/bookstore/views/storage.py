@@ -66,10 +66,21 @@ class AddBookToStorageViewAPI(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookStorages = []
+        print(bookStorageData.validated_data)
         for bookStorage in bookStorageData.validated_data:
+            storageId = bookStorage['bookStorageId']
             bookId = bookStorage['bookId']
             unitPrice = bookStorage['unitPrice']
             quantity = bookStorage['quantity']
+            try:
+                storage = Storage.objects.get(pk=storageId)
+            except Storage.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": StorageMessage.MSG2002 + str(storageId)
+                    }
+                )
             try:
                 book = Book.objects.get(pk=bookId)
             except Book.DoesNotExist:
@@ -88,8 +99,8 @@ class AddBookToStorageViewAPI(GenericAPIView):
                         "success": False,
                         "message": StorageMessage.MSG2004
                     }
-                )   
-            if book.Quantity > int(maxBook.Value):
+                )
+            if book.Quantity >= int(maxBook.Value):
                 return Response(
                     {
                         "success": False,
@@ -97,14 +108,15 @@ class AddBookToStorageViewAPI(GenericAPIView):
                     }
                 )   
             bookStorages.append(bookStorage)
+
+        print(bookStorages)
         for bookStorage in bookStorages:
             bookId = bookStorage['bookId']
             unitPrice = bookStorage['unitPrice']
             quantity = bookStorage['quantity']
             book.Quantity = book.Quantity + quantity
             book.save()
-            storage = Storage()
-            storage.save()
+            storage = Storage.objects.get(pk=storageId)
             BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
         
         return Response({

@@ -1,0 +1,76 @@
+:root {
+    --theme-color: rgb(30, 60, 114);
+    --foreground-color: rgb(255, 255, 255);
+    --background-color: rgb(248, 249, 250);
+
+    --font-size-default: 1rem;
+    --font-size-h1: 2rem;
+    --font-size-h2: 1.5rem;
+    --font-size-h3: 1rem;
+    --font-size-p: 1rem;
+
+    --font-weight-defualt: 400;
+    --font-weight-h1: 700;
+    --font-weight-h2: 600;
+    --font-weight-h3: 500;
+    --font-weight-p: 400;
+
+    --font-color-default: rgba(0, 0, 0, 0.7);
+    --font-color-h1: rgba(30, 60, 114, 1);
+    --font-color-h2: rgba(30, 60, 114, 1);
+    --font-color-h3: rgba(30, 60, 114, 1);
+    --font-color-p: rgba(0, 0, 0, 0.7);
+
+    --font-family-theme:  'Nunito', sans-serif;
+
+    --box-shadow-default: 5px 0px 12px 4px rgba(0, 0, 0, 0.09);
+    --box-shadow-down: 5px 0px 12px 4px rgba(0, 0, 0, 0.09)	;
+    --box-shadow-right: 0px 3px 6px 0px rgba(0, 0, 0, 0.16);
+
+    --space-default: 1rem
+}
+
+* {
+    font-size: var(--font-size-default);
+    font-weight: var(--font-weight-defualt);
+    font-family: var(--font-family-theme);
+    color: var(--font-color-default);
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: var(--font-size-h1) !important;
+    font-weight: var(--font-weight-h1) !important;
+    text-transform: capitalize;
+    color: var(--font-color-h1);
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+h2 {
+    font-size: var(--font-size-h2) !important;
+    font-weight: var(--font-weight-h2) !important;
+    color: var(--font-color-h2);
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+h3 {
+    font-size: var(--font-size-h3) !important;
+    font-weight: var(--font-weight-h3) !important;
+    color: var(--font-color-h3);
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+p {
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
+    color: var(--font-color-p);
+    margin: 0 !important;
+    line-height: 0 !important;
+} 
+
+.bottom-margin-default {
+    margin-bottom: var(--space-default)
+}

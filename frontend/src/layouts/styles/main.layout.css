@@ -1,17 +1,28 @@
-.Sider {
-    background: #1890ff; 
-  }
-  
-  .ant-menu-dark .ant-menu-item,
-  .ant-menu-dark .ant-menu-submenu-title {
-    color: #fff;
-  }
-  
-  .ant-menu-dark .ant-menu-item-selected {
-    background-color: #096dd9; 
-  }
-  
-  .ant-menu-dark .ant-menu-item:hover {
-    background-color: rgba(24, 144, 255, 0.5); 
-  }
-  
+#main-layout-sider {
+  height: 100vh;
+  background-color: var(--background-color);
+  margin-top: 0;
+  box-shadow: var(--box-shadow-right)
+}
+
+#sider-title {
+  opacity: 1;
+}
+
+#sider-collapsed-button {
+  border: none;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  box-shadow: var(--box-shadow-down);
+}
+
+#sider-collapsed-button path {
+  color: var(--theme-color)
+}
+
+footer {
+  text-align: center;
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-h3)
+}

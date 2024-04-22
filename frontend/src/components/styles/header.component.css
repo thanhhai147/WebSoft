@@ -1,0 +1,39 @@
+#header {
+    background: var(--foreground-color);
+    box-shadow: var(--box-shadow-down);
+}
+
+#user-title {
+    margin-left: auto;
+}
+
+#avatar-wrapper {
+    cursor: pointer;
+    margin-left: auto;
+}
+
+#avatar {
+    background-color: var(--theme-color);
+}
+
+#avatar-letter {
+    color: var(--foreground-color)
+}
+
+#logout-wrapper {
+    height: 64px;
+}
+
+#logout-button {
+    background-color: var(--theme-color);
+}
+
+#logout-button>span {
+    color: var(--foreground-color);
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-h3);
+}
+
+#logout-button path {
+    color: var(--foreground-color)
+}

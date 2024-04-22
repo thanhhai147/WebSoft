@@ -3,10 +3,11 @@ import { Layout, Button } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import "./styles/main.layout.css"
 
-const { Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 const Header = lazy(() => import("../components/header.component"))
 const Menu = lazy(() => import("../components/menu.component"))
+const Footer = lazy(() => import("../components/footer.component"))
 
 const MainLayout = ({ pageContent }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -34,9 +35,7 @@ const MainLayout = ({ pageContent }) => {
           </Content>
         </Layout>
       </Content>
-      <Footer>
-        Designed and Created by TeamUIT - version ©{new Date().getFullYear()}
-      </Footer>
+      <Footer />
     </Layout>
   );
 };

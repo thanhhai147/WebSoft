@@ -24,14 +24,19 @@
     height: 64px;
 }
 
+#logout-wrapper p span {
+    color: var(--theme-color);
+    font-weight: 500;
+}
+
 #logout-button {
     background-color: var(--theme-color);
 }
 
 #logout-button>span {
     color: var(--foreground-color);
-    font-size: var(--font-size-h3);
-    font-weight: var(--font-weight-h3);
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
 }
 
 #logout-button path {

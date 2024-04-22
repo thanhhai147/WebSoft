@@ -15,8 +15,8 @@
 }
 
 #login-form label span {
-    font-size: var(--font-size-h3);
-    font-weight: var(--font-weight-h3)
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p)
 }
 
 #login-form #username-input {
@@ -34,8 +34,16 @@
     background-color: var(--theme-color);
 }
 
+#login-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #login-btn span {
     color: var(--foreground-color) !important;
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
 }
 
 

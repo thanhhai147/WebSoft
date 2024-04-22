@@ -20,9 +20,3 @@
 #sider-collapsed-button path {
   color: var(--theme-color)
 }
-
-footer {
-  text-align: center;
-  font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-h3)
-}

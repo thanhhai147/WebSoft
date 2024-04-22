@@ -2,11 +2,15 @@
     --theme-color: rgb(30, 60, 114);
     --foreground-color: rgb(255, 255, 255);
     --background-color: rgb(248, 249, 250);
+    --success-color: #52c41a;
+    --failed-color: #ff4d4f;
+    --warning-color: #faad14;
+    --info-color: #1677ff;
 
     --font-size-default: 1rem;
     --font-size-h1: 2rem;
     --font-size-h2: 1.5rem;
-    --font-size-h3: 1rem;
+    --font-size-h3: 1.25rem;
     --font-size-p: 1rem;
 
     --font-weight-defualt: 400;
@@ -31,11 +35,9 @@
 }
 
 * {
-    font-size: var(--font-size-default);
-    font-weight: var(--font-weight-defualt);
-    font-family: var(--font-family-theme);
-    color: var(--font-color-default);
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {

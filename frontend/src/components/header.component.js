@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { UserContext } from '../routers'; 
+import UserContext from '../contexts/user.context'; 
 import { Layout , Avatar, Popover, Button } from 'antd';
 import { LogoutOutlined  } from '@ant-design/icons';
 import TokenUtil from "../helpers/token.utils";
@@ -24,7 +24,7 @@ export default function HeaderComponent() {
 
     const Logout = (
         <div id='logout-wrapper' className='d-flex flex-column'>
-            <p className='d-flex mb-4 mt-2'><h3>{username}</h3>, Bạn có muốn đăng xuất?</p>
+            <p className='d-flex mb-4 mt-2'><span>{username}</span>, Bạn có muốn đăng xuất?</p>
             <Button id="logout-button" type="primary" onClick={handleLogout} className="Button" icon={<LogoutOutlined />}>Đăng xuất</Button>
         </div>
     )

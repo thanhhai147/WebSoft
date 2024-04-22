@@ -2,21 +2,25 @@ import React from 'react';
 import { Button, Form, Input } from 'antd';
 import LoginAPI from  "../api/login.api";
 import TokenUtil from '../helpers/token.utils';
+import { NotificationComponent } from '../components/notification.component';
+import { TITLE, MESSAGE } from '../messages/main.message'
 import "./styles/login.page.css";
-
 
 export default function Login () {
 
     const onFinish = async (values) => {
         try {
-            console.log(values.username)
             let response = await LoginAPI.handleLogin({
                 "username": values.username,
                 "password": values.password
             })
+
             if(response.success) {
                 TokenUtil.saveToken(response.data.token)
                 TokenUtil.saveUsername(response.data.account)
+
+                NotificationComponent('success', TITLE.SUCCESS, MESSAGE.SIGN_IN_SUCCESS)
+
                 window.location.replace("/book")
             }
         } catch (err) {
@@ -26,6 +30,7 @@ export default function Login () {
 
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
+        NotificationComponent('warning', TITLE.WARNING, MESSAGE.HAS_AN_ERROR)
     };    
 
     return (

@@ -1,12 +1,11 @@
-import React, { lazy, useState, createContext } from 'react';
+import React, { lazy, useState } from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import TokenUtil from '../helpers/token.utils';
+import UserContext from '../contexts/user.context';
 
 const LoginPage = lazy(() => import("../pages/login.page"))
 const BookPage = lazy(() => import("../pages/book.page"))
 const NotFoundPage = lazy(() => import("../pages/404.page"))
-
-export const UserContext = createContext();
 
 export default function AppRouter() {
 

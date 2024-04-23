@@ -1,48 +1,40 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  PlusCircleOutlined,
-} from "@ant-design/icons";
-import { Button, Table, Input } from "antd";
+import React, { lazy } from 'react'
+
+const PageTitle = lazy(() => import("../components/common/pageTitle.component"))
+const TableToolBar = lazy(() => import("../components/common/tableToolBar.component"))
+const Button = lazy(() => import("../components/common/button.component"))
+const Table = lazy(() => import("../components/common/table.component"))
 
 const columns = [
   {
-    title: "Name",
+    title: "Tên sách",
     dataIndex: "name",
     key: "name",
   },
   {
-    title: "Book Type",
+    title: "Thể loại",
     dataIndex: "bookType",
     key: "bookType",
   },
   {
-    title: "Author",
+    title: "Tác giả",
     dataIndex: "author",
     key: "author",
   },
   {
-    title: "Price",
-    dataIndex: "price",
-    key: "price",
-    sorter: (a, b) => a.price - b.price,
+    title: "Số lượng tồn",
+    dataIndex: "quantity",
+    key: "quantity",
+    sorter: (a, b) => a.quantity - b.quantity,
   },
   {
-    title: "Action",
-    key: "action",
+    title: "Chỉnh sửa",
+    key: "edit",
     render: (text, record) => (
-      <span>
-        <Button
-          type="primary"
-          style={{ marginRight: 16 }}
-          icon={<EditOutlined />}
-        >
-          Sửa
-        </Button>
-      </span>
+      <Button buttonCase='edit' />
     ),
   },
-];
+]
 
 const data = [
   {
@@ -50,61 +42,36 @@ const data = [
     name: "Book 1",
     bookType: "Type 1",
     author: "Author 1",
-    price: 100,
+    quantity: 100,
   },
   {
     key: "2",
     name: "Book 2",
     bookType: "Type 2",
     author: "Author 2",
-    price: 200,
+    quantity: 200,
   },
   {
     key: "3",
     name: "Book 3",
     bookType: "Type 3",
     author: "Author 3",
-    price: 300,
+    quantity: 300,
   },
 ];
 
-const BookPage = () => {
+const bookPageContent = () => {
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
   return (
     <div>
-      <h1 style={{ marginBottom: 32 }}>Danh sách sản phẩm</h1>
-
-      <div style={{ marginBottom: 64, display: "flex", gap: "20px" }}>
-        <Input.Search
-          placeholder="Tìm kiếm sản phẩm"
-          onSearch={(value) => console.log(value)}
-          style={{
-            backgroundColor: "#CFD8DC",
-            width: 800,
-            borderRadius: 20,
-          }}
-        />
-
-        <Button danger icon={<DeleteOutlined />}>
-          Xóa bỏ
-        </Button>
-        <Button type="primary" icon={<PlusCircleOutlined />}>
-          Tạo mới
-        </Button>
-      </div>
-
-      <Table
-        columns={columns}
-        dataSource={data}
-        rowKey={(record) => record.key}
-        rowSelection={{ type: "checkbox" }}
-        onChange={onChange}
-      />
+      <PageTitle title={"Tra cứu sách"} />
+      <TableToolBar className={'mb-3'} />
+      <Table columns={columns} data={data} onChange={onChange} sticky={true} />
     </div>
   );
 };
 
-export default BookPage;
+export default bookPageContent

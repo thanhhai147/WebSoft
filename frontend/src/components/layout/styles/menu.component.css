@@ -1,0 +1,12 @@
+#main-layout-menu {
+    background-color: var(--background-color);
+    border: none;
+    color: var(--theme-color);
+}
+
+.ant-menu-title-content {
+    font-size: var(--font-size-p);
+    color: var(--font-color-p);
+    font-weight: var(--font-weight-p);
+}
+

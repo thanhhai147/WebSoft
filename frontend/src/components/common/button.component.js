@@ -1,0 +1,44 @@
+import React from 'react'
+import { Button } from 'antd'
+import { 
+    PlusCircleOutlined,
+    DeleteOutlined,
+    LogoutOutlined,
+    EditOutlined
+} from '@ant-design/icons'
+import "./styles/button.component.css"
+
+export default function ButtonComponent({ buttonCase, className, ...props }) {
+    switch(buttonCase) {
+        case 'create':
+            return (
+                <Button className={"btn-component btn-theme-color d-flex align-items-center justify-content-center" + ' ' + className} type="primary" icon={<PlusCircleOutlined />} {...props}>
+                    Tạo mới
+                </Button>
+            )
+        case 'delete':
+            return (
+                <Button className={"btn-component d-flex align-items-center justify-content-center" + ' ' + className} danger icon={<DeleteOutlined />} {...props}>
+                    Xóa bỏ
+                </Button>
+            )
+        case 'logout':
+            return (
+                <Button className={"btn-component btn-theme-color d-flex align-items-center justify-content-center" + ' ' + className} type="primary" icon={<LogoutOutlined />} {...props}>
+                    Đăng xuất
+                </Button>
+            )
+        case 'login':
+            return (
+                <Button className={"btn-component btn-theme-color d-flex align-items-center justify-content-center" + ' ' + className} type="primary" {...props}>
+                    Xác nhận
+                </Button>
+            )
+        case 'edit':
+            return (
+                <Button className={"btn-component btn-theme-color d-flex align-items-center justify-content-center" + ' ' + className} type="primary" icon={<EditOutlined />} {...props}>
+                    {/* Sửa */}
+                </Button>
+            )
+    }
+}

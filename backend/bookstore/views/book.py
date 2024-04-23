@@ -159,8 +159,8 @@ class AddBookTypeAPIVIew(GenericAPIView):
         maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
         minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(bookTypeName) < minBNameLength or
-            len(bookTypeName) > maxNameLength):
+        if (len(bookTypeName) < minBNameLength.Value or
+            len(bookTypeName) > maxNameLength.Value):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG1010
@@ -212,8 +212,8 @@ class AddAuthorViewAPI(GenericAPIView):
         maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
         minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(authorName) < minBNameLength or
-            len(authorName) > maxNameLength):
+        if (len(authorName) < minBNameLength.Value or
+            len(authorName) > maxNameLength.Value):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG2010
@@ -287,8 +287,8 @@ class AddBookViewAPI(GenericAPIView):
         maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
         minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(bookName) < minBNameLength or
-            len(bookName) > maxNameLength):
+        if (len(bookName) < minBNameLength.Value or
+            len(bookName) > maxNameLength.Value):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG3010
@@ -351,8 +351,8 @@ class EditBookTypeViewAPI(GenericAPIView):
         maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
         minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(bookTypeName) < minBNameLength or
-            len(bookTypeName) > maxNameLength):
+        if (len(bookTypeName) < minBNameLength.Value or
+            len(bookTypeName) > maxNameLength.Value):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG1010
@@ -419,8 +419,8 @@ class EditAuthorViewAPI(GenericAPIView):
         maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
         minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(authorName) < minBNameLength or
-            len(authorName) > maxNameLength):
+        if (len(authorName) < minBNameLength.Value or
+            len(authorName) > maxNameLength.Value):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG2010
@@ -508,8 +508,8 @@ class EditBookViewAPI(GenericAPIView):
         maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
         minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(bookName) < minBNameLength or
-            len(bookName) > maxNameLength):
+        if (len(bookName) < minBNameLength.Value or
+            len(bookName) > maxNameLength.Value):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG3010

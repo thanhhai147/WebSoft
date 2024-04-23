@@ -26,10 +26,12 @@ const menuItems = [
     label: "Quản lý kho sách",
     submenu: [
       { key: "1a", label: "Tra cứu sách", path: "/book" },
+      { key: "1a", label: "Tra cứu thể loại", path: "/book-type" },
+      { key: "1a", label: "Tra cứu tác giả", path: "/author" },
       { key: "1b", label: "Tra cứu phiếu nhập sách", path: "/book/storage" },
       {
         key: "1c",
-        label: "Lập báo cáo hàng tháng tồn kho",
+        label: "Lập báo cáo tồn kho",
         path: "/book/report",
       },
     ],

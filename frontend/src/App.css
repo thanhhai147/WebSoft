@@ -1,0 +1,80 @@
+:root {
+    --theme-color: rgb(30, 60, 114);
+    --foreground-color: rgb(255, 255, 255);
+    --background-color: rgb(248, 249, 250);
+    --success-color: #52c41a;
+    --failed-color: #ff4d4f;
+    --warning-color: #faad14;
+    --info-color: #1677ff;
+
+    --font-size-default: 1rem;
+    --font-size-h1: 2rem;
+    --font-size-h2: 1.5rem;
+    --font-size-h3: 1.25rem;
+    --font-size-p: 1rem;
+
+    --font-weight-defualt: 400;
+    --font-weight-h1: 700;
+    --font-weight-h2: 600;
+    --font-weight-h3: 500;
+    --font-weight-p: 400;
+
+    --font-color-default: rgba(0, 0, 0, 0.7);
+    --font-color-h1: rgba(30, 60, 114, 1);
+    --font-color-h2: rgba(30, 60, 114, 1);
+    --font-color-h3: rgba(30, 60, 114, 1);
+    --font-color-p: rgba(0, 0, 0, 0.7);
+
+    --font-family-theme:  'Nunito', sans-serif;
+
+    --box-shadow-default: 5px 0px 12px 4px rgba(0, 0, 0, 0.09);
+    --box-shadow-down: 5px 0px 12px 4px rgba(0, 0, 0, 0.09);
+    --box-shadow-right: 0px 3px 6px 0px rgba(0, 0, 0, 0.16);
+
+    --space-default: 1rem;
+
+    --border-radius-default: 10px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    font-size: var(--font-size-h1) !important;
+    font-weight: var(--font-weight-h1) !important;
+    text-transform: capitalize;
+    color: var(--font-color-h1);
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+h2 {
+    font-size: var(--font-size-h2) !important;
+    font-weight: var(--font-weight-h2) !important;
+    color: var(--font-color-h2);
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+h3 {
+    font-size: var(--font-size-h3) !important;
+    font-weight: var(--font-weight-h3) !important;
+    color: var(--font-color-h3);
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+p {
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
+    color: var(--font-color-p);
+    margin: 0 !important;
+    line-height: 0 !important;
+} 
+
+.bottom-margin-default {
+    margin-bottom: var(--space-default)
+}

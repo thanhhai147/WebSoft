@@ -1,0 +1,21 @@
+.btn-component {
+    border-radius: var(--border-radius-default);
+    height: 40px;
+}
+
+.btn-component > span {
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
+}
+
+.btn-theme-color {
+    background-color: var(--theme-color);
+}
+
+.btn-theme-color > span {
+    color: var(--foreground-color)
+}
+
+.btn-theme-color path {
+    color: var(--foreground-color)
+}

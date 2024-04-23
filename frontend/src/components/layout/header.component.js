@@ -1,12 +1,13 @@
-import React, { useContext } from 'react';
-import UserContext from '../contexts/user.context'; 
-import { Layout , Avatar, Popover, Button } from 'antd';
-import { LogoutOutlined  } from '@ant-design/icons';
-import TokenUtil from "../helpers/token.utils";
-import LoginAPI from "../api/login.api";
+import React, { lazy, useContext } from 'react';
+import UserContext from '../../contexts/user.context'; 
+import { Layout , Avatar, Popover } from 'antd';
+import TokenUtil from "../../helpers/token.utils";
+import LoginAPI from "../../api/login.api";
 import "./styles/header.component.css";
 
-const { Header, Content } = Layout;
+const Button = lazy(() => import("../common/button.component"))
+
+const { Header } = Layout;
 
 const handleLogout = async () => {
     try {
@@ -25,7 +26,7 @@ export default function HeaderComponent() {
     const Logout = (
         <div id='logout-wrapper' className='d-flex flex-column'>
             <p className='d-flex mb-4 mt-2'><span>{username}</span>, Bạn có muốn đăng xuất?</p>
-            <Button id="logout-button" type="primary" onClick={handleLogout} className="Button" icon={<LogoutOutlined />}>Đăng xuất</Button>
+            <Button buttonCase="logout" id="logout-button" onClick={handleLogout} />
         </div>
     )
 

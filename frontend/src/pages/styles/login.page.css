@@ -5,7 +5,7 @@
 
 #login-form {
     background-color: var(--foreground-color);
-    border-radius: 10px;
+    border-radius: var(--border-radius-default);
     box-shadow: var(--box-shadow-down);
     width: 450px;
 }
@@ -29,21 +29,6 @@
 
 #login-btn {
     height: 40px;
-    font-size: var(--font-size-h3);
-    font-weight: var(--font-weight-h3);
-    background-color: var(--theme-color);
-}
-
-#login-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#login-btn span {
-    color: var(--foreground-color) !important;
-    font-size: var(--font-size-p);
-    font-weight: var(--font-weight-p);
 }
 
 

@@ -2,7 +2,6 @@ import React from "react";
 import { Menu } from "antd";
 import "./styles/menu.component.css";
 import {
-    UserOutlined,
     BookOutlined,
     TeamOutlined, 
     BankOutlined,

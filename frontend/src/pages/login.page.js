@@ -1,10 +1,12 @@
-import React from 'react';
-import { Button, Form, Input } from 'antd';
+import React, { lazy } from 'react';
+import { Form, Input } from 'antd';
 import LoginAPI from  "../api/login.api";
 import TokenUtil from '../helpers/token.utils';
-import { NotificationComponent } from '../components/notification.component';
+import { NotificationComponent } from '../components/common/notification.component';
 import { TITLE, MESSAGE } from '../messages/main.message'
 import "./styles/login.page.css";
+
+const Button = lazy(() => import("../components/common/button.component"))
 
 export default function Login () {
 
@@ -75,9 +77,7 @@ export default function Login () {
                 
                         <Form.Item
                         >
-                            <Button id='login-btn' type="primary" htmlType="submit" block >
-                                Xác nhận
-                            </Button>
+                            <Button buttonCase="login" id='login-btn' htmlType="submit" block />
                         </Form.Item>
                     </Form>
                 </div>

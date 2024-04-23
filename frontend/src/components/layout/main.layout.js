@@ -1,15 +1,16 @@
 import React, { lazy, useState } from 'react';
 import { Layout, Button } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { Outlet } from 'react-router-dom';
 import "./styles/main.layout.css"
 
 const { Content, Sider } = Layout;
 
-const Header = lazy(() => import("../components/header.component"))
-const Menu = lazy(() => import("../components/menu.component"))
-const Footer = lazy(() => import("../components/footer.component"))
+const Header = lazy(() => import("./header.component"))
+const Menu = lazy(() => import("./menu.component"))
+const Footer = lazy(() => import("./footer.component"))
 
-const MainLayout = ({ pageContent }) => {
+const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -30,8 +31,8 @@ const MainLayout = ({ pageContent }) => {
             </div>
             <Menu />
           </Sider>
-          <Content className='p-4 pt-5'>
-            {pageContent}
+          <Content className='p-5'>
+            <Outlet />
           </Content>
         </Layout>
       </Content>

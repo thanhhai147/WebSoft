@@ -66,6 +66,7 @@ class AddBookToStorageViewAPI(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookStorages = []
+        print(bookStorageData.validated_data)
         for bookStorage in bookStorageData.validated_data:
             bookId = bookStorage['bookId']
             unitPrice = bookStorage['unitPrice']
@@ -88,8 +89,8 @@ class AddBookToStorageViewAPI(GenericAPIView):
                         "success": False,
                         "message": StorageMessage.MSG2004
                     }
-                )   
-            if book.Quantity > int(maxBook.Value):
+                )
+            if book.Quantity >= int(maxBook.Value):
                 return Response(
                     {
                         "success": False,
@@ -97,14 +98,17 @@ class AddBookToStorageViewAPI(GenericAPIView):
                     }
                 )   
             bookStorages.append(bookStorage)
+
+        
+        storage = Storage()
+        storage.save()
         for bookStorage in bookStorages:
             bookId = bookStorage['bookId']
             unitPrice = bookStorage['unitPrice']
             quantity = bookStorage['quantity']
+            book = Book.objects.get(pk=bookId)
             book.Quantity = book.Quantity + quantity
             book.save()
-            storage = Storage()
-            storage.save()
             BookStorage(StorageId = storage, BookId = book, Quantity = quantity, UnitPrice = unitPrice).save()
         
         return Response({

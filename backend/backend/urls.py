@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('bookstore.urls.account')),
     path('', include('bookstore.urls.book')),
     path('storage/', include('bookstore.urls.storage')),
+    path('', include('bookstore.urls.consumer'))
 ]

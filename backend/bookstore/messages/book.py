@@ -28,11 +28,11 @@ class BookMessage():
     MSG2009 = "Vui lòng nhập đầy đủ các ô"
     MSG2010 = "Tên tác giả phải từ 1 tới 255 kí tự"
 
-    # function New Author: MSG3xxx
+    # function New Book: MSG3xxx
     MSG3001 = "Lấy thông tin sách thành công"
     MSG3002 = "Lấy thông tin sách thất bại"
-    MSG3003 = "Tạo thể sách thành công"
-    MSG3004 = "Tạo thể sách thất bại"
+    MSG3003 = "Tạo sách thành công"
+    MSG3004 = "Tạo sách thất bại"
     MSG3005 = "Chỉnh sửa thông tin sách thành công"
     MSG3006 = "Chỉnh sửa thông tin sách thất bại"
     MSG3007 = "Xoá thông tin sách thành công"

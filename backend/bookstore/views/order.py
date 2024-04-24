@@ -6,7 +6,8 @@ from ..serializers.order import OrderSerializer, BookOrderSerializer
 from ..messages.order import OrderMessage
 from ..models.order import Order, BookOrder
 from ..models.consumer import Consumer
-from ..models.book import Book, BookType, Author
+from ..models.book import Book
+from ..models.storage import BookStorage
 from ..models.parameter import Parameter
 
 #----------------
@@ -32,19 +33,18 @@ class createOrderAPIView(GenericAPIView):
             return Response({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
         
         totalValue = Order.TotalValue
-        remainingValue = Order.RemainingValue
+        consumer.Debt += totalValue
 
-        if (totalValue > paid_value):
-            remainingValue = totalValue - paid_value
-            consumer.Debt += remainingValue
-            consumer.save()
+        if (totalValue >= paid_value):
+            Order.RemainingValue = totalValue - paid_value
         else:
-            remainingValue = paid_value - totalValue
+            return Response ({ OrderMessage.MSG1002 }, status = status.HTTP_400_BAD_REQUEST)
 
         maxDebt = Parameter.objects.filter(ParameterName='maxDebt').first()
-        if consumer.Debt >= maxDebt:
+        if consumer.Debt >= float(maxDebt.Value):
             return Response({OrderMessage.MSG1001}, status = status.HTTP_400_BAD_REQUEST)
         
+        consumer.save()
         Order (
             ConsumerID = consumer,
             PaidValue = paid_value
@@ -100,29 +100,87 @@ class getOrderAPIView(GenericAPIView):
 #------------------
 class createBookOrderAPIView(GenericAPIView):
     serializer_class = BookOrderSerializer
-    queryset = BookOrder.objects.all()
 
     def post(self, request):
-        serializer = BookOrderSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        bookOrder_data = BookOrderSerializer(data=request.data)
+        if not bookOrder_data.is_valid(raise_exception = True):
+            return Response (
+                {
+                    "success": False,
+                    "message": OrderMessage.MSG0003
+                }, status = status.HTTP_400_BAD_REQUEST
+            )
+        
+        order_id = bookOrder_data.validated_data["OrderId"]
+        book_id = bookOrder_data.validated_data["BookId"]
+        quantity = bookOrder_data.validated_data["Quantity"]
+
+        try:
+            order = Order.objects.get(OrderId = order_id)
+        except Order.DoesNotExist:
+             return Response({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
+        try:
+            book = Book.objects.get(BookId = book_id)
+        except Book.DoesNotExist:
+            return Response ({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
+        try:
+            bookStorage = BookStorage.objects.get(BookId = book_id)
+        except BookStorage.DoesNotExist:
+            return Response ({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
+        
+        minQuantity = Parameter.objects.filter(ParameterName='minQuantity').first()
+        percentPrice = Parameter.objects.filter(ParameterName='percentPrice').first()
+        book.Quantity -= quantity
+        if quantity <= int(minQuantity.Value):
+            return Response ({ OrderMessage.MSG1003 }, status = status.HTTP_400_BAD_REQUEST)
+        
+        order.TotalValue += bookStorage.UnitPrice * percentPrice * quantity
+        order.save()
+        book.save()
+        BookOrder (
+            OrderID = order,
+            BookID = book,
+            Quantity = quantity
+        ).save()
+
 class getAllBookOrderAPIView(GenericAPIView):
     serializer_class = BookOrderSerializer
-    queryset = BookOrder.objects.all()
 
     def get(self, request):
-        orders = BookOrder.objects.all()
-        serializer = BookOrderSerializer(orders, many=True)
-        return Response(serializer.data)
+        try:
+            orders = BookOrder.objects.all()
+            orders_data = {} 
+            for order in orders:
+              orders_data[order.OrderId] = model_to_dict(order)
+        
+              return Response(
+                {
+                    "success": True,
+                    "message": OrderMessage.MSG0001,
+                    "data": orders_data
+                },
+                status=status.HTTP_200_OK
+              )
+        except BookOrder.DoesNotExist:
+            return Response(
+                {"message": OrderMessage.MSG0004},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 class getBookOrderAPIView(GenericAPIView):
     serializer_class = BookOrderSerializer
-    queryset = BookOrder.objects.all()
 
     def get(self, request, pk):
-        order = BookOrder.objects.get(pk=pk)
-        serializer = BookOrderSerializer(order)
-        return Response(serializer.data)
+        try:
+            order = BookOrder.objects.get(pk=pk)
+            return Response({
+                "success": True,
+                "message": OrderMessage.MSG0001,
+                "data": model_to_dict(order)
+            }, status = status.HTTP_200_OK
+            )
+        except BookOrder.DoesNotExist:
+            return Response(
+                {"message": OrderMessage.MSG0004},
+                status=status.HTTP_404_NOT_FOUND
+            )

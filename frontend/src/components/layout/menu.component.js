@@ -63,7 +63,7 @@ const menuItems = [
 ];
 
 const redirectPage = (path) => {
-    window.location.replace(path)
+    window.location.assign(path)
 }
 
 const getSelectedKey = () => {

@@ -37,7 +37,7 @@ class BaseAPI {
         if(err?.response?.status === 401 || err?.response?.status === 403) {
             // reset authorization token
             TokenUtil.saveToken("")
-            window.location.replace("/")
+            window.location.assign("/")
         }
     }
 

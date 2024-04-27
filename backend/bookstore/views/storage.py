@@ -248,6 +248,6 @@ class GetMonthReportViewAPI(GenericAPIView):
 
         return Response({
                 "success": True,
-                "message": now_date,
-                "data": bookPrevInventory
+                "message": StorageMessage.MSG0001,
+                "data": bookInventory
             }, status=status.HTTP_200_OK)

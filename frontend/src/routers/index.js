@@ -6,6 +6,8 @@ import MainLayout from "../components/layout/main.layout";
 
 const LoginPage = lazy(() => import("../pages/login.page"));
 const BookPage = lazy(() => import("../pages/book.page"));
+const BookType = lazy(() => import("../pages/bookType.page"));
+const BookAuthor = lazy(() => import("../pages/bookAuthor.page"));
 const ConsumerPage = lazy(() => import("../pages/consumer.page"));
 const NotFoundPage = lazy(() => import("../pages/404.page"));
 
@@ -29,6 +31,8 @@ export default function AppRouter() {
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route path="/book" element={<BookPage />} />
+              <Route path="/book-type" element={<BookType />} />
+              <Route path="/author" element={<BookAuthor />} />
               <Route path="/consumer" element={<ConsumerPage />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />

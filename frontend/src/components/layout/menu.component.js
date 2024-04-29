@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { Menu } from "antd";
 import "./styles/menu.component.css";
 import {
-    BookOutlined,
-    TeamOutlined, 
-    BankOutlined,
-    ToolOutlined,
-} from '@ant-design/icons';
+  BookOutlined,
+  TeamOutlined,
+  BankOutlined,
+  ToolOutlined,
+} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const pathToSelectedKey = {
   "/book": "1a",
@@ -16,8 +17,8 @@ const pathToSelectedKey = {
   "/order": "3a",
   "/payment": "3b",
   "/payment/report": "3c",
-  "/settings": "4"
-}
+  "/settings": "4",
+};
 
 const menuItems = [
   {
@@ -26,11 +27,11 @@ const menuItems = [
     label: "Quản lý kho sách",
     submenu: [
       { key: "1a", label: "Tra cứu sách", path: "/book" },
-      { key: "1a", label: "Tra cứu thể loại", path: "/book-type" },
-      { key: "1a", label: "Tra cứu tác giả", path: "/author" },
-      { key: "1b", label: "Tra cứu phiếu nhập sách", path: "/book/storage" },
+      { key: "1b", label: "Tra cứu thể loại", path: "/book-type" },
+      { key: "1c", label: "Tra cứu tác giả", path: "/author" },
+      { key: "1d", label: "Tra cứu phiếu nhập sách", path: "/book/storage" },
       {
-        key: "1c",
+        key: "1e",
         label: "Lập báo cáo tồn kho",
         path: "/book/report",
       },
@@ -40,9 +41,7 @@ const menuItems = [
     key: "2",
     icon: <TeamOutlined />,
     label: "Quản lí khách hàng",
-    submenu: [
-      { key: "2a", label: "Tra cứu khách hàng", path: "/consumer" },
-    ],
+    submenu: [{ key: "2a", label: "Tra cứu khách hàng", path: "/consumer" }],
   },
   {
     key: "3",
@@ -62,23 +61,24 @@ const menuItems = [
   },
 ];
 
-const redirectPage = (path) => {
-    window.location.replace(path)
-}
+// const redirectPage = (path) => {
+//   window.location.assign(path);
+// };
 
 const getSelectedKey = () => {
-  let path = window.location.pathname
-  return pathToSelectedKey[path]
-}
+  let path = window.location.pathname;
+  return pathToSelectedKey[path];
+};
 
 export default function MenuComponent() {
-  const [selectedKey, setSelectedKey] = useState(getSelectedKey())
+  const navigate = useNavigate();
+  const [selectedKey, setSelectedKey] = useState(getSelectedKey());
 
   return (
-    <Menu 
-      id="main-layout-menu" 
-      theme="light" 
-      mode="inline" 
+    <Menu
+      id="main-layout-menu"
+      theme="light"
+      mode="inline"
       selectedKeys={selectedKey}
     >
       {menuItems.map((item) =>
@@ -87,7 +87,7 @@ export default function MenuComponent() {
             {item.submenu.map((subItem) => (
               <Menu.Item
                 key={subItem.key}
-                onClick={() => redirectPage(subItem.path)}
+                onClick={() => navigate(subItem.path)}
               >
                 {subItem.label}
               </Menu.Item>
@@ -97,7 +97,7 @@ export default function MenuComponent() {
           <Menu.Item
             key={item.key}
             icon={item.icon}
-            onClick={() => redirectPage(item.path)}
+            onClick={() => navigate(item.path)}
           >
             {item.label}
           </Menu.Item>

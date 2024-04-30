@@ -61,7 +61,7 @@ export default function BookTypePage() {
 
   return (
     <div>
-      <PageTitle title={"Tra cứu thể loại sách"} />
+      <PageTitle title={"Tra cứu thể loại"} />
       <TableToolBar
         className={"mb-3"}
         placeholder={"Tìm kiếm thể loại"}

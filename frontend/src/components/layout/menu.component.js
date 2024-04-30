@@ -1,23 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu } from "antd";
 import "./styles/menu.component.css";
 import {
-    BookOutlined,
-    TeamOutlined, 
-    BankOutlined,
-    ToolOutlined,
-} from '@ant-design/icons';
+  BookOutlined,
+  TeamOutlined,
+  BankOutlined,
+  ToolOutlined,
+} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const pathToSelectedKey = {
   "/book": "1a",
-  "/book/storage": "1b",
-  "/book/report": "1c",
+  "/book-type": "1b",
+  "/author": "1c",
+  "/book/storage": "1d",
+  "/book/report": "1e",
   "/consumer": "2a",
   "/order": "3a",
   "/payment": "3b",
   "/payment/report": "3c",
-  "/settings": "4"
-}
+  "/settings": "4",
+};
 
 const menuItems = [
   {
@@ -40,9 +43,7 @@ const menuItems = [
     key: "2",
     icon: <TeamOutlined />,
     label: "Quản lí khách hàng",
-    submenu: [
-      { key: "2a", label: "Tra cứu khách hàng", path: "/consumer" },
-    ],
+    submenu: [{ key: "2a", label: "Tra cứu khách hàng", path: "/consumer" }],
   },
   {
     key: "3",
@@ -62,23 +63,24 @@ const menuItems = [
   },
 ];
 
-const redirectPage = (path) => {
-    window.location.assign(path)
-}
-
 const getSelectedKey = () => {
-  let path = window.location.pathname
-  return pathToSelectedKey[path]
-}
+  let path = window.location.pathname;
+  return pathToSelectedKey[path];
+};
 
 export default function MenuComponent() {
-  const [selectedKey, setSelectedKey] = useState(getSelectedKey())
+  const navigate = useNavigate();
+  const [selectedKey, setSelectedKey] = useState(getSelectedKey());
+
+  useEffect(() => {
+    setSelectedKey(pathToSelectedKey[window.location.pathname])
+  }, [window.location.pathname])
 
   return (
-    <Menu 
-      id="main-layout-menu" 
-      theme="light" 
-      mode="inline" 
+    <Menu
+      id="main-layout-menu"
+      theme="light"
+      mode="inline"
       selectedKeys={selectedKey}
     >
       {menuItems.map((item) =>
@@ -87,7 +89,7 @@ export default function MenuComponent() {
             {item.submenu.map((subItem) => (
               <Menu.Item
                 key={subItem.key}
-                onClick={() => redirectPage(subItem.path)}
+                onClick={() => navigate(subItem.path)}
               >
                 {subItem.label}
               </Menu.Item>
@@ -97,7 +99,7 @@ export default function MenuComponent() {
           <Menu.Item
             key={item.key}
             icon={item.icon}
-            onClick={() => redirectPage(item.path)}
+            onClick={() => navigate(item.path)}
           >
             {item.label}
           </Menu.Item>

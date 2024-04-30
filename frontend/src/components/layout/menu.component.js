@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu } from "antd";
 import "./styles/menu.component.css";
 import {
@@ -11,8 +11,10 @@ import { useNavigate } from "react-router-dom";
 
 const pathToSelectedKey = {
   "/book": "1a",
-  "/book/storage": "1b",
-  "/book/report": "1c",
+  "/book-type": "1b",
+  "/author": "1c",
+  "/book/storage": "1d",
+  "/book/report": "1e",
   "/consumer": "2a",
   "/order": "3a",
   "/payment": "3b",
@@ -73,6 +75,10 @@ const getSelectedKey = () => {
 export default function MenuComponent() {
   const navigate = useNavigate();
   const [selectedKey, setSelectedKey] = useState(getSelectedKey());
+
+  useEffect(() => {
+    setSelectedKey(pathToSelectedKey[window.location.pathname])
+  }, [window.location.pathname])
 
   return (
     <Menu

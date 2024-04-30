@@ -11,25 +11,9 @@ const Table = lazy(() => import("../components/common/table.component"));
 
 const columns = [
   {
-    title: "Tên sách",
-    dataIndex: "bookName",
-    key: "bookName",
-  },
-  {
     title: "Thể loại",
     dataIndex: "bookType",
     key: "bookType",
-  },
-  {
-    title: "Tác giả",
-    dataIndex: "author",
-    key: "author",
-  },
-  {
-    title: "Số lượng tồn kho",
-    dataIndex: "quantity",
-    key: "quantity",
-    sorter: (a, b) => a.quantity - b.quantity,
   },
   {
     title: "Chỉnh sửa",
@@ -42,31 +26,19 @@ const columns = [
 const data = [
   {
     key: "1",
-    bookName: "Book 1",
     bookType: "Type 1",
-    author: "Author 1",
-    quantity: 100,
   },
   {
     key: "4",
-    bookName: "Book Developer",
     bookType: "Type Programming",
-    author: "Author 2",
-    quantity: 100,
   },
   {
     key: "2",
-    bookName: "Book 2",
     bookType: "Type 2",
-    author: "Author 2",
-    quantity: 200,
   },
   {
     key: "3",
-    bookName: "Book 3",
     bookType: "Type 3",
-    author: "Author 3",
-    quantity: 300,
   },
 ];
 
@@ -89,10 +61,10 @@ export default function BookTypePage() {
 
   return (
     <div>
-      <PageTitle title={"Tra cứu Thể loại Sách"} />
+      <PageTitle title={"Tra cứu thể loại sách"} />
       <TableToolBar
         className={"mb-3"}
-        placeholder={"Tìm kiếm tên sách, thể loại, tác giả"}
+        placeholder={"Tìm kiếm thể loại"}
         onSearch={search}
       />
       <Table

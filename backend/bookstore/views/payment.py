@@ -19,7 +19,6 @@ class CreatePaymentAPIView(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         consumer_id = payment_data.validated_data['ConsumerId']
-        date = payment_data.validated_data['Date']
         value = payment_data.validated_data['Value']
         
         try:
@@ -36,7 +35,6 @@ class CreatePaymentAPIView(GenericAPIView):
 
         Payment(
             ConsumerId = consumer,
-            Date = date,
             Value = value
             ).save()
 

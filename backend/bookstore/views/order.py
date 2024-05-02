@@ -142,3 +142,41 @@ class getOrderAPIView(GenericAPIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+class getOrderDetailAPIView(GenericAPIView):
+    serializer_class = OrderDetailSerializer
+
+    def get(self, request, pk):
+        try:
+            order = Order.objects.get(pk=pk)
+            book_orders = BookOrder.objects.filter(OrderId=order)
+            
+            order_data = {
+                "OrderId": order.OrderId,
+                "ConsumerId": order.ConsumerId_id,
+                "Date": order.Date,
+                "BookOrders": [],
+                "TotalValue": order.TotalValue,
+                "PaidValue": order.PaidValue,
+                "RemainingValue": order.RemainingValue
+            }
+
+            for book_order in book_orders:
+                book_order_data = {
+                    "BookId": book_order.BookId_id,
+                    "Quantity": book_order.Quantity,
+                    "UnitSoldPrice": book_order.UnitSoldPrice
+                }
+                order_data["BookOrders"].append(book_order_data)
+            return Response(
+                {
+                    "success": True,
+                    "message": OrderMessage.MSG0001,
+                    "data": order_data
+                },
+                status=status.HTTP_200_OK
+            )
+        except Order.DoesNotExist:
+            return Response(
+                {"message": OrderMessage.MSG0004},
+                status=status.HTTP_404_NOT_FOUND
+            )

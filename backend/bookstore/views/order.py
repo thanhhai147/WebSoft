@@ -65,7 +65,7 @@ class createOrderAPIView(GenericAPIView):
             total_value = 0 
             unitSoldPrice = bookStorage.UnitPrice * float(percentPrice.Value)
             total_value += unitSoldPrice * quantity
-
+            
             BookOrder.objects.create(
                 OrderId=order_instance,
                 BookId=book,
@@ -89,6 +89,7 @@ class createOrderAPIView(GenericAPIView):
             return Response({OrderMessage.MSG1001}, status = status.HTTP_400_BAD_REQUEST)
 
         order_instance.save()
+        book.save()
 
         return Response({
                 "success": True,

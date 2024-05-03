@@ -9,4 +9,5 @@ class BookStorageSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(required=True, allow_null=False)
 
 class DateTimeSerializer(serializers.Serializer):
-    date = serializers.DateField()
+    startDate = serializers.DateField(required=True, allow_null=False)
+    endDate = serializers.DateField(required=True, allow_null=False)

@@ -7,7 +7,7 @@ import {
   BankOutlined,
   ToolOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const pathToSelectedKey = {
   "/book": "1a",
@@ -70,11 +70,12 @@ const getSelectedKey = () => {
 
 export default function MenuComponent() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedKey, setSelectedKey] = useState(getSelectedKey());
 
   useEffect(() => {
-    setSelectedKey(pathToSelectedKey[window.location.pathname])
-  }, [window.location.pathname])
+    setSelectedKey(pathToSelectedKey[location.pathname]);
+  }, [location.pathname]);
 
   return (
     <Menu

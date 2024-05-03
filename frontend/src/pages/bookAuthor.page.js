@@ -1,4 +1,7 @@
-import React, { lazy, useState } from "react";
+import React, { lazy, useContext, useEffect, useState } from "react";
+import { Form } from "antd";
+import BookContext from "../contexts/book.context";
+import EditButton from "../components/book-management/editButton.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -6,19 +9,27 @@ const PageTitle = lazy(() =>
 const TableToolBar = lazy(() =>
   import("../components/common/tableToolBar.component")
 );
-const Button = lazy(() => import("../components/common/button.component"));
 const Table = lazy(() => import("../components/common/table.component"));
+const ModalCreateBook = lazy(() =>
+  import("../components/book-management/modalCreateBook.component")
+);
+const ModalEditBook = lazy(() =>
+  import("../components/book-management/modalEditBook.component")
+);
+const BookAuthorForm = lazy(() =>
+  import("../components/book-management/bookAuthor.component")
+);
 
 const columns = [
   {
     title: "Tác giả",
-    dataIndex: "author",
-    key: "author",
+    dataIndex: "bookAuthor",
+    key: "bookAuthor",
   },
   {
     title: "Chỉnh sửa",
     key: "edit",
-    render: (text, record) => <Button buttonCase="edit" />,
+    render: (record) => <EditButton record={record} />,
   },
 ];
 
@@ -26,24 +37,57 @@ const columns = [
 const data = [
   {
     key: "1",
-    author: "Author 1",
-  },
-  {
-    key: "4",
-    author: "Author 2",
+    bookAuthor: "F. Scott Fitzgerald",
   },
   {
     key: "2",
-    author: "Author 2",
+    bookAuthor: "George Orwell",
   },
   {
     key: "3",
-    author: "Author 3",
+    bookAuthor: "Jane Austen",
+  },
+  {
+    key: "4",
+    bookAuthor: "Harper Lee",
   },
 ];
 
 export default function BookAuthorPage() {
   const [filterTable, setFilterTable] = useState(null);
+  const [form] = Form.useForm();
+  const {
+    isModalCreateOpen,
+    isModalEditOpen,
+    showModal,
+    closeModal,
+    selectedRecord,
+  } = useContext(BookContext);
+
+  useEffect(() => {
+    form.setFieldsValue(selectedRecord);
+  }, [form, selectedRecord]);
+
+  const handleOk = (variant) => {
+    form
+      .validateFields()
+      .then(() => {
+        const values = form.getFieldsValue();
+        console.log("🚀 ~ .then ~ values:", values);
+        // TODO: send form values to server
+
+        form.resetFields();
+        closeModal(variant);
+      })
+      .catch((errorInfo) => {
+        console.log("Validate Failed:", errorInfo);
+      });
+  };
+
+  const handleCancel = (variant) => {
+    form.resetFields();
+    closeModal(variant);
+  };
 
   const search = (value) => {
     const filteredData = data.filter((o) =>
@@ -66,6 +110,7 @@ export default function BookAuthorPage() {
         className={"mb-3"}
         placeholder={"Tìm tác giả"}
         onSearch={search}
+        showModal={showModal}
       />
       <Table
         columns={columns}
@@ -73,6 +118,22 @@ export default function BookAuthorPage() {
         onChange={onChange}
         sticky={true}
       />
+
+      <ModalCreateBook
+        open={isModalCreateOpen}
+        onOk={() => handleOk("create")}
+        onCancel={() => handleCancel("create")}
+      >
+        <BookAuthorForm variant="create" form={form} />
+      </ModalCreateBook>
+
+      <ModalEditBook
+        open={isModalEditOpen}
+        onOk={() => handleOk("edit")}
+        onCancel={() => handleCancel("edit")}
+      >
+        <BookAuthorForm variant="update" form={form} record={selectedRecord} />
+      </ModalEditBook>
     </div>
   );
 }

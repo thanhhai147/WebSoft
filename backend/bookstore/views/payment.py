@@ -24,12 +24,26 @@ class CreatePaymentAPIView(GenericAPIView):
         try:
             consumer = Consumer.objects.get(pk=consumer_id)
         except Consumer.DoesNotExist:
-            return Response({PaymentMessage.MSG1002}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                            {
+                                "success": False,
+                                "message": PaymentMessage.MSG1002
+                            }, status=status.HTTP_404_NOT_FOUND)
         
         if value <= 0:
-                return Response({PaymentMessage.MSG1003}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                            {
+                                "success": False,
+                                "message": PaymentMessage.MSG1003
+                            }, status=status.HTTP_400_BAD_REQUEST)
+        
         if value > consumer.Debt:
-                return Response({PaymentMessage.MSG1004}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                            {
+                                "success": False,
+                                "message": PaymentMessage.MSG1004
+                            }, status=status.HTTP_400_BAD_REQUEST)
+        
         consumer.Debt -= value
         consumer.save()
 
@@ -65,7 +79,11 @@ class GetAllPaymentDetailAPIView(GenericAPIView):
             status=status.HTTP_200_OK    
             )
         except Payment.DoesNotExist:
-            return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                            {
+                                "success": False,
+                                "message": PaymentMessage.MSG1001
+                            }, status=status.HTTP_404_NOT_FOUND)
         
 class GetPaymentDetailAPIView(GenericAPIView):
     serializer_class = PaymentSerializers
@@ -81,5 +99,9 @@ class GetPaymentDetailAPIView(GenericAPIView):
             status=status.HTTP_200_OK
             )
         except Payment.DoesNotExist:
-            return Response({PaymentMessage.MSG1001}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                            {
+                                "success": False,
+                                "message": PaymentMessage.MSG1001
+                            }, status=status.HTTP_404_NOT_FOUND)
 

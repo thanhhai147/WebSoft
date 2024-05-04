@@ -101,6 +101,7 @@ class createOrderAPIView(GenericAPIView):
                                 "success": False,
                                 "message": OrderMessage.MSG1002
                             }, status = status.HTTP_400_BAD_REQUEST)
+        
         order_instance.RemainingValue = remainingValue
 
         maxDebt = Parameter.objects.filter(ParameterName='maxDebt').first()
@@ -118,7 +119,11 @@ class createOrderAPIView(GenericAPIView):
         return Response({
                 "success": True,
                 "message": OrderMessage.MSG0001,
-                "data": order_data.validated_data
+                "data": {
+                        **order_data.validated_data,
+                        "TotalValue": order_instance.TotalValue,
+                        "RemainingValue": order_instance.RemainingValue
+                        }
         }, status = status.HTTP_200_OK)
 
         

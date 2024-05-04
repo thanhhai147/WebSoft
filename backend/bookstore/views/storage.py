@@ -149,37 +149,31 @@ class GetMonthReportViewAPI(GenericAPIView):
                 "message": StorageMessage.MSG0003
             }, status=status.HTTP_400_BAD_REQUEST)
     
-        date = dateData.validated_data['date']
+        startDate = dateData.validated_data['startDate']
+        endDate = dateData.validated_data['endDate']
 
-        year = date.year
-        month = date.month
-        prev_day = 31
-        if month == 1:
-            prev_month = 12
-            prev_year = year-1
-        else:
-            prev_month = month - 1
-            prev_year = year
+        # startDate = datetime(startDate).date()
+        # endDate = datetime(endDate).date()
 
-        prev_date = datetime(prev_year, prev_month, prev_day).date()
-        now_date = datetime(year, month, calendar.monthrange(year, month)[1]).date()
-        queryset_prev = BookStorage.objects.filter(
-            Q(Created__date__lt=prev_date)
+        queryset_start = BookStorage.objects.filter(
+            Q(Created__date__lte=startDate)
         )
-        queryset_now = BookStorage.objects.filter(
-            Q(Created__date__gt=prev_date) & Q(Created__date__lt=now_date)
+        queryset_end = BookStorage.objects.filter(
+            Q(Created__date__gt=startDate) & Q(Created__date__lte=endDate)
         )
-        # queryset = BookStorage.objects.all()
-        bookStoragePrevData = {}
-        for iter, bookStorage in enumerate(queryset_prev):
-            bookStoragePrevData[f"{iter+1}"] = model_to_dict(bookStorage)
+        
+        # All Book Storage Record from begin to the start date
+        bookStorageStartData = {}
+        for iter, bookStorage in enumerate(queryset_start):
+            bookStorageStartData[f"{iter+1}"] = model_to_dict(bookStorage)
 
-        # Tinh so luong ton dau
-        bookPrevInventory = {}
-        for iter, bookStorage in enumerate(queryset_prev):
+        # The book inventory from begin to the start date
+        bookInventoryStart = {}
+        for iter, bookStorage in enumerate(queryset_start):
             bookStorageDict = model_to_dict(bookStorage)
             bookId = bookStorageDict['BookId']
             quantity = bookStorageDict['Quantity']
+            created = bookStorageDict['Created']
             try:
                 book = Book.objects.get(pk=bookId)
             except Book.DoesNotExist:
@@ -189,24 +183,27 @@ class GetMonthReportViewAPI(GenericAPIView):
                         "message": StorageMessage.MSG2003 + str(bookId)
                     }
                 )
-            if bookId in bookPrevInventory:
-                bookPrevInventory[bookId]["Quantity"] += quantity
+            if bookId in bookInventoryStart:
+                bookInventoryStart[bookId]["Quantity"] += quantity
             else:
-                bookPrevInventory[bookId] = {
+                bookInventoryStart[bookId] = {
                     'BookName': book.BookName,
-                    'Quantity': quantity
+                    'Quantity': quantity,
+                    'Created': created
                 }
 
-        # Tinh phat sinh
-        bookStorageNowData = {}
-        for iter, bookStorage in enumerate(queryset_now):
-            bookStorageNowData[f"{iter+1}"] = model_to_dict(bookStorage)
+        # The book storage from the start to the end date
+        bookStorageEndData = {}
+        for iter, bookStorage in enumerate(queryset_end):
+            bookStorageEndData[f"{iter+1}"] = model_to_dict(bookStorage)
 
-        bookNowInventory = {}
-        for iter, bookStorage in enumerate(queryset_now):
+        # The book inventory from start to the end date
+        bookInventoryNow = {}
+        for iter, bookStorage in enumerate(queryset_end):
             bookStorageDict = model_to_dict(bookStorage)
             bookId = bookStorageDict['BookId']
             quantity = bookStorageDict['Quantity']
+            created = bookStorageDict['Created']
             try:
                 book = Book.objects.get(pk=bookId)
             except Book.DoesNotExist:
@@ -216,19 +213,23 @@ class GetMonthReportViewAPI(GenericAPIView):
                         "message": StorageMessage.MSG2003 + str(bookId)
                     }
                 )
-            if bookId in bookNowInventory:
-                bookNowInventory[bookId]["Quantity"] += quantity
+            if bookId in bookInventoryNow:
+                bookInventoryNow[bookId]["Quantity"] += quantity
             else:
-                bookNowInventory[bookId] = {
+                bookInventoryNow[bookId] = {
                     'BookName': book.BookName,
-                    'Quantity': quantity
+                    'Quantity': quantity,
+                    'Created': created
                 }
 
-        bookInventory = copy.deepcopy(bookNowInventory)
-        for iter, bookStorage in enumerate(queryset_prev):
+        # The book storage difference between the begin-start and start-end book storage
+        bookInventory = copy.deepcopy(bookInventoryNow)
+        for iter, bookStorage in enumerate(queryset_start):
             bookStorageDict = model_to_dict(bookStorage)
             bookId = bookStorageDict['BookId']
             quantity = bookStorageDict['Quantity']
+            created = bookStorageDict['Created']
+
             try:
                 book = Book.objects.get(pk=bookId)
             except Book.DoesNotExist:
@@ -243,11 +244,19 @@ class GetMonthReportViewAPI(GenericAPIView):
             else:
                 bookInventory[bookId] = {
                     'BookName': book.BookName,
-                    'Quantity': quantity
+                    'Quantity': quantity,
+                    'Created': created,
                 }
-
+        
+        data = {
+            "Start": startDate,
+            "End": endDate,
+            "A": bookInventoryStart,
+            "B": bookInventoryNow,
+            "A+B": bookInventory,
+        }
         return Response({
                 "success": True,
                 "message": StorageMessage.MSG0001,
-                "data": bookInventory
+                "data": data
             }, status=status.HTTP_200_OK)

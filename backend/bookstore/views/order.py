@@ -2,7 +2,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.forms.models import model_to_dict
-from ..serializers.order import OrderSerializer, BookOrderSerializer, OrderDetailSerializer
+from ..serializers.order import OrderSerializer, OrderDetailSerializer
 from ..messages.order import OrderMessage
 from ..models.order import Order, BookOrder
 from ..models.consumer import Consumer
@@ -30,7 +30,11 @@ class createOrderAPIView(GenericAPIView):
         try:
             consumer = Consumer.objects.get(ConsumerId=consumer_id)
         except Consumer.DoesNotExist:
-            return Response({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
+            return Response(
+                            {
+                                "success": False,
+                                "message": OrderMessage.MSG1004 + str(consumer_id)
+                            }, status = status.HTTP_404_NOT_FOUND)
         
         order_instance = Order.objects.create(
             ConsumerId=consumer,
@@ -50,18 +54,30 @@ class createOrderAPIView(GenericAPIView):
                 book = Book.objects.get(BookId = book_id)
             except Book.DoesNotExist:
                 order_instance.delete() 
-                return Response ({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
+                return Response (
+                            {
+                                "success": False,
+                                "message": OrderMessage.MSG1005 + str(book_id)
+                            }, status = status.HTTP_404_NOT_FOUND)
             
             try:
                 bookStorage = BookStorage.objects.get(BookId = book_id)
             except BookStorage.DoesNotExist:
                 order_instance.delete() 
-                return Response ({ OrderMessage.MSG0004 }, status = status.HTTP_404_NOT_FOUND)
+                return Response (                            
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1006
+                            }, status = status.HTTP_404_NOT_FOUND)
             
             book.Quantity -= quantity
             if book.Quantity <= int(minQuantity.Value):
                 order_instance.delete()
-                return Response ({ OrderMessage.MSG1003 }, status = status.HTTP_400_BAD_REQUEST)
+                return Response (
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1003
+                            }, status = status.HTTP_400_BAD_REQUEST)
             total_value = 0 
             unitSoldPrice = bookStorage.UnitPrice * float(percentPrice.Value)
             total_value += unitSoldPrice * quantity
@@ -72,7 +88,7 @@ class createOrderAPIView(GenericAPIView):
                 Quantity=quantity,
                 UnitSoldPrice=unitSoldPrice
             )
-                # Cập nhật tổng giá trị đơn hàng
+        # Cập nhật tổng giá trị đơn hàng
         order_instance.TotalValue = total_value
         if (total_value >= paid_value):
             remainingValue = total_value - paid_value
@@ -80,13 +96,21 @@ class createOrderAPIView(GenericAPIView):
             consumer.save()
         else:
             order_instance.delete()
-            return Response({OrderMessage.MSG1002}, status = status.HTTP_400_BAD_REQUEST)
+            return Response(
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1002
+                            }, status = status.HTTP_400_BAD_REQUEST)
         order_instance.RemainingValue = remainingValue
 
         maxDebt = Parameter.objects.filter(ParameterName='maxDebt').first()
         if consumer.Debt >= float(maxDebt.Value):
             order_instance.delete() 
-            return Response({OrderMessage.MSG1001}, status = status.HTTP_400_BAD_REQUEST)
+            return Response(
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1001
+                            }, status = status.HTTP_400_BAD_REQUEST)
 
         order_instance.save()
         book.save()
@@ -118,9 +142,11 @@ class getAllOrderAPIView (GenericAPIView):
         )
         except Order.DoesNotExist:
             return Response(
-                {"message": OrderMessage.MSG0004},
-                status=status.HTTP_404_NOT_FOUND
-            )
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1007
+                            },status=status.HTTP_404_NOT_FOUND
+                            )
     
 class getOrderAPIView(GenericAPIView):
     serializer_class = OrderSerializer
@@ -139,9 +165,11 @@ class getOrderAPIView(GenericAPIView):
         )
         except Order.DoesNotExist:
             return Response(
-                {"message": OrderMessage.MSG0004},
-                status=status.HTTP_404_NOT_FOUND
-            )
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1007
+                            },status=status.HTTP_404_NOT_FOUND
+                            )
 
 class getOrderDetailAPIView(GenericAPIView):
     serializer_class = OrderDetailSerializer
@@ -178,6 +206,8 @@ class getOrderDetailAPIView(GenericAPIView):
             )
         except Order.DoesNotExist:
             return Response(
-                {"message": OrderMessage.MSG0004},
-                status=status.HTTP_404_NOT_FOUND
-            )
+                            {       
+                                "success": False,
+                                "message": OrderMessage.MSG1007
+                            },status=status.HTTP_404_NOT_FOUND
+                            )

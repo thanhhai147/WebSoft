@@ -1,6 +1,7 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.forms.models import model_to_dict
 from ..models.payment import Payment
 from ..models.consumer import Consumer
 from ..serializers.payment import PaymentSerializers
@@ -17,9 +18,8 @@ class CreatePaymentAPIView(GenericAPIView):
                 "message": PaymentMessage.MSG0003
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        consumer_id = payment_data.data['ConsumerId']
-        date = payment_data.data['Date']
-        value = payment_data.data['Value']
+        consumer_id = payment_data.validated_data['ConsumerId']
+        value = payment_data.validated_data['Value']
         
         try:
             consumer = Consumer.objects.get(pk=consumer_id)
@@ -30,13 +30,11 @@ class CreatePaymentAPIView(GenericAPIView):
                 return Response({PaymentMessage.MSG1003}, status=status.HTTP_400_BAD_REQUEST)
         if value > consumer.Debt:
                 return Response({PaymentMessage.MSG1004}, status=status.HTTP_400_BAD_REQUEST)
-       
         consumer.Debt -= value
         consumer.save()
 
         Payment(
-            ConsumerId = consumer_id,
-            Date = date,
+            ConsumerId = consumer,
             Value = value
             ).save()
 
@@ -54,12 +52,15 @@ class GetAllPaymentDetailAPIView(GenericAPIView):
     def get(self, request):
         try:
             payments = Payment.objects.all()
-            payment_data = PaymentSerializers(payments, many=True)
+            payment_data = {}
+            for payment in payments:
+                payment_data[payment.PaymentId] = model_to_dict(payment)
+
             return Response(
             {
                 "success": True,
                 "message": PaymentMessage.MSG0001,
-                "data": payment_data.data
+                "data": payment_data
             },
             status=status.HTTP_200_OK    
             )
@@ -71,12 +72,11 @@ class GetPaymentDetailAPIView(GenericAPIView):
     def get(self, request, pk):
         try:
             payment = Payment.objects.get(pk=pk)
-            payment_data = PaymentSerializers(payment)
             return Response(
             {
                 "success": True,
                 "message": PaymentMessage.MSG0001,
-                "data": payment_data.data
+                "data": model_to_dict(payment)
             },
             status=status.HTTP_200_OK
             )

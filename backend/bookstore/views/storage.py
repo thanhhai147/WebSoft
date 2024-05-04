@@ -197,7 +197,7 @@ class GetMonthReportViewAPI(GenericAPIView):
                     'Quantity': quantity
                 }
 
-        # Tinhs phat sinh
+        # Tinh phat sinh
         bookStorageNowData = {}
         for iter, bookStorage in enumerate(queryset_now):
             bookStorageNowData[f"{iter+1}"] = model_to_dict(bookStorage)

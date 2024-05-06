@@ -4,6 +4,7 @@ import { Layout , Avatar, Popover } from 'antd';
 import TokenUtil from "../../helpers/token.utils";
 import LoginAPI from "../../api/login.api";
 import "./styles/header.component.css";
+import Logo from './assets/bookstore.png'
 
 const Button = lazy(() => import("../common/button.component"))
 
@@ -32,7 +33,10 @@ export default function HeaderComponent() {
 
     return (
         <Header id='header' className='d-flex flex-row align-items-center'>
-            <div id='web-title'>
+            <div id='web-title' className='d-flex flex-row align-items-center'>
+                <div id='logo-wrapper'>
+                    <img id='logo' src={Logo} alt='Logo' />
+                </div>
                 <h1>Quản lí nhà sách</h1>
             </div>
 

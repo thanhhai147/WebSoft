@@ -11,6 +11,7 @@ class AuthorizationMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, *view_args, **view_kwargs):
         path = request.path
         
+        if (path.split('/')[1] == 'admin'): return None
         if (path == '/account/log-in/'): return None
         
         token = request.META['HTTP_AUTHORIZATION']

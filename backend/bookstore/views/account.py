@@ -28,7 +28,6 @@ class LoginAPIView(GenericAPIView):
         username = login_data.data['username']
         password = login_data.data['password']
         password = hashlib.sha256(password.strip().encode('utf-8')).hexdigest()
-        print(password)
         account = Account.objects.filter(AccountName=username, Password=password).first()
         # AccountName or Password does not correct
         if account is None:
@@ -107,18 +106,23 @@ class LogoutAPIView(APIView):
                 "success": False,
                 "message": AccountMessage.MSG1006,
             }, status=status.HTTP_401_UNAUTHORIZED)
+            
+        return Response({
+            "success": True,
+            "message": AccountMessage.MSG1008,
+        }, status=status.HTTP_200_OK)
 
-        token_expire_time = Parameter.objects.filter(ParameterName='TokenExpireTime').first()
-        if (token.Created + timedelta(hours=token_expire_time.Value)) < timezone.now():
-            return Response({
-                "success": False,
-                "message": AccountMessage.MSG1007,
-            }, status=status.HTTP_403_FORBIDDEN)
-        else:
-            token_expire_bonus_time = Parameter.objects.filter(ParameterName="TokenExpireBonusTime").first()
-            token.Created -= timedelta(hours=token_expire_bonus_time.Value)
-            token.save()
-            return Response({
-                "success": True,
-                "message": AccountMessage.MSG1008,
-            }, status=status.HTTP_200_OK)
+        # token_expire_time = Parameter.objects.filter(ParameterName='TokenExpireTime').first()
+        # if (token.Created + timedelta(hours=token_expire_time.Value)) < timezone.now():
+        #     return Response({
+        #         "success": False,
+        #         "message": AccountMessage.MSG1007,
+        #     }, status=status.HTTP_403_FORBIDDEN)
+        # else:
+        #     token_expire_bonus_time = Parameter.objects.filter(ParameterName="TokenExpireBonusTime").first()
+        #     token.Created -= timedelta(hours=token_expire_bonus_time.Value)
+        #     token.save()
+        #     return Response({
+        #         "success": True,
+        #         "message": AccountMessage.MSG1008,
+        #     }, status=status.HTTP_200_OK)

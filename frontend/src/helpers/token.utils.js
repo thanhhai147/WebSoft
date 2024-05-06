@@ -1,30 +1,59 @@
+function setCookie(key, value, expire='') {
+    if (expire) {
+        let date = new Date()
+        date.setTime(date.getTime() + (expire*60*60*1000))
+        expire = date.toUTCString()
+    }
+
+    const domain = process.env.REACT_APP_DOMAIN
+    const path = '/'
+
+    document.cookie =
+        key + '=' + value + 
+        ',expire' + '=' + expire +
+        ',domain' + '=' + domain + 
+        ',path' + '=' + path +
+        ',HttpOnly'
+
+}
+
+function getCookie(key) {
+    let match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
+    if (match) return match[2].split(',')[0];
+    return null;
+}
+
+function removeCookie(key) {
+    document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
 export default class TokenUtil {
     static getToken() {
-        const tokenString = sessionStorage.getItem('auth_token');
-        const userToken = JSON.parse(tokenString);
+        const tokenString = getCookie('auth_token')
+        const userToken = tokenString
         return userToken
-    };
+    }
 
     static saveToken(userToken) {
-        sessionStorage.setItem('auth_token', JSON.stringify(userToken));
-    };
+        setCookie('auth_token', userToken, 24)
+    }
 
     static getUsername() {
-        const tokenString = sessionStorage.getItem('auth_username');
-        const userToken = JSON.parse(tokenString);
-        return userToken
-    };
+        const usernameString = getCookie('auth_username')
+        const username = usernameString
+        return username
+    }
 
     static saveUsername(username) {
-        sessionStorage.setItem('auth_username', JSON.stringify(username));
+        setCookie('auth_username', username, 24)
     }
 
     static removeToken() {
-        sessionStorage.removeItem('auth_token')
+        removeCookie('auth_token')
     }
     
     static removeUsername() {
-        sessionStorage.removeItem('auth_username')
+        removeCookie('auth_username')
     }
     
 }

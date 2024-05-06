@@ -90,22 +90,22 @@ class GetAccessFunctionAPIView(GenericAPIView):
 class LogoutAPIView(APIView):
    
     def put(self, request):
-        try:
-            token = request.headers['Authorization']
-        except:
-            return Response(
-                {
-                    "success": False,
-                    "message": AccountMessage.MSG1005,
-                }, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        # try:
+        #     token = request.headers['Authorization']
+        # except:
+        #     return Response(
+        #         {
+        #             "success": False,
+        #             "message": AccountMessage.MSG1005,
+        #         }, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        
+        # token = Token.objects.filter(Key=token).first()
 
-        token = Token.objects.filter(Key=token).first()
-
-        if token is None:
-            return Response({
-                "success": False,
-                "message": AccountMessage.MSG1006,
-            }, status=status.HTTP_401_UNAUTHORIZED)
+        # if token is None:
+        #     return Response({
+        #         "success": False,
+        #         "message": AccountMessage.MSG1006,
+        #     }, status=status.HTTP_401_UNAUTHORIZED)
             
         return Response({
             "success": True,

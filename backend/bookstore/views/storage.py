@@ -61,7 +61,14 @@ class GetStorageViewAPI(GenericAPIView):
                 print(storages)
             thisStorageData = []
             for _, storage in enumerate(storages):
-                thisStorageData.append(model_to_dict(storage))
+                bookId = storage.BookId_id
+                unitPrice = storage.UnitPrice
+                quantity = storage.Quantity
+                storageData.append({
+                    'bookId': bookId,
+                    'unitPrice': unitPrice,
+                    'quantity': quantity
+                })
             storagesData[f"{iter+1}"] = thisStorageData
         return Response({
                 "success": True,
@@ -87,7 +94,14 @@ class GetStorageViewWithIdAPI(GenericAPIView):
         storages = BookStorage.objects.filter(StorageId=queryset)
         storageData = []
         for iter, storage in enumerate(storages):
-            storageData.append(model_to_dict(storage))
+            bookId = storage.BookId_id
+            unitPrice = storage.UnitPrice
+            quantity = storage.Quantity
+            storageData.append({
+                'bookId': bookId,
+                'unitPrice': unitPrice,
+                'quantity': quantity
+            })
         return Response({
                 "success": True,
                 "message": StorageMessage.MSG1001,

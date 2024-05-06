@@ -28,3 +28,12 @@
     color: var(--theme-color);
     font-weight: 500;
 }
+
+#logo-wrapper {
+    margin-right: 1rem;
+}
+
+#logo {
+    width: 40px;
+    height: 40px;
+}

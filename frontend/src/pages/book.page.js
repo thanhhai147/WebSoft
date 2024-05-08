@@ -2,6 +2,7 @@ import { Form } from "antd";
 import React, { lazy, useContext, useEffect, useState } from "react";
 import BookContext from "../contexts/book.context";
 import EditButton from "../components/book-management/editButton.component";
+import { books } from "../mock/books";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -50,45 +51,6 @@ const columns = [
   },
 ];
 
-// TODO: convert to state management to fetch data from server
-const data = [
-  {
-    key: "1",
-    bookName: "The Great Gatsby",
-    bookType: "Fiction",
-    bookAuthor: "F. Scott Fitzgerald",
-    quantity: 10,
-  },
-  {
-    key: "2",
-    bookName: "1984",
-    bookType: "Fiction",
-    bookAuthor: "George Orwell",
-    quantity: 12,
-  },
-  {
-    key: "3",
-    bookName: "Pride and Prejudice",
-    bookType: "Classic",
-    bookAuthor: "Jane Austen",
-    quantity: 6,
-  },
-  {
-    key: "4",
-    bookName: "To Kill a Mockingbird",
-    bookType: "Fiction",
-    bookAuthor: "Harper Lee",
-    quantity: 8,
-  },
-  {
-    key: "5",
-    bookName: "Harry Potter and the Philosopher's Stone",
-    bookType: "Fantasy",
-    bookAuthor: "J.K. Rowling",
-    quantity: 15,
-  },
-];
-
 export default function BookPage() {
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
@@ -126,7 +88,7 @@ export default function BookPage() {
   };
 
   const search = (value) => {
-    const filteredData = data.filter((o) =>
+    const filteredData = books.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
@@ -150,12 +112,13 @@ export default function BookPage() {
       />
       <Table
         columns={columns}
-        data={filterTable == null ? data : filterTable}
+        data={filterTable == null ? books : filterTable}
         onChange={onChange}
         sticky={true}
       />
 
       <ModalCreateBook
+        variant={"book"}
         open={isModalCreateOpen}
         onOk={() => handleOk("create")}
         onCancel={() => handleCancel("create")}
@@ -164,6 +127,7 @@ export default function BookPage() {
       </ModalCreateBook>
 
       <ModalEditBook
+        variant={"book"}
         open={isModalEditOpen}
         onOk={() => handleOk("edit")}
         onCancel={() => handleCancel("edit")}

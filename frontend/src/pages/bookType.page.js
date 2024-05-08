@@ -120,6 +120,7 @@ export default function BookTypePage() {
       />
 
       <ModalCreateBook
+        variant={"bookType"}
         open={isModalCreateOpen}
         onOk={() => handleOk("create")}
         onCancel={() => handleCancel("create")}
@@ -128,6 +129,7 @@ export default function BookTypePage() {
       </ModalCreateBook>
 
       <ModalEditBook
+        variant={"bookType"}
         open={isModalEditOpen}
         onOk={() => handleOk("edit")}
         onCancel={() => handleCancel("edit")}

@@ -1,7 +1,7 @@
-import { Form, Select } from "antd";
-import { bookTypes } from "../../mock/book-type";
+import { Select, Form } from "antd";
+import { authors } from "../../mock/authors";
 
-export default function BookTypeForm({
+export default function BookAuthorForm({
   variant = "create" | "update",
   form,
   record,
@@ -17,18 +17,18 @@ export default function BookTypeForm({
   return isCreateForm ? (
     <Form form={form} layout="vertical">
       <Form.Item
-        label="Thể loại"
-        name="bookType"
+        label="Tác giả"
+        name="bookAuthor"
         rules={[
           {
             required: true,
-            message: "Vui lòng nhập thể loại",
+            message: "Vui lòng nhập tác giả",
           },
         ]}
       >
         <Select
           style={{ width: "100%" }}
-          placeholder="Chọn thể loại"
+          placeholder="Chọn tác giả"
           showSearch
           optionFilterProp="children"
           filterOption={(input, option) =>
@@ -39,16 +39,16 @@ export default function BookTypeForm({
               .toLowerCase()
               .localeCompare((optionB?.label ?? "").toLowerCase())
           }
-          options={bookTypes}
+          options={authors}
         />
       </Form.Item>
     </Form>
   ) : (
     <Form form={form} layout="vertical">
-      <Form.Item label="Thể loại" name="bookType">
+      <Form.Item label="Tác giả" name="bookAuthor">
         <Select
           style={{ width: "100%" }}
-          placeholder="Chọn thể loại"
+          placeholder="Chọn tác giả"
           showSearch
           optionFilterProp="children"
           filterOption={(input, option) =>
@@ -59,7 +59,7 @@ export default function BookTypeForm({
               .toLowerCase()
               .localeCompare((optionB?.label ?? "").toLowerCase())
           }
-          options={bookTypes}
+          options={authors}
         />
       </Form.Item>
     </Form>

@@ -1,4 +1,6 @@
-import { Input, Form } from "antd";
+import { Input, Form, Select } from "antd";
+import { bookTypes } from "../../mock/book-type";
+import { authors } from "../../mock/authors";
 
 export default function BookForm({
   variant = "create" | "update",
@@ -38,11 +40,25 @@ export default function BookForm({
           },
         ]}
       >
-        <Input />
+        <Select
+          style={{ width: "100%" }}
+          placeholder="Chọn thể loại"
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+          }
+          filterSort={(optionA, optionB) =>
+            (optionA?.label ?? "")
+              .toLowerCase()
+              .localeCompare((optionB?.label ?? "").toLowerCase())
+          }
+          options={bookTypes}
+        />
       </Form.Item>
       <Form.Item
         label="Tác giả"
-        name="author"
+        name="bookAuthor"
         rules={[
           {
             required: true,
@@ -50,7 +66,21 @@ export default function BookForm({
           },
         ]}
       >
-        <Input />
+        <Select
+          style={{ width: "100%" }}
+          placeholder="Chọn tác giả"
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+          }
+          filterSort={(optionA, optionB) =>
+            (optionA?.label ?? "")
+              .toLowerCase()
+              .localeCompare((optionB?.label ?? "").toLowerCase())
+          }
+          options={authors}
+        />
       </Form.Item>
       <Form.Item
         label="Số lượng tồn kho"
@@ -71,10 +101,38 @@ export default function BookForm({
         <Input />
       </Form.Item>
       <Form.Item label="Thể loại" name="bookType">
-        <Input />
+        <Select
+          style={{ width: "100%" }}
+          placeholder="Chọn thể loại"
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+          }
+          filterSort={(optionA, optionB) =>
+            (optionA?.label ?? "")
+              .toLowerCase()
+              .localeCompare((optionB?.label ?? "").toLowerCase())
+          }
+          options={bookTypes}
+        />
       </Form.Item>
       <Form.Item label="Tác giả" name="bookAuthor">
-        <Input />
+        <Select
+          style={{ width: "100%" }}
+          placeholder="Chọn tác giả"
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            (option?.label.toLowerCase() ?? "").includes(input.toLowerCase())
+          }
+          filterSort={(optionA, optionB) =>
+            (optionA?.label ?? "")
+              .toLowerCase()
+              .localeCompare((optionB?.label ?? "").toLowerCase())
+          }
+          options={authors}
+        />
       </Form.Item>
       <Form.Item label="Số lượng tồn kho" name="quantity">
         <Input />

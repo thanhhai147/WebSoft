@@ -17,7 +17,7 @@ const ModalEditBook = lazy(() =>
   import("../components/book-management/modalEditBook.component")
 );
 const BookAuthorForm = lazy(() =>
-  import("../components/book-management/bookAuthor.component")
+  import("../components/book-management/bookAuthorForm.component")
 );
 
 const columns = [
@@ -120,6 +120,7 @@ export default function BookAuthorPage() {
       />
 
       <ModalCreateBook
+        variant={"bookAuthor"}
         open={isModalCreateOpen}
         onOk={() => handleOk("create")}
         onCancel={() => handleCancel("create")}
@@ -128,6 +129,7 @@ export default function BookAuthorPage() {
       </ModalCreateBook>
 
       <ModalEditBook
+        variant={"bookAuthor"}
         open={isModalEditOpen}
         onOk={() => handleOk("edit")}
         onCancel={() => handleCancel("edit")}

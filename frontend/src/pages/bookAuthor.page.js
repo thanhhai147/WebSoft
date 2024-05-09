@@ -1,7 +1,7 @@
 import React, { lazy, useContext, useEffect, useState } from "react";
 import { Form } from "antd";
-import BookContext from "../contexts/book.context";
-import EditButton from "../components/book-management/editButton.component";
+import ModalContext from "../contexts/modal.context";
+import EditButton from "../components/common/editButton.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -62,7 +62,7 @@ export default function BookAuthorPage() {
     showModal,
     closeModal,
     selectedRecord,
-  } = useContext(BookContext);
+  } = useContext(ModalContext);
 
   useEffect(() => {
     form.setFieldsValue(selectedRecord);

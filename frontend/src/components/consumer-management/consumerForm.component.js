@@ -1,6 +1,6 @@
 import { Input, Form } from "antd";
 
-export default function BookForm({
+export default function ConsumerForm({
   variant = "create" | "update",
   form,
   record,
@@ -16,37 +16,49 @@ export default function BookForm({
   return isCreateForm ? (
     <Form form={form} layout="vertical">
       <Form.Item
-        label="Tên sách"
-        name="bookName"
+        label="Tên khách hàng"
+        name="Name"
         style={{ marginTop: "1rem" }}
         rules={[
           {
             required: true,
-            message: "Vui lòng nhập tên sách",
+            message: "Vui lòng nhập tên khách hàng",
           },
         ]}
       >
         <Input />
       </Form.Item>
       <Form.Item
-        label="Thể loại"
-        name="bookType"
+        label="Địa chỉ"
+        name="Address"
         rules={[
           {
             required: true,
-            message: "Vui lòng nhập thể loại",
+            message: "Vui lòng nhập địa chỉ",
           },
         ]}
       >
         <Input />
       </Form.Item>
       <Form.Item
-        label="Tác giả"
-        name="author"
+        label="Số điện thoại"
+        name="Phone"
         rules={[
           {
             required: true,
-            message: "Vui lòng nhập tác giả",
+            message: "Vui lòng nhập số điện thoại",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        label="Email"
+        name="Email"
+        rules={[
+          {
+            required: true,
+            message: "Vui lòng nhập email",
           },
         ]}
       >
@@ -55,13 +67,16 @@ export default function BookForm({
     </Form>
   ) : (
     <Form form={form} layout="vertical">
-      <Form.Item label="Tên sách" name="bookName" style={{ marginTop: "1rem" }}>
+      <Form.Item label="Tên khách hàng" name="Name" style={{ marginTop: "1rem" }}>
         <Input />
       </Form.Item>
-      <Form.Item label="Thể loại" name="bookType">
+      <Form.Item label="Địa chỉ" name="Address">
         <Input />
       </Form.Item>
-      <Form.Item label="Tác giả" name="bookAuthor">
+      <Form.Item label="Số điện thoại" name="Phone">
+        <Input />
+      </Form.Item>
+      <Form.Item label="Email" name="Email">
         <Input />
       </Form.Item>
     </Form>

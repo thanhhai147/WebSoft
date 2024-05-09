@@ -1,3 +1,5 @@
+import { TITLE, MESSAGE } from "../../messages/main.message";
+import { NotificationComponent } from "../common/notification.component";
 import { Input, Form, Select } from "antd";
 import { bookTypes } from "../../mock/book-type";
 import { authors } from "../../mock/authors";
@@ -15,8 +17,13 @@ export default function BookForm({
     form.resetFields();
   }
 
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+    NotificationComponent("warning", TITLE.WARNING, MESSAGE.HAS_AN_ERROR);
+  };
+
   return isCreateForm ? (
-    <Form form={form} layout="vertical">
+    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
       <Form.Item
         label="Tên sách"
         name="bookName"
@@ -82,18 +89,6 @@ export default function BookForm({
           options={authors}
         />
       </Form.Item>
-      <Form.Item
-        label="Số lượng tồn kho"
-        name="quantity"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập số lượng tồn kho",
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
     </Form>
   ) : (
     <Form form={form} layout="vertical">
@@ -133,9 +128,6 @@ export default function BookForm({
           }
           options={authors}
         />
-      </Form.Item>
-      <Form.Item label="Số lượng tồn kho" name="quantity">
-        <Input />
       </Form.Item>
     </Form>
   );

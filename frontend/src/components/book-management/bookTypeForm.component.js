@@ -1,3 +1,5 @@
+import { TITLE, MESSAGE } from "../../messages/main.message";
+import { NotificationComponent } from "../common/notification.component";
 import { Form, Select } from "antd";
 import { bookTypes } from "../../mock/book-type";
 
@@ -14,8 +16,13 @@ export default function BookTypeForm({
     form.resetFields();
   }
 
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+    NotificationComponent("warning", TITLE.WARNING, MESSAGE.HAS_AN_ERROR);
+  };
+
   return isCreateForm ? (
-    <Form form={form} layout="vertical">
+    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
       <Form.Item
         label="Thể loại"
         name="bookType"
@@ -44,7 +51,7 @@ export default function BookTypeForm({
       </Form.Item>
     </Form>
   ) : (
-    <Form form={form} layout="vertical">
+    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
       <Form.Item label="Thể loại" name="bookType">
         <Select
           style={{ width: "100%" }}

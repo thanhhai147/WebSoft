@@ -1,7 +1,9 @@
 import { Form } from "antd";
 import React, { lazy, useContext, useEffect, useState } from "react";
-import BookContext from "../contexts/book.context";
-import EditButton from "../components/book-management/editButton.component";
+import ModalContext from "../contexts/modal.context";
+import EditButton from "../components/common/editButton.component";
+import { TITLE, MESSAGE } from "../messages/main.message";
+import { NotificationComponent } from "../components/common/notification.component";
 import { books } from "../mock/books";
 
 const PageTitle = lazy(() =>
@@ -60,7 +62,7 @@ export default function BookPage() {
     showModal,
     closeModal,
     selectedRecord,
-  } = useContext(BookContext);
+  } = useContext(ModalContext);
 
   useEffect(() => {
     form.setFieldsValue(selectedRecord);
@@ -75,10 +77,16 @@ export default function BookPage() {
         // TODO: send form values to server
 
         form.resetFields();
+        NotificationComponent(
+          "success",
+          TITLE.SUCCESS,
+          variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS
+        );
         closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
+        NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
       });
   };
 

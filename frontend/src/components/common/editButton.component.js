@@ -1,10 +1,10 @@
 import { lazy, useContext } from "react";
-import BookContext from "../../contexts/book.context";
+import ModalContext from "../../contexts/modal.context";
 
-const Button = lazy(() => import("../common/button.component"));
+const Button = lazy(() => import("./button.component"));
 
 const EditButton = ({ record }) => {
-  const { showModal, setSelectedRecord } = useContext(BookContext);
+  const { showModal, setSelectedRecord } = useContext(ModalContext);
 
   const handleEdit = () => {
     setSelectedRecord(record);

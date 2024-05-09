@@ -79,3 +79,7 @@ p {
 .bottom-margin-default {
     margin-bottom: var(--space-default)
 }
+
+.ant-modal-footer .ant-btn-primary {
+    background-color: var(--theme-color);
+}

@@ -1,4 +1,6 @@
 import { Input, Form } from "antd";
+import { TITLE, MESSAGE } from '../../messages/main.message'
+import { NotificationComponent } from '../common/notification.component'
 
 export default function BookAuthorForm({
   variant = "create" | "update",
@@ -13,8 +15,13 @@ export default function BookAuthorForm({
     form.resetFields();
   }
 
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+    NotificationComponent('warning', TITLE.WARNING, MESSAGE.HAS_AN_ERROR)
+  };    
+
   return isCreateForm ? (
-    <Form form={form} layout="vertical">
+    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
       <Form.Item
         label="Tác giả"
         name="author"

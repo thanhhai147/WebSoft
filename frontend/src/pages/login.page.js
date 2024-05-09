@@ -27,6 +27,7 @@ export default function Login () {
             }
         } catch (err) {
             console.log(err)
+            NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
         }
     };
 

@@ -2,6 +2,8 @@ import React, { lazy, useContext, useEffect, useState } from "react";
 import { Form } from "antd";
 import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
+import { TITLE, MESSAGE } from '../messages/main.message'
+import { NotificationComponent } from "../components/common/notification.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -77,10 +79,12 @@ export default function BookAuthorPage() {
         // TODO: send form values to server
 
         form.resetFields();
+        NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
         closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
+        NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
       });
   };
 

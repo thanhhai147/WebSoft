@@ -1,4 +1,7 @@
-import React, { lazy, useState } from "react";
+import { Form } from "antd";
+import React, { lazy, useContext, useEffect, useState } from "react";
+import ModalContext from "../contexts/modal.context";
+import EditButton from "../components/common/editButton.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -6,8 +9,17 @@ const PageTitle = lazy(() =>
 const TableToolBar = lazy(() =>
   import("../components/common/tableToolBar.component")
 );
-const Button = lazy(() => import("../components/common/button.component"));
+
 const Table = lazy(() => import("../components/common/table.component"));
+const BookForm = lazy(() =>
+  import("../components/book-management/bookForm.component")
+);
+const ModalCreateBook = lazy(() =>
+  import("../components/book-management/modalCreateBook.component")
+);
+const ModalEditBook = lazy(() =>
+  import("../components/book-management/modalEditBook.component")
+);
 
 const columns = [
   {
@@ -22,8 +34,8 @@ const columns = [
   },
   {
     title: "Tác giả",
-    dataIndex: "author",
-    key: "author",
+    dataIndex: "bookAuthor",
+    key: "bookAuthor",
   },
   {
     title: "Số lượng tồn kho",
@@ -34,7 +46,7 @@ const columns = [
   {
     title: "Chỉnh sửa",
     key: "edit",
-    render: (text, record) => <Button buttonCase="edit" />,
+    render: (record) => <EditButton record={record} />,
   },
 ];
 
@@ -42,36 +54,76 @@ const columns = [
 const data = [
   {
     key: "1",
-    bookName: "Book 1",
-    bookType: "Type 1",
-    author: "Author 1",
-    quantity: 100,
-  },
-  {
-    key: "4",
-    bookName: "Book Developer",
-    bookType: "Type Programming",
-    author: "Author 2",
-    quantity: 100,
+    bookName: "The Great Gatsby",
+    bookType: "Fiction",
+    bookAuthor: "F. Scott Fitzgerald",
+    quantity: 10,
   },
   {
     key: "2",
-    bookName: "Book 2",
-    bookType: "Type 2",
-    author: "Author 2",
-    quantity: 200,
+    bookName: "1984",
+    bookType: "Fiction",
+    bookAuthor: "George Orwell",
+    quantity: 12,
   },
   {
     key: "3",
-    bookName: "Book 3",
-    bookType: "Type 3",
-    author: "Author 3",
-    quantity: 300,
+    bookName: "Pride and Prejudice",
+    bookType: "Classic",
+    bookAuthor: "Jane Austen",
+    quantity: 6,
+  },
+  {
+    key: "4",
+    bookName: "To Kill a Mockingbird",
+    bookType: "Fiction",
+    bookAuthor: "Harper Lee",
+    quantity: 8,
+  },
+  {
+    key: "5",
+    bookName: "Harry Potter and the Philosopher's Stone",
+    bookType: "Fantasy",
+    bookAuthor: "J.K. Rowling",
+    quantity: 15,
   },
 ];
 
 export default function BookPage() {
   const [filterTable, setFilterTable] = useState(null);
+  const [form] = Form.useForm();
+  const {
+    isModalCreateOpen,
+    isModalEditOpen,
+    showModal,
+    closeModal,
+    selectedRecord,
+  } = useContext(ModalContext);
+
+  useEffect(() => {
+    form.setFieldsValue(selectedRecord);
+  }, [form, selectedRecord]);
+
+  const handleOk = (variant) => {
+    form
+      .validateFields()
+      .then(() => {
+        const values = form.getFieldsValue();
+        console.log("🚀 ~ .then ~ values:", values);
+        // TODO: send form values to server
+
+        form.resetFields();
+        closeModal(variant);
+      })
+      .catch((errorInfo) => {
+        console.log("Validate Failed:", errorInfo);
+      });
+  };
+
+  const handleCancel = (variant) => {
+    form.resetFields();
+    closeModal(variant);
+  };
 
   const search = (value) => {
     const filteredData = data.filter((o) =>
@@ -94,6 +146,7 @@ export default function BookPage() {
         className={"mb-3"}
         placeholder={"Tìm kiếm tên sách, thể loại, tác giả"}
         onSearch={search}
+        showModal={showModal}
       />
       <Table
         columns={columns}
@@ -101,6 +154,22 @@ export default function BookPage() {
         onChange={onChange}
         sticky={true}
       />
+
+      <ModalCreateBook
+        open={isModalCreateOpen}
+        onOk={() => handleOk("create")}
+        onCancel={() => handleCancel("create")}
+      >
+        <BookForm variant="create" form={form} />
+      </ModalCreateBook>
+
+      <ModalEditBook
+        open={isModalEditOpen}
+        onOk={() => handleOk("edit")}
+        onCancel={() => handleCancel("edit")}
+      >
+        <BookForm variant="update" form={form} record={selectedRecord} />
+      </ModalEditBook>
     </div>
   );
 }

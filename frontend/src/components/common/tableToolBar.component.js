@@ -8,6 +8,7 @@ export default function TableToolBar({
   className,
   placeholder,
   onSearch,
+  showModal,
   ...props
 }) {
   return (
@@ -28,7 +29,11 @@ export default function TableToolBar({
         className="btn-wrapper d-flex align-items-center justify-content-end"
         style={{ width: "30%" }}
       >
-        <Button buttonCase="create" style={{ marginRight: "1rem" }} />
+        <Button
+          buttonCase="create"
+          style={{ marginRight: "1rem" }}
+          onClick={() => showModal("create")}
+        />
         <Button buttonCase="delete" />
       </div>
     </div>

@@ -8,7 +8,12 @@ import {
 } from "@ant-design/icons";
 import "./styles/button.component.css";
 
-export default function ButtonComponent({ buttonCase, className, ...props }) {
+export default function ButtonComponent({
+  buttonCase,
+  className,
+  onClickEdit,
+  ...props
+}) {
   switch (buttonCase) {
     case "create":
       return (
@@ -79,6 +84,7 @@ export default function ButtonComponent({ buttonCase, className, ...props }) {
           }
           type="primary"
           icon={<EditOutlined />}
+          onClick={onClickEdit}
           {...props}
         >
           {/* Sửa */}

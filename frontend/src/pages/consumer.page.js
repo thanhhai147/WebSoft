@@ -1,4 +1,5 @@
 import React, { lazy, useContext, useEffect, useState } from 'react'
+import ConsumerAPI from '../api/consumer.api'
 import { Form } from 'antd'
 import ModalContext from "../contexts/modal.context"
 import { TITLE, MESSAGE } from '../messages/main.message'
@@ -8,15 +9,9 @@ const PageTitle = lazy(() => import("../components/common/pageTitle.component"))
 const TableToolBar = lazy(() => import("../components/common/tableToolBar.component"))
 const Table = lazy(() => import("../components/common/table.component"))
 const EditButton = lazy(() => import("../components/common/editButton.component"))
-const ConsumerForm = lazy(() =>
-  import("../components/consumer-management/consumerForm.component")
-)
-const ModalCreateConsumer = lazy(() =>
-  import("../components/consumer-management/modalCreateConsumer.component")
-);
-const ModalEditConsumer = lazy(() =>
-  import("../components/consumer-management/modalEditConsumer.component")
-);
+const ConsumerForm = lazy(() => import("../components/consumer-management/consumerForm.component"))
+const ModalCreateConsumer = lazy(() => import("../components/consumer-management/modalCreateConsumer.component"))
+const ModalEditConsumer = lazy(() => import("../components/consumer-management/modalEditConsumer.component"))
 
 const columns = [
   {
@@ -77,7 +72,7 @@ const data = [
     email: "Email 3",
     debt: 300,
   },
-];
+]
 
 export default function ConsumerPage () {
   const [filterTable, setFilterTable] = useState(null);

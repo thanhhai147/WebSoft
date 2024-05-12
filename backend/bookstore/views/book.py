@@ -100,7 +100,7 @@ class GetBook(GenericAPIView):
             bookType = book.BookTypeId.BookTypeName
             bookData[book.BookId]['Author'] = author
             bookData[book.BookId]['BookType'] = bookType
-            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').first().UnitPrice
+            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last().UnitPrice
             bookData[book.BookId]['Price'] = price
 
         return Response({
@@ -128,7 +128,7 @@ class GetBookWithId(GenericAPIView):
         bookType = queryset.BookTypeId.BookTypeName
         bookData['Author'] = author
         bookData['BookType'] = bookType
-        price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').first().UnitPrice
+        price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last().UnitPrice
         bookData['Price'] = price
         return Response({
                 "success": True,

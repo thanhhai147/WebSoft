@@ -105,8 +105,8 @@ class GetBook(GenericAPIView):
             price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
             bookData.append({
                 'id': book.BookId,
-                'author': book.AuthorId.AuthorName,
-                'bookType': book.BookTypeId.BookTypeName,
+                'authorName': book.AuthorId.AuthorName,
+                'bookTypeName': book.BookTypeId.BookTypeName,
                 'quantity': book.Quantity,
                 'price': price.UnitPrice if price is not None else None,
                 'created': book.Created,
@@ -132,13 +132,15 @@ class GetBookWithId(GenericAPIView):
                     "message": BookMessage.MSG3002
                 }
             )
-        bookData = model_to_dict(queryset)
-        author = queryset.AuthorId.AuthorName
-        bookType = queryset.BookTypeId.BookTypeName
-        bookData['Author'] = author
-        bookData['BookType'] = bookType
         price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last()
-        bookData['Price'] = price.UnitPrice if price is not None else None
+        bookData = {
+            'id': queryset.BookId,
+            'authorName': queryset.AuthorId.AuthorName,
+            'bookTypeName': queryset.BookTypeId.BookTypeName,
+            'quantity': queryset.Quantity,
+            'price': price.UnitPrice if price is not None else None,
+            'created': queryset.Created,
+        }
         
         return Response({
                 "success": True,

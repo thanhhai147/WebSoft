@@ -4,7 +4,8 @@ import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
 import { TITLE, MESSAGE } from "../messages/main.message";
 import { NotificationComponent } from "../components/common/notification.component";
-import { books } from "../mock/books";
+import BaseAPIInstance from "../api/base.api";
+import UpdateBookForm from "../components/book-management/UpdateBookForm.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -14,8 +15,8 @@ const TableToolBar = lazy(() =>
 );
 
 const Table = lazy(() => import("../components/common/table.component"));
-const BookForm = lazy(() =>
-  import("../components/book-management/bookForm.component")
+const CreateBookForm = lazy(() =>
+  import("../components/book-management/CreateBookForm.component")
 );
 const ModalCreateBook = lazy(() =>
   import("../components/book-management/modalCreateBook.component")
@@ -32,13 +33,13 @@ const columns = [
   },
   {
     title: "Thể loại",
-    dataIndex: "bookType",
-    key: "bookType",
+    dataIndex: "bookTypeName",
+    key: "bookTypeName",
   },
   {
     title: "Tác giả",
-    dataIndex: "bookAuthor",
-    key: "bookAuthor",
+    dataIndex: "authorName",
+    key: "authorName",
   },
   {
     title: "Số lượng tồn kho",
@@ -54,6 +55,7 @@ const columns = [
 ];
 
 export default function BookPage() {
+  const [books, setBooks] = useState([]);
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
   const {
@@ -64,9 +66,28 @@ export default function BookPage() {
     selectedRecord,
   } = useContext(ModalContext);
 
+  // fetch all books
   useEffect(() => {
-    form.setFieldsValue(selectedRecord);
-  }, [form, selectedRecord]);
+    const fetchData = async () => {
+      try {
+        const response = await BaseAPIInstance.get("/book");
+
+        // Add key property to each element in the array
+        const data = response
+          ? response.data.map((item) => ({
+              ...item,
+              key: item.id,
+            }))
+          : [];
+
+        setBooks(data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleOk = (variant) => {
     form
@@ -131,7 +152,7 @@ export default function BookPage() {
         onOk={() => handleOk("create")}
         onCancel={() => handleCancel("create")}
       >
-        <BookForm variant="create" form={form} />
+        <CreateBookForm form={form} />
       </ModalCreateBook>
 
       <ModalEditBook
@@ -140,7 +161,7 @@ export default function BookPage() {
         onOk={() => handleOk("edit")}
         onCancel={() => handleCancel("edit")}
       >
-        <BookForm variant="update" form={form} record={selectedRecord} />
+        <UpdateBookForm form={form} record={selectedRecord} />
       </ModalEditBook>
     </div>
   );

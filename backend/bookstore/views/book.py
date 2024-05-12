@@ -7,7 +7,8 @@ from rest_framework import status
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from ..serializers.book import BookTypeSerializer, AuthorSerializer, BookSerializer
-from ..models import BookType, Author, Book, Parameter
+from ..models import BookType, Author, Book, Parameter, BookStorage
+from django.db.models import Q
 
 from ..messages.book import BookMessage
 
@@ -95,6 +96,12 @@ class GetBook(GenericAPIView):
         bookData = {}
         for book in queryset:
             bookData[book.BookId] = model_to_dict(book)
+            author = book.AuthorId.AuthorName
+            bookType = book.BookTypeId.BookTypeName
+            bookData[book.BookId]['Author'] = author
+            bookData[book.BookId]['BookType'] = bookType
+            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').first().UnitPrice
+            bookData[book.BookId]['Price'] = price
 
         return Response({
                 "success": True,
@@ -115,13 +122,20 @@ class GetBookWithId(GenericAPIView):
                     "success": False,
                     "message": BookMessage.MSG3002
                 }
-            )  
+            )
+        bookData = model_to_dict(queryset)
+        author = queryset.AuthorId.AuthorName
+        bookType = queryset.BookTypeId.BookTypeName
+        bookData['Author'] = author
+        bookData['BookType'] = bookType
+        price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').first().UnitPrice
+        bookData['Price'] = price
         return Response({
                 "success": True,
                 "message": BookMessage.MSG3001,
-                "data": model_to_dict(queryset)
+                "data": bookData
             }, status=status.HTTP_200_OK)
-    
+
 class AddBookTypeAPIVIew(GenericAPIView):
     serializer_class = BookTypeSerializer
     queryset = BookType.objects.all()

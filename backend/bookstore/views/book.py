@@ -100,7 +100,8 @@ class GetBook(GenericAPIView):
             bookType = book.BookTypeId.BookTypeName 
             bookData[book.BookId]['Author'] = author
             bookData[book.BookId]['BookType'] = bookType
-            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last().UnitPrice
+            price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last()
+            bookData['Price'] = price.UnitPrice if price is not None else 0
             bookData[book.BookId]['Price'] = price if price is not None else 0
 
         return Response({
@@ -128,8 +129,8 @@ class GetBookWithId(GenericAPIView):
         bookType = queryset.BookTypeId.BookTypeName
         bookData['Author'] = author
         bookData['BookType'] = bookType
-        price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last().UnitPrice
-        bookData['Price'] = price if price is not None else 0
+        price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last()
+        bookData['Price'] = price.UnitPrice if price is not None else 0
         return Response({
                 "success": True,
                 "message": BookMessage.MSG3001,

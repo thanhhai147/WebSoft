@@ -105,6 +105,7 @@ class GetBook(GenericAPIView):
             price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
             bookData.append({
                 'id': book.BookId,
+                'bookName': book.BookName,
                 'authorName': book.AuthorId.AuthorName,
                 'bookTypeName': book.BookTypeId.BookTypeName,
                 'quantity': book.Quantity,
@@ -135,6 +136,7 @@ class GetBookWithId(GenericAPIView):
         price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last()
         bookData = {
             'id': queryset.BookId,
+            'bookName': queryset.BookName,
             'authorName': queryset.AuthorId.AuthorName,
             'bookTypeName': queryset.BookTypeId.BookTypeName,
             'quantity': queryset.Quantity,

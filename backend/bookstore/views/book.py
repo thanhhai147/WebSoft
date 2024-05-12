@@ -97,11 +97,11 @@ class GetBook(GenericAPIView):
         for book in queryset:
             bookData[book.BookId] = model_to_dict(book)
             author = book.AuthorId.AuthorName
-            bookType = book.BookTypeId.BookTypeName
+            bookType = book.BookTypeId.BookTypeName 
             bookData[book.BookId]['Author'] = author
             bookData[book.BookId]['BookType'] = bookType
             price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last().UnitPrice
-            bookData[book.BookId]['Price'] = price
+            bookData[book.BookId]['Price'] = price if price is not None else 0
 
         return Response({
                 "success": True,
@@ -129,7 +129,7 @@ class GetBookWithId(GenericAPIView):
         bookData['Author'] = author
         bookData['BookType'] = bookType
         price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last().UnitPrice
-        bookData['Price'] = price
+        bookData['Price'] = price if price is not None else 0
         return Response({
                 "success": True,
                 "message": BookMessage.MSG3001,

@@ -1,30 +1,71 @@
-import React, { lazy, useState } from 'react';
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import TokenUtil from '../helpers/token.utils';
+import React, { lazy, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import TokenUtil from "../helpers/token.utils";
+import UserContext from "../contexts/user.context";
+import MainLayout from "../components/layout/main.layout";
+import BookContext from "../contexts/modal.context";
 
-const LoginPage = lazy(() => import("../pages/login.page"))
-const BookPage = lazy(() => import("../pages/book.page"))
-const NotFoundPage = lazy(() => import("../pages/404.page"))
-const LogoutPage = lazy(() => import("../components/logout.component"))
+const LoginPage = lazy(() => import("../pages/login.page"));
+const BookPage = lazy(() => import("../pages/book.page"));
+const BookType = lazy(() => import("../pages/bookType.page"));
+const BookAuthor = lazy(() => import("../pages/bookAuthor.page"));
+const ConsumerPage = lazy(() => import("../pages/consumer.page"));
+const NotFoundPage = lazy(() => import("../pages/404.page"));
 
 export default function AppRouter() {
+  const [token] = useState(() => TokenUtil.getToken());
+  const [username] = useState(() => TokenUtil.getUsername());
+  const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
+  const [isModalEditOpen, setIsModalEditOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
-    const [token, setToken] = useState(() => TokenUtil.getToken())
-    const [username, setUsername] = useState(() => TokenUtil.getUsername())
+  if (!token || token === "undefined") {
+    return <LoginPage />;
+  }
 
-    if(!token || token === "undefined") {
-        return <LoginPage />
-    }
+  let userContextValue = {
+    token: token,
+    username: username,
+  };
 
-    return (
-        <>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<BookPage />} />
-                    <Route path="/book" element={<BookPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                </Routes>
-            </BrowserRouter>
-        </>
-    );
+  const showModal = (variant) => {
+    variant === "create"
+      ? setIsModalCreateOpen(true)
+      : setIsModalEditOpen(true);
+  };
+
+  const closeModal = (variant) => {
+    variant === "create"
+      ? setIsModalCreateOpen(false)
+      : setIsModalEditOpen(false);
+  };
+
+  return (
+    <>
+      <UserContext.Provider value={userContextValue}>
+        <BookContext.Provider
+          value={{
+            isModalCreateOpen,
+            isModalEditOpen,
+            showModal,
+            closeModal,
+            selectedRecord,
+            setSelectedRecord,
+          }}
+        >
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                <Route path="/book" element={<BookPage />} />
+                <Route path="/book-type" element={<BookType />} />
+                <Route path="/author" element={<BookAuthor />} />
+                <Route path="/consumer" element={<ConsumerPage />} />
+              </Route>
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </BrowserRouter>
+        </BookContext.Provider>
+      </UserContext.Provider>
+    </>
+  );
 }

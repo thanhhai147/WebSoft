@@ -1,14 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
-from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from ..serializers.storage import BookStorageSerializer, DateTimeSerializer
 from ..models import Storage, BookStorage, Book, Parameter
 from django.db.models import Q
-from datetime import datetime
 import copy
-import calendar
 
 from ..messages.storage import StorageMessage
     
@@ -211,9 +208,6 @@ class GetMonthReportViewAPI(GenericAPIView):
     
         startDate = dateData.validated_data['startDate']
         endDate = dateData.validated_data['endDate']
-
-        # startDate = datetime(startDate).date()
-        # endDate = datetime(endDate).date()
 
         queryset_start = BookStorage.objects.filter(
             Q(Created__date__lte=startDate)

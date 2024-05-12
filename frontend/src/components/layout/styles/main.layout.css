@@ -1,0 +1,22 @@
+#main-layout-sider {
+  height: 100vh;
+  background-color: var(--background-color);
+  margin-top: 0;
+  box-shadow: var(--box-shadow-right)
+}
+
+#sider-title {
+  opacity: 1;
+}
+
+#sider-collapsed-button {
+  border: none;
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 50%;
+  box-shadow: var(--box-shadow-down);
+}
+
+#sider-collapsed-button path {
+  color: var(--theme-color)
+}

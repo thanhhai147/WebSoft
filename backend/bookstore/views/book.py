@@ -18,9 +18,13 @@ class GetBookType(GenericAPIView):
     def get(self, request):
         queryset = BookType.objects.all()
 
-        bookTypeData = {}
+        bookTypeData = []
         for bookType in queryset:
-            bookTypeData[bookType.BookTypeId] = model_to_dict(bookType)
+            bookTypeData.append({
+                'id': bookType.BookTypeId,
+                'name': bookType.BookTypeName,
+                'created': bookType.Created
+            })
 
         return Response({
                 "success": True,
@@ -55,9 +59,13 @@ class GetAuthor(GenericAPIView):
     def get(self, request):
         queryset = Author.objects.all()
 
-        authorData = {}
+        authorData = []
         for author in queryset:
-            authorData[author.AuthorId] = model_to_dict(author)
+            authorData.append({
+                'id': author.AuthorId,
+                'name': author.AuthorName,
+                'created': author.Created
+            })
 
         return Response({
                 "success": True,
@@ -92,15 +100,17 @@ class GetBook(GenericAPIView):
     def get(self, request):
         queryset = Book.objects.all()
 
-        bookData = {}
+        bookData = []
         for book in queryset:
-            bookData[book.BookId] = model_to_dict(book)
-            author = book.AuthorId.AuthorName
-            bookType = book.BookTypeId.BookTypeName 
-            bookData[book.BookId]['Author'] = author
-            bookData[book.BookId]['BookType'] = bookType
             price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
-            bookData[book.BookId]['Price'] = price.UnitPrice if price is not None else None
+            bookData.append({
+                'id': book.BookId,
+                'author': book.AuthorId.AuthorName,
+                'bookType': book.BookTypeId.BookTypeName,
+                'quantity': book.Quantity,
+                'price': price.UnitPrice if price is not None else None,
+                'created': book.Created,
+            })
 
         return Response({
                 "success": True,

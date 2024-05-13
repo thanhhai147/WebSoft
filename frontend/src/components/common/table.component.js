@@ -2,6 +2,7 @@ import React, { useContext } from "react"
 import { Table } from "antd"
 import "./styles/table.component.css"
 import ModalContext from "../../contexts/modal.context"
+import EmptyComponent from "./empty.component"
 
 export default function TableComponent({columns, data, ...props}) {
 
@@ -25,6 +26,9 @@ export default function TableComponent({columns, data, ...props}) {
                     type: "checkbox",
                     onSelect: handleOnSelect,
                     onSelectAll: handleOnSelectAll
+                }}
+                locale={{
+                    emptyText: EmptyComponent
                 }}
                 {...props}
             />

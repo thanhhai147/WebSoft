@@ -1,23 +1,23 @@
 import BaseAPI from "./base.api";
 
 const ConsumerAPI = {
-    handleGetALLConsumer: () => {
+    getALLConsumer: () => {
         return BaseAPI.get("/consumer/")
     },
 
-    handleGetConsumerById: (consumerId) => {
+    getConsumerById: (consumerId) => {
         return BaseAPI.get(`/consumer/${consumerId}/`)
     },
 
-    handleCreateConsumer: (consumerData) => {
+    createConsumer: (consumerData) => {
         return BaseAPI.post("/consumer/create/", consumerData)
     },
 
-    handleCreateConsumer: (consumerId, consumerData) => {
+    editConsumer: (consumerId, consumerData) => {
         return BaseAPI.put(`/consumer/${consumerId}/update/`, consumerData)
     },
 
-    handleDeleteConsumer: (consumerId) => {
+    deleteConsumer: (consumerId) => {
         return BaseAPI.delete(`/consumer/${consumerId}/delete/`)
     },
 }

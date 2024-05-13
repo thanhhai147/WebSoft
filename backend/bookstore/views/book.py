@@ -1,4 +1,3 @@
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
@@ -7,7 +6,8 @@ from rest_framework import status
 from django.core.serializers import serialize
 from django.forms.models import model_to_dict
 from ..serializers.book import BookTypeSerializer, AuthorSerializer, BookSerializer
-from ..models import BookType, Author, Book, Parameter
+from ..models import BookType, Author, Book, Parameter, BookStorage
+from django.db.models import Q
 
 from ..messages.book import BookMessage
 
@@ -18,9 +18,13 @@ class GetBookType(GenericAPIView):
     def get(self, request):
         queryset = BookType.objects.all()
 
-        bookTypeData = {}
+        bookTypeData = []
         for bookType in queryset:
-            bookTypeData[bookType.BookTypeId] = model_to_dict(bookType)
+            bookTypeData.append({
+                'id': bookType.BookTypeId,
+                'name': bookType.BookTypeName,
+                'created': bookType.Created
+            })
 
         return Response({
                 "success": True,
@@ -55,9 +59,13 @@ class GetAuthor(GenericAPIView):
     def get(self, request):
         queryset = Author.objects.all()
 
-        authorData = {}
+        authorData = []
         for author in queryset:
-            authorData[author.AuthorId] = model_to_dict(author)
+            authorData.append({
+                'id': author.AuthorId,
+                'name': author.AuthorName,
+                'created': author.Created
+            })
 
         return Response({
                 "success": True,
@@ -92,9 +100,18 @@ class GetBook(GenericAPIView):
     def get(self, request):
         queryset = Book.objects.all()
 
-        bookData = {}
+        bookData = []
         for book in queryset:
-            bookData[book.BookId] = model_to_dict(book)
+            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
+            bookData.append({
+                'id': book.BookId,
+                'bookName': book.BookName,
+                'authorName': book.AuthorId.AuthorName,
+                'bookTypeName': book.BookTypeId.BookTypeName,
+                'quantity': book.Quantity,
+                'price': price.UnitPrice if price is not None else None,
+                'created': book.Created,
+            })
 
         return Response({
                 "success": True,
@@ -115,13 +132,24 @@ class GetBookWithId(GenericAPIView):
                     "success": False,
                     "message": BookMessage.MSG3002
                 }
-            )  
+            )
+        price = BookStorage.objects.filter(BookId=queryset.BookId).order_by('Created').last()
+        bookData = {
+            'id': queryset.BookId,
+            'bookName': queryset.BookName,
+            'authorName': queryset.AuthorId.AuthorName,
+            'bookTypeName': queryset.BookTypeId.BookTypeName,
+            'quantity': queryset.Quantity,
+            'price': price.UnitPrice if price is not None else None,
+            'created': queryset.Created,
+        }
+        
         return Response({
                 "success": True,
                 "message": BookMessage.MSG3001,
-                "data": model_to_dict(queryset)
+                "data": bookData
             }, status=status.HTTP_200_OK)
-    
+
 class AddBookTypeAPIVIew(GenericAPIView):
     serializer_class = BookTypeSerializer
     queryset = BookType.objects.all()

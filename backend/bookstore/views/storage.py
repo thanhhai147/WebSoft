@@ -43,7 +43,68 @@ class GetBookStorageViewWithIdAPI(GenericAPIView):
                 "message": StorageMessage.MSG1001,
                 "data": model_to_dict(queryset)
             }, status=status.HTTP_200_OK)
+
+class GetStorageViewAPI(GenericAPIView):
+    serializer_class = BookStorageSerializer
+    queryset = BookStorage.objects.all()
+    def get(self, request):
+        queryset = Storage.objects.all()
+        
+        storagesData = {}
+
+        for iter, storageData in enumerate(queryset):
+            storages = BookStorage.objects.filter(StorageId=storageData)
+            if(iter == 0):
+                print(storages)
+            thisStorageData = []
+            for _, storage in enumerate(storages):
+                bookId = storage.BookId_id
+                unitPrice = storage.UnitPrice
+                quantity = storage.Quantity
+                storageData.append({
+                    'bookId': bookId,
+                    'unitPrice': unitPrice,
+                    'quantity': quantity
+                })
+            storagesData[f"{iter+1}"] = thisStorageData
+        return Response({
+                "success": True,
+                "message": StorageMessage.MSG1001,
+                "data": storagesData
+            }, status=status.HTTP_200_OK)   
     
+class GetStorageViewWithIdAPI(GenericAPIView):
+    serializer_class = BookStorageSerializer
+    queryset = BookStorage.objects.all()
+    def get(self, request, id):
+        try:
+            queryset = Storage.objects.get(pk=id)
+        except Storage.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": StorageMessage.MSG1005
+                }
+            )
+        
+        # storageData = {}
+        storages = BookStorage.objects.filter(StorageId=queryset)
+        storageData = []
+        for iter, storage in enumerate(storages):
+            bookId = storage.BookId_id
+            unitPrice = storage.UnitPrice
+            quantity = storage.Quantity
+            storageData.append({
+                'bookId': bookId,
+                'unitPrice': unitPrice,
+                'quantity': quantity
+            })
+        return Response({
+                "success": True,
+                "message": StorageMessage.MSG1001,
+                "data": storageData
+            }, status=status.HTTP_200_OK)    
+
 class AddBookToStorageViewAPI(GenericAPIView):
     serializer_class = BookStorageSerializer
     queryset = BookStorage.objects.all()
@@ -71,7 +132,6 @@ class AddBookToStorageViewAPI(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         bookStorages = []
-        print(bookStorageData.validated_data)
         for bookStorage in bookStorageData.validated_data:
             bookId = bookStorage['bookId']
             unitPrice = bookStorage['unitPrice']

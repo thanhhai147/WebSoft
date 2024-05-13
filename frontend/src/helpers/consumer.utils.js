@@ -1,4 +1,4 @@
-import ConsumerAPI from "../api/consumer.api";
+import ConsumerAPI from "../api/consumer.api"
 
 export default class ConsumerUtil {
     static async getAllConsumer() {

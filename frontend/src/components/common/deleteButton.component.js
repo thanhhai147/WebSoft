@@ -1,25 +1,16 @@
-import { lazy, useContext } from "react";
+import React, { lazy, useContext } from "react";
 import ModalContext from "../../contexts/modal.context";
-import ConsumerAPI from "../../api/consumer.api";
-
-const { deleteConsumer } = ConsumerAPI
 
 const Button = lazy(() => import("./button.component"));
 
-const DeleteButton = ({ variant }) => {
-  const { selectedRows } = useContext(ModalContext);
+export default function DeleteButton() {
+  const { setIsDelete } = useContext(ModalContext)
 
-  const handleDelete = async () => {
-    switch (variant) {
-        case 'consumer':
-            const response = await Promise.all(selectedRows.forEach(row => deleteConsumer(row.ConsumerId)))
-            if (response.success) {
-                
-            }
-    }
-  };
+  const handleDelete = () => {
+    setIsDelete(true)
+  }
 
-  return <Button buttonCase="detete" onClickEdit={handleDelete} />;
+  return (
+    <Button buttonCase={"delete"} onClickDelete={handleDelete} />
+  )
 };
-
-export default EditButton;

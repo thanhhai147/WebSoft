@@ -12,6 +12,7 @@ export default function ButtonComponent({
   buttonCase,
   className,
   onClickEdit,
+  onClickDelete,
   ...props
 }) {
   switch (buttonCase) {
@@ -40,6 +41,7 @@ export default function ButtonComponent({
           }
           danger
           icon={<DeleteOutlined />}
+          onClick={onClickDelete}
           {...props}
         >
           Xóa bỏ

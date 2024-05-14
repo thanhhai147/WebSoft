@@ -12,6 +12,7 @@ class BaseAPI {
   }
 
   queryParams(params) {
+    if (params === null || params === undefined) return;
     return Object.keys(params)
       .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
       .join("&");
@@ -22,10 +23,9 @@ class BaseAPI {
       // error notification
       NotificationComponent("error", TITLE.WARNING, res?.data?.message, 1);
     }
-    return res.data;
+    return res?.data;
   }
 
-<<<<<<< HEAD
   handleError(err) {
     if (!err) return;
     // error notification
@@ -45,26 +45,11 @@ class BaseAPI {
       TokenUtil.saveToken("");
       TokenUtil.saveUsername("");
       window.location.assign("/");
-=======
-    queryParams(params) {
-        if(params === null || params === undefined) return
-        return Object.keys(params)
-                .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
-                .join("&")
-    }
-
-    handleResponse(res) {
-        if(res?.data?.success === false) {
-            // error notification
-            NotificationComponent("error", TITLE.WARNING, res?.data?.message, 1)
-        }
-        return res?.data
->>>>>>> 29c8b5051d075f302b79257dc0e8443b32e482ce
     }
   }
 
   get(path, params) {
-    let query = params && this.queryParams(params);
+    let query = this.queryParams(params);
     let url = path;
 
     if (query) {

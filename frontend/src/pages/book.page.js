@@ -13,7 +13,6 @@ const PageTitle = lazy(() =>
 const TableToolBar = lazy(() =>
   import("../components/common/tableToolBar.component")
 );
-
 const Table = lazy(() => import("../components/common/table.component"));
 const CreateBookForm = lazy(() =>
   import("../components/book-management/CreateBookForm.component")
@@ -56,6 +55,8 @@ const columns = [
 
 export default function BookPage() {
   const [books, setBooks] = useState([]);
+  const [bookTypes, setBookTypes] = useState([]);
+  const [authors, setAuthors] = useState([]);
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
   const {
@@ -89,13 +90,103 @@ export default function BookPage() {
     fetchData();
   }, []);
 
+  // fetch all authors and book types
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [bookTypeResponse, authorResponse] = await Promise.all([
+          BaseAPIInstance.get("/book-type"),
+          BaseAPIInstance.get("/author"),
+        ]);
+
+        setBookTypes(
+          bookTypeResponse.data.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        );
+        setAuthors(
+          authorResponse.data.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCreateBook = async (values) => {
+    try {
+      const response = await BaseAPIInstance.post("/book/new", values);
+      const createdBook = {
+        ...response.data,
+        key: books.length + 1,
+      };
+
+      setBooks((prevBooks) => [...prevBooks, createdBook]);
+
+      form.resetFields();
+      closeModal("create");
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error creating book: ", error);
+
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  };
+
+  const handleEditBook = async (values) => {
+    // convert bookTypeName and authorName to bookTypeId and authorId
+    const bookType = bookTypes.find(
+      (item) => item.label === values.bookTypeName
+    );
+    const author = authors.find((item) => item.label === values.authorName);
+
+    const bookUpdate = {
+      bookName: values.bookName,
+      bookTypeId: bookType ? bookType.value : null,
+      authorId: author ? author.value : null,
+    };
+
+    try {
+      const response = await BaseAPIInstance.put(
+        `/book/${selectedRecord.id}/edit`,
+        bookUpdate
+      );
+      const updatedBook = response.data;
+
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book.id === updatedBook.id ? updatedBook : book
+        )
+      );
+
+      form.resetFields();
+      closeModal("edit");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating book: ", error);
+
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  };
+
   const handleOk = (variant) => {
     form
       .validateFields()
       .then(() => {
         const values = form.getFieldsValue();
-        console.log("🚀 ~ .then ~ values:", values);
-        // TODO: send form values to server
+        // handle create or edit book
+        if (variant === "create") {
+          handleCreateBook(values);
+        } else {
+          handleEditBook(values);
+        }
 
         form.resetFields();
         NotificationComponent(
@@ -126,10 +217,6 @@ export default function BookPage() {
     setFilterTable(filteredData);
   };
 
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
-  };
-
   return (
     <div>
       <PageTitle title={"Tra cứu sách"} />
@@ -142,7 +229,6 @@ export default function BookPage() {
       <Table
         columns={columns}
         data={filterTable == null ? books : filterTable}
-        onChange={onChange}
         sticky={true}
       />
 

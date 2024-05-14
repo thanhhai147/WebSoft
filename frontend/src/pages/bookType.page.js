@@ -2,8 +2,11 @@ import { Form } from "antd";
 import React, { lazy, useContext, useEffect, useState } from "react";
 import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
-import { TITLE, MESSAGE } from '../messages/main.message'
-import { NotificationComponent } from "../components/common/notification.component"; 
+import { TITLE, MESSAGE } from "../messages/main.message";
+import { NotificationComponent } from "../components/common/notification.component";
+import BaseAPIInstance from "../api/base.api";
+import CreateBookTypeForm from "../components/book-management/CreateBookTypeForm.component";
+import UpdateBookTypeForm from "../components/book-management/UpdateBookTypeForm.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -18,15 +21,12 @@ const ModalCreateBook = lazy(() =>
 const ModalEditBook = lazy(() =>
   import("../components/book-management/modalEditBook.component")
 );
-const BookTypeForm = lazy(() =>
-  import("../components/book-management/bookTypeForm.component")
-);
 
 const columns = [
   {
     title: "Thể loại",
-    dataIndex: "bookType",
-    key: "bookType",
+    dataIndex: "bookTypeName",
+    key: "bookTypeName",
   },
   {
     title: "Chỉnh sửa",
@@ -35,27 +35,8 @@ const columns = [
   },
 ];
 
-// TODO: convert to state management to fetch data from server
-const data = [
-  {
-    key: "1",
-    bookType: "Fiction",
-  },
-  {
-    key: "2",
-    bookType: "Classic",
-  },
-  {
-    key: "3",
-    bookType: "Fantasy",
-  },
-  {
-    key: "4",
-    bookType: "Programming",
-  },
-];
-
 export default function BookTypePage() {
+  const [bookTypes, setBookTypes] = useState([]);
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
   const {
@@ -66,25 +47,94 @@ export default function BookTypePage() {
     selectedRecord,
   } = useContext(ModalContext);
 
+  // fetch all book types
   useEffect(() => {
-    form.setFieldsValue(selectedRecord);
-  }, [form, selectedRecord]);
+    const fetchData = async () => {
+      try {
+        const response = await BaseAPIInstance.get("/book-type");
+
+        // Add key property to each element in the array
+        const data = response
+          ? response.data.map((item) => ({
+              bookTypeName: item.name,
+              key: item.id,
+            }))
+          : [];
+
+        setBookTypes(data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleCreateBookType = async (values) => {
+    try {
+      const response = await BaseAPIInstance.post("/book-type/new", values);
+
+      const newBookType = {
+        ...response.data,
+        key: bookTypes.length + 1,
+      };
+
+      setBookTypes([...bookTypes, newBookType]);
+    } catch (error) {
+      console.error("Error creating book type: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  };
+
+  const handleEditBookType = async (values) => {
+    try {
+      const response = await BaseAPIInstance.put(
+        `/book-type/${selectedRecord.key}/edit`,
+        values
+      );
+
+      const updatedBookType = {
+        ...response.data,
+      };
+
+      const updatedData = bookTypes.map((item) =>
+        item.key === selectedRecord.key
+          ? {
+              ...item,
+              bookTypeName: updatedBookType.bookTypeName,
+            }
+          : item
+      );
+
+      setBookTypes(updatedData);
+    } catch (error) {
+      console.error("Error updating book type: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  };
 
   const handleOk = (variant) => {
     form
       .validateFields()
       .then(() => {
         const values = form.getFieldsValue();
-        console.log("🚀 ~ .then ~ values:", values);
-        // TODO: send form values to server
+        if (variant === "create") {
+          handleCreateBookType(values);
+        } else {
+          handleEditBookType(values);
+        }
 
         form.resetFields();
-        NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
+        NotificationComponent(
+          "success",
+          TITLE.SUCCESS,
+          variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS
+        );
         closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
-        NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
+        NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
       });
   };
 
@@ -94,17 +144,13 @@ export default function BookTypePage() {
   };
 
   const search = (value) => {
-    const filteredData = data.filter((o) =>
+    const filteredData = bookTypes.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
     );
 
     setFilterTable(filteredData);
-  };
-
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
   };
 
   return (
@@ -118,8 +164,7 @@ export default function BookTypePage() {
       />
       <Table
         columns={columns}
-        data={filterTable == null ? data : filterTable}
-        onChange={onChange}
+        data={filterTable == null ? bookTypes : filterTable}
         sticky={true}
       />
 
@@ -129,7 +174,7 @@ export default function BookTypePage() {
         onOk={() => handleOk("create")}
         onCancel={() => handleCancel("create")}
       >
-        <BookTypeForm variant="create" form={form} />
+        <CreateBookTypeForm form={form} />
       </ModalCreateBook>
 
       <ModalEditBook
@@ -138,7 +183,7 @@ export default function BookTypePage() {
         onOk={() => handleOk("edit")}
         onCancel={() => handleCancel("edit")}
       >
-        <BookTypeForm variant="update" form={form} record={selectedRecord} />
+        <UpdateBookTypeForm form={form} record={selectedRecord} />
       </ModalEditBook>
     </div>
   );

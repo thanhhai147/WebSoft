@@ -28,13 +28,13 @@ export default function UpdateBookForm({ form, record }) {
 
         setBookTypes(
           bookTypeResponse.data.map((item) => ({
-            value: item.name,
+            value: item.name, // change from item.id to item.name
             label: item.name,
           }))
         );
         setAuthors(
           authorResponse.data.map((item) => ({
-            value: item.name,
+            value: item.name, // change from item.id to item.name
             label: item.name,
           }))
         );
@@ -49,7 +49,7 @@ export default function UpdateBookForm({ form, record }) {
   return (
     <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
       <Form.Item label="Tên sách" name="bookName" style={{ marginTop: "1rem" }}>
-        <Input />
+        <Input placeholder="Nhập tên sách" />
       </Form.Item>
       <Form.Item label="Thể loại" name="bookTypeName">
         <Select

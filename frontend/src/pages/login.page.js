@@ -23,10 +23,11 @@ export default function Login () {
 
                 NotificationComponent('success', TITLE.SUCCESS, MESSAGE.SIGN_IN_SUCCESS)
 
-                window.location.replace("/book")
+                window.location.assign("/book")
             }
         } catch (err) {
             console.log(err)
+            NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
         }
     };
 

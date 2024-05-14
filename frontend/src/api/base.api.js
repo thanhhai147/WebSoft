@@ -12,6 +12,7 @@ class BaseAPI {
     }
 
     queryParams(params) {
+        if(params === null || params === undefined) return
         return Object.keys(params)
                 .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
                 .join("&")
@@ -22,7 +23,7 @@ class BaseAPI {
             // error notification
             NotificationComponent("error", TITLE.WARNING, res?.data?.message, 1)
         }
-        return res.data
+        return res?.data
     }
 
     handleError(err) {
@@ -37,7 +38,8 @@ class BaseAPI {
         if(err?.response?.status === 401 || err?.response?.status === 403) {
             // reset authorization token
             TokenUtil.saveToken("")
-            window.location.replace("/")
+            TokenUtil.saveUsername("")
+            window.location.assign("/")
         }
     }
 

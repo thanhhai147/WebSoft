@@ -1,5 +1,6 @@
 :root {
     --theme-color: rgb(30, 60, 114);
+    --light-theme-color: rgba(63, 131, 255, 0.5);
     --foreground-color: rgb(255, 255, 255);
     --background-color: rgb(248, 249, 250);
     --success-color: #52c41a;
@@ -77,4 +78,8 @@ p {
 
 .bottom-margin-default {
     margin-bottom: var(--space-default)
+}
+
+.ant-modal-footer .ant-btn-primary {
+    background-color: var(--theme-color);
 }

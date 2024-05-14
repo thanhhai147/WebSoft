@@ -24,5 +24,6 @@ urlpatterns = [
     path('', include('bookstore.urls.order')),
     path('', include('bookstore.urls.book')),
     path('storage/', include('bookstore.urls.storage')),
-    path('', include('bookstore.urls.consumer'))
+    path('', include('bookstore.urls.consumer')),
+    path('', include('bookstore.urls.payment'))
 ]

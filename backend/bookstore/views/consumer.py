@@ -171,7 +171,7 @@ class UpdateConsumerAPIView(GenericAPIView):
             maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
 
         # Checking if the consumer already exists
-            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or consumer_name.isalnum():
+            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value):
                 return Response(
                     {
                         "success": False,

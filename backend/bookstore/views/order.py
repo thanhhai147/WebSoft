@@ -18,6 +18,10 @@ class createOrderAPIView(GenericAPIView):
 
     def post(self, request):
         order_data = OrderDetailSerializer(data=request.data)
+        queryset = Book.objects.all()
+        for book in queryset:
+            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
+
         if not order_data.is_valid(raise_exception=True):
             return Response({
                 "success": False,
@@ -70,10 +74,6 @@ class createOrderAPIView(GenericAPIView):
                                 "message": OrderMessage.MSG1003
                             }, status = status.HTTP_400_BAD_REQUEST)
             total_value = 0 
-
-        queryset = Book.objects.all()
-        for book in queryset:
-            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
 
             unitSoldPrice = price.UnitPrice * float(percentPrice.Value)
             total_value += unitSoldPrice * quantity

@@ -9,7 +9,7 @@ from ..models.consumer import Consumer
 from ..models.book import Book
 from ..models.storage import BookStorage
 from ..models.parameter import Parameter
-
+import logging
 #----------------
 #     Order
 #----------------
@@ -59,16 +59,7 @@ class createOrderAPIView(GenericAPIView):
                                 "success": False,
                                 "message": OrderMessage.MSG1005 + str(book_id)
                             }, status = status.HTTP_404_NOT_FOUND)
-            
-            try:
-                bookStorage = BookStorage.objects.get(BookId = book_id)
-            except BookStorage.DoesNotExist:
-                order_instance.delete() 
-                return Response (                            
-                            {       
-                                "success": False,
-                                "message": OrderMessage.MSG1006
-                            }, status = status.HTTP_404_NOT_FOUND)
+
             
             book.Quantity -= quantity
             if book.Quantity <= int(minQuantity.Value):
@@ -79,7 +70,12 @@ class createOrderAPIView(GenericAPIView):
                                 "message": OrderMessage.MSG1003
                             }, status = status.HTTP_400_BAD_REQUEST)
             total_value = 0 
-            unitSoldPrice = bookStorage.UnitPrice * float(percentPrice.Value)
+
+        queryset = Book.objects.all()
+        for book in queryset:
+            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
+
+            unitSoldPrice = price.UnitPrice * float(percentPrice.Value)
             total_value += unitSoldPrice * quantity
             
             BookOrder.objects.create(

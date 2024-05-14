@@ -18,9 +18,6 @@ class createOrderAPIView(GenericAPIView):
 
     def post(self, request):
         order_data = OrderDetailSerializer(data=request.data)
-        queryset = Book.objects.all()
-        for book in queryset:
-            price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
 
         if not order_data.is_valid(raise_exception=True):
             return Response({
@@ -49,6 +46,10 @@ class createOrderAPIView(GenericAPIView):
         minQuantity = Parameter.objects.filter(ParameterName='minQuantity').first()
         percentPrice = Parameter.objects.filter(ParameterName='percentPrice').first()
 
+        queryset = Book.objects.all()
+        for book in queryset:
+                price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
+                
         book_orders = order_data.validated_data['BookOrder']
         for book_order in book_orders:
             book_id = book_order['BookId']
@@ -64,7 +65,6 @@ class createOrderAPIView(GenericAPIView):
                                 "message": OrderMessage.MSG1005 + str(book_id)
                             }, status = status.HTTP_404_NOT_FOUND)
 
-            
             book.Quantity -= quantity
             if book.Quantity <= int(minQuantity.Value):
                 order_instance.delete()

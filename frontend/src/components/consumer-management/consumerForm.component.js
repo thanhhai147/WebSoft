@@ -1,6 +1,8 @@
+import React, { useContext } from "react";
 import { Input, Form } from "antd";
 import { TITLE, MESSAGE } from '../../messages/main.message'
 import { NotificationComponent } from "../common/notification.component";
+import ModalContext from "../../contexts/modal.context";
 
 export default function ConsumerForm({
   variant = "create" | "update",
@@ -8,11 +10,12 @@ export default function ConsumerForm({
   record,
 }) {
   const isCreateForm = variant === "create";
+  const { isModalCreateOpen, isModalEditOpen } = useContext(ModalContext)
 
-  if (!isCreateForm) {
+  if (!isCreateForm && isModalCreateOpen) {
     form.setFieldsValue(record);
   } else {
-    form.resetFields();
+    if (isModalEditOpen) form.resetFields();
   }
 
   const onFinishFailed = (errorInfo) => {
@@ -62,28 +65,53 @@ export default function ConsumerForm({
       <Form.Item
         label="Email"
         name="Email"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập email",
-          },
-        ]}
       >
         <Input />
       </Form.Item>
     </Form>
   ) : (
     <Form form={form} layout="vertical">
-      <Form.Item label="Tên khách hàng" name="Name" style={{ marginTop: "1rem" }}>
+      <Form.Item 
+        label="Tên khách hàng" 
+        name="Name" 
+        style={{ marginTop: "1rem" }}
+        rules={[
+          {
+            required: true,
+            message: "Vui lòng nhập tên khách hàng",
+          },
+        ]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item label="Địa chỉ" name="Address">
+      <Form.Item 
+        label="Địa chỉ" 
+        name="Address"
+        rules={[
+          {
+            required: true,
+            message: "Vui lòng nhập địa chỉ",
+          },
+        ]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item label="Số điện thoại" name="Phone">
+      <Form.Item 
+        label="Số điện thoại" 
+        name="Phone"
+        rules={[
+          {
+            required: true,
+            message: "Vui lòng nhập số điện thoại",
+          },
+        ]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item label="Email" name="Email">
+      <Form.Item 
+        label="Email" 
+        name="Email"
+      >
         <Input />
       </Form.Item>
     </Form>

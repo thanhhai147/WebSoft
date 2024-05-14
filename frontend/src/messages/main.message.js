@@ -4,7 +4,8 @@ export const MESSAGE = {
     SIGN_IN_SUCCESS: "Đăng nhập thành công",
     SIGN_IN_FAILED: "Đăng nhập thất bại",
     CREATE_SUCCESS: "Tạo mới thành công",
-    EDIT_SUCCESS: "Chỉnh sửa thành công"
+    EDIT_SUCCESS: "Chỉnh sửa thành công",
+    DELETE_SUCCESS: "Xóa thành công"
 }
 
 export const TITLE = {

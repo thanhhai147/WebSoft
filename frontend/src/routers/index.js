@@ -18,6 +18,8 @@ export default function AppRouter() {
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [checkedRows, setCheckedRows] = useState(null);
+  const [isDelete, setIsDelete] = useState(null);
 
   if (!token || token === "undefined") {
     return <LoginPage />;
@@ -51,6 +53,10 @@ export default function AppRouter() {
             closeModal,
             selectedRecord,
             setSelectedRecord,
+            isDelete,
+            setIsDelete,
+            checkedRows,
+            setCheckedRows
           }}
         >
           <BrowserRouter>

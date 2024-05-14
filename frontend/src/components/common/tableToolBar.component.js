@@ -3,6 +3,7 @@ import "./styles/tableToolBar.component.css";
 
 const SearchInput = lazy(() => import("./searchInput.component"));
 const Button = lazy(() => import("./button.component"));
+const DeleteButton = lazy(() => import("./deleteButton.component"));
 
 export default function TableToolBar({
   className,
@@ -34,7 +35,7 @@ export default function TableToolBar({
           style={{ marginRight: "1rem" }}
           onClick={() => showModal("create")}
         />
-        <Button buttonCase="delete" />
+        <DeleteButton />
       </div>
     </div>
   );

@@ -1,5 +1,11 @@
 import { Form } from "antd";
-import React, { lazy, useContext, useEffect, useState } from "react";
+import React, {
+  lazy,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
 import { TITLE, MESSAGE } from "../messages/main.message";
@@ -45,30 +51,76 @@ export default function BookTypePage() {
     showModal,
     closeModal,
     selectedRecord,
+    isDelete,
+    setIsDelete,
+    checkedRows,
+    setCheckedRows,
   } = useContext(ModalContext);
 
   // fetch all book types
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await BaseAPIInstance.get("/book-type");
+  const fetchBookTypes = useCallback(async () => {
+    try {
+      const response = await BaseAPIInstance.get("/book-type");
 
-        // Add key property to each element in the array
-        const data = response
-          ? response.data.map((item) => ({
-              bookTypeName: item.name,
-              key: item.id,
-            }))
-          : [];
+      // Add key property to each element in the array
+      const data = response
+        ? response.data.map((item) => ({
+            bookTypeName: item.name,
+            key: item.id,
+          }))
+        : [];
 
-        setBookTypes(data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
+      setBookTypes(data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchBookTypes();
+  }, [fetchBookTypes]);
+
+  // handle delete book types
+  const handleDeleteBookTypes = useCallback(async (ids) => {
+    if (ids.length === 0) {
+      NotificationComponent(
+        "warning",
+        TITLE.WARNING,
+        MESSAGE.NO_RECORD_SELECTED
+      );
+      return;
+    }
+
+    try {
+      const response = await Promise.all(
+        ids.map((id) => BaseAPIInstance.delete(`/book-type/${id}/delete`))
+      );
+
+      if (response) {
+        NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting book types: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDelete) {
+      const ids = checkedRows.map((row) => row.key);
+      handleDeleteBookTypes(ids);
+      setIsDelete(false);
+      setCheckedRows([]);
+    }
+  }, [
+    checkedRows,
+    handleDeleteBookTypes,
+    isDelete,
+    setCheckedRows,
+    setIsDelete,
+  ]);
 
   const handleCreateBookType = async (values) => {
     try {

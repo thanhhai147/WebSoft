@@ -1,4 +1,10 @@
-import React, { lazy, useContext, useEffect, useState } from "react";
+import React, {
+  lazy,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Form } from "antd";
 import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
@@ -45,6 +51,10 @@ export default function BookAuthorPage() {
     showModal,
     closeModal,
     selectedRecord,
+    isDelete,
+    setIsDelete,
+    checkedRows,
+    setCheckedRows,
   } = useContext(ModalContext);
 
   // fetch all authors
@@ -69,6 +79,42 @@ export default function BookAuthorPage() {
 
     fetchData();
   }, []);
+
+  // handle delete authors
+  const handleDeleteAuthor = useCallback(async (authorIdList) => {
+    if (authorIdList.length === 0) {
+      NotificationComponent(
+        "warning",
+        TITLE.WARNING,
+        MESSAGE.NO_RECORD_SELECTED
+      );
+      return;
+    }
+
+    try {
+      const response = await Promise.all(
+        authorIdList.map((id) => BaseAPIInstance.delete(`/author/${id}/delete`))
+      );
+
+      if (response) {
+        NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting book types: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDelete) {
+      const authorIdList = checkedRows.map((row) => row.key);
+      handleDeleteAuthor(authorIdList);
+      setIsDelete(false);
+      setCheckedRows([]);
+    }
+  }, [checkedRows, handleDeleteAuthor, isDelete, setCheckedRows, setIsDelete]);
 
   const handleCreateAuthor = async (values) => {
     try {

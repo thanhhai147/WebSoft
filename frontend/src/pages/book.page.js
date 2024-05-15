@@ -1,5 +1,11 @@
 import { Form } from "antd";
-import React, { lazy, useContext, useEffect, useState } from "react";
+import React, {
+  lazy,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
 import { TITLE, MESSAGE } from "../messages/main.message";
@@ -65,30 +71,33 @@ export default function BookPage() {
     showModal,
     closeModal,
     selectedRecord,
+    isDelete,
+    setIsDelete,
+    checkedRows,
   } = useContext(ModalContext);
 
   // fetch all books
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await BaseAPIInstance.get("/book");
+  const fetchBooks = useCallback(async () => {
+    try {
+      const response = await BaseAPIInstance.get("/book");
 
-        // Add key property to each element in the array
-        const data = response
-          ? response.data.map((item) => ({
-              ...item,
-              key: item.id,
-            }))
-          : [];
+      // Add key property to each element in the array
+      const data = response
+        ? response.data.map((item) => ({
+            ...item,
+            key: item.id,
+          }))
+        : [];
 
-        setBooks(data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
+      setBooks(data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchBooks();
+  }, [fetchBooks]);
 
   // fetch all authors and book types
   useEffect(() => {
@@ -118,6 +127,41 @@ export default function BookPage() {
 
     fetchData();
   }, []);
+
+  // handle delete books
+  const handleDeleteBooks = useCallback(async (bookIdList) => {
+    if (bookIdList.length === 0) {
+      NotificationComponent(
+        "warning",
+        TITLE.WARNING,
+        MESSAGE.NO_RECORD_SELECTED
+      );
+      return;
+    }
+
+    try {
+      const response = await Promise.all([
+        bookIdList.map((id) => BaseAPIInstance.delete(`/book/${id}/delete`)),
+      ]);
+
+      if (response) {
+        NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting books: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDelete) {
+      const bookIdList = checkedRows.map((row) => row.id);
+      handleDeleteBooks(bookIdList);
+      setIsDelete(false);
+    }
+  }, [checkedRows, handleDeleteBooks, isDelete, setIsDelete]);
 
   const handleCreateBook = async (values) => {
     try {

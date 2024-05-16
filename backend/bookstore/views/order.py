@@ -46,14 +46,13 @@ class createOrderAPIView(GenericAPIView):
         minQuantity = Parameter.objects.filter(ParameterName='minQuantity').first()
         percentPrice = Parameter.objects.filter(ParameterName='percentPrice').first()
 
-        queryset = Book.objects.all()
-        for book in queryset:
-                price = BookStorage.objects.filter(BookId=book.BookId).order_by('Created').last()
                 
         book_orders = order_data.validated_data['BookOrder']
         for book_order in book_orders:
             book_id = book_order['BookId']
             quantity = book_order['Quantity']
+
+            price = BookStorage.objects.filter(BookId=book_id).order_by('Created').last()
 
             try:
                 book = Book.objects.get(BookId = book_id)

@@ -664,7 +664,7 @@ class DeleteBookViewAPI(GenericAPIView):
                 }
             )  
 
-        queryset.Active = False;
+        queryset.Active = False
             
         return Response({
                 "success": True,

@@ -106,11 +106,12 @@ class GetBook(GenericAPIView):
             bookData.append({
                 'id': book.BookId,
                 'bookName': book.BookName,
-                'authorName': book.AuthorId.AuthorName,
-                'bookTypeName': book.BookTypeId.BookTypeName,
+                'authorName': book.AuthorId.AuthorName if book.AuthorId != None else None,
+                'bookTypeName': book.BookTypeId.BookTypeName if book.BookTypeId != None else None,
                 'quantity': book.Quantity,
                 'price': price.UnitPrice if price is not None else None,
                 'created': book.Created,
+                'active': book.Active,
             })
 
         return Response({
@@ -137,11 +138,12 @@ class GetBookWithId(GenericAPIView):
         bookData = {
             'id': queryset.BookId,
             'bookName': queryset.BookName,
-            'authorName': queryset.AuthorId.AuthorName,
-            'bookTypeName': queryset.BookTypeId.BookTypeName,
+            'authorName': queryset.AuthorId.AuthorName if queryset.AuthorId != None else None,
+            'bookTypeName': queryset.BookTypeId.BookTypeName if queryset.BookTypeId != None else None,
             'quantity': queryset.Quantity,
             'price': price.UnitPrice if price is not None else None,
             'created': queryset.Created,
+            'active': queryset.Active,
         }
         
         return Response({
@@ -506,18 +508,16 @@ class EditBookViewAPI(GenericAPIView):
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
-        
-        if (bookName is None or
-            bookTypeId is None or
-            authorId is None):
+        activate = bookData.validated_data['activate']
+        if (bookName is None):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG3009
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            bookType = BookType.objects.get(pk=bookTypeId)
-            author = Author.objects.get(pk=authorId)
+            bookType = BookType.objects.get(pk=bookTypeId) if bookTypeId != None else None
+            author = Author.objects.get(pk=authorId) if authorId != None else None
         except BookType.DoesNotExist:
             return Response(
                 {
@@ -546,20 +546,22 @@ class EditBookViewAPI(GenericAPIView):
         queryset.BookName = bookName
         queryset.BookTypeId = bookType
         queryset.AuthorId = author
+        if (activate != None): 
+            queryset.Active = activate
         
         queryset.save()
 
         return Response({
                 "success": True,
                 "message": BookMessage.MSG3005,
-                "data": bookData.data
+                "data": model_to_dict(queryset)
             }, status=status.HTTP_200_OK)
 
 class DeleteBookTypeViewAPI(GenericAPIView):
     serializer_class = AuthorSerializer
     queryset = BookType.objects.all()
 
-    def get(self, request):
+    def get(self, request, id):
         try:
             queryset = BookType.objects.get(pk=id)
         except BookType.DoesNotExist:
@@ -597,7 +599,7 @@ class DeleteAuthorViewAPI(GenericAPIView):
     serializer_class = AuthorSerializer
     queryset = Author.objects.all()
 
-    def get(self, request):
+    def get(self, request, id):
         try:
             queryset = Author.objects.get(pk=id)
         except Author.DoesNotExist:
@@ -662,7 +664,7 @@ class DeleteBookViewAPI(GenericAPIView):
                 }
             )  
 
-        queryset.delete()
+        queryset.Active = False;
             
         return Response({
                 "success": True,

@@ -24,8 +24,8 @@ class AuthorAdmin(admin.ModelAdmin):
     search_fields = ['AuthorId', 'AuthorName']
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('BookId', 'BookName', 'BookTypeId', 'AuthorId', 'Quantity', 'Created')
-    list_filter = ['BookTypeId', 'Created']
+    list_display = ('BookId', 'BookName', 'BookTypeId', 'AuthorId', 'Quantity', 'Active', 'Created')
+    list_filter = ['BookTypeId', 'Active', 'Created']
     search_fields = ['BookId', 'BookName', 'BookTypeId', 'AuthorId']
     
 class ConsumerAdmin(admin.ModelAdmin):

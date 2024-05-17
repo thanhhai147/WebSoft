@@ -326,18 +326,18 @@ class GetMonthReportViewAPI(GenericAPIView):
                     }
                 )
             if bookId in bookOrderNow:
-                bookOrderNow[bookId]["Quantity"] += quantity
+                bookOrderNow[bookId]["Quantity"] -= quantity
             else:
                 bookOrderNow[bookId] = {
                     'BookName': book.BookName,
-                    'Quantity': quantity,
+                    'Quantity': -quantity,
                     'Created': created
                 }
 
         # Subtract the number of books sold in bookOrderNow from bookInventory
         for bookId, orderData in bookOrderNow.items():
             if bookId in bookInventory:
-                bookInventory[bookId]["Quantity"] -= orderData["Quantity"]
+                bookInventory[bookId]["Quantity"] += orderData["Quantity"]
             else:
                 return Response(
                     {
@@ -352,7 +352,7 @@ class GetMonthReportViewAPI(GenericAPIView):
             "A": bookInventoryStart,
             "B": bookInventoryNow,
             "C": bookOrderNow,
-            "A+B-C": bookInventory,
+            "A+B+C": bookInventory,
         }
         return Response({
                 "success": True,

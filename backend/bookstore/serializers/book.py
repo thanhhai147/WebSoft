@@ -8,5 +8,5 @@ class AuthorSerializer(serializers.Serializer):
 
 class BookSerializer(serializers.Serializer):
     bookName = serializers.CharField(required=True, allow_null=False)
-    bookTypeId = serializers.IntegerField(required=True, allow_null=True)
-    authorId = serializers.IntegerField(required=True, allow_null=True)
+    bookTypeId = serializers.IntegerField(allow_null=True)
+    authorId = serializers.IntegerField(allow_null=True)

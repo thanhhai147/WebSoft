@@ -508,7 +508,7 @@ class EditBookViewAPI(GenericAPIView):
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
-        activate = bookData.validated_data['activate']
+        active = bookData.validated_data['active']
         if (bookName is None):
             return Response({
                 "success": False,
@@ -546,8 +546,8 @@ class EditBookViewAPI(GenericAPIView):
         queryset.BookName = bookName
         queryset.BookTypeId = bookType
         queryset.AuthorId = author
-        if (activate != None): 
-            queryset.Active = activate
+        if (active != None): 
+            queryset.Active = active
         
         queryset.save()
 

@@ -10,4 +10,4 @@ class BookSerializer(serializers.Serializer):
     bookName = serializers.CharField(required=True, allow_null=False)
     bookTypeId = serializers.IntegerField(allow_null=True)
     authorId = serializers.IntegerField(allow_null=True)
-    activate = serializers.BooleanField(allow_null=True)
+    active = serializers.BooleanField(allow_null=True)

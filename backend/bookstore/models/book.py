@@ -21,9 +21,10 @@ class Author(models.Model):
 class Book(models.Model):
     BookId = models.AutoField(primary_key=True)
     BookName = models.TextField(max_length=255, null=False, blank=False)
-    BookTypeId = models.ForeignKey(BookType, on_delete=models.CASCADE, null=False, blank=False)
-    AuthorId = models.ForeignKey(Author, on_delete=models.CASCADE, null=False, blank=False)
+    BookTypeId = models.ForeignKey(BookType, on_delete=models.CASCADE, null=True, blank=False)
+    AuthorId = models.ForeignKey(Author, on_delete=models.CASCADE, null=True, blank=False)
     Quantity = models.IntegerField(default=0, null=False, blank=False, validators=[MinValueValidator(0)])
+    Active = models.BooleanField(default=False, null=False, blank=False)
     Created = models.DateTimeField(default=timezone.now)
     
     def __str__(self):

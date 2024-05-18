@@ -288,17 +288,15 @@ class AddBookViewAPI(GenericAPIView):
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
         
-        if (bookName is None or
-            bookTypeId is None or
-            authorId is None):
+        if (bookName is None):
             return Response({
                 "success": False,
                 "message": BookMessage.MSG3009
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
-            bookType = BookType.objects.get(pk=bookTypeId)
-            author = Author.objects.get(pk=authorId)
+            bookType = BookType.objects.get(pk=bookTypeId) if bookTypeId != None else None
+            author = Author.objects.get(pk=authorId) if authorId != None else None
         except BookType.DoesNotExist:
             return Response(
                 {
@@ -313,11 +311,11 @@ class AddBookViewAPI(GenericAPIView):
                     "message": BookMessage.MSG3012
                 }
             )
-        
-        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
-        minBNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
 
-        if (len(bookName) < minBNameLength.Value or
+        maxNameLength = Parameter.objects.filter(ParameterName='MaxNameLength').first()
+        minNameLength = Parameter.objects.filter(ParameterName='MinNameLength').first()
+
+        if (len(bookName) < minNameLength.Value or
             len(bookName) > maxNameLength.Value):
             return Response({
                 "success": False,
@@ -509,6 +507,7 @@ class EditBookViewAPI(GenericAPIView):
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
         active = bookData.validated_data['active']
+
         if (bookName is None):
             return Response({
                 "success": False,
@@ -637,7 +636,7 @@ class DeleteBookViewAPI(GenericAPIView):
     serializer_class = AuthorSerializer
     queryset = Book.objects.all()
 
-    def get(self, request):
+    def get(self, request, id):
         try:
             queryset = Book.objects.get(pk=id)
         except Book.DoesNotExist:
@@ -665,6 +664,7 @@ class DeleteBookViewAPI(GenericAPIView):
             )  
 
         queryset.Active = False;
+        queryset.save();
             
         return Response({
                 "success": True,

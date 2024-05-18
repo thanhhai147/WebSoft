@@ -8,9 +8,11 @@ export default function UpdateBookForm({ form, record }) {
   const [bookTypes, setBookTypes] = useState([]);
   const [authors, setAuthors] = useState([]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const newRecord = { ...record };
   useEffect(() => {
-    form.setFieldsValue(record);
-  }, [form, record]);
+    form.setFieldsValue(newRecord);
+  }, [form, newRecord]);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -84,6 +86,12 @@ export default function UpdateBookForm({ form, record }) {
           }
           options={authors}
         />
+      </Form.Item>
+      <Form.Item label="Active" name="active">
+        <Select>
+          <Select.Option value={true}>Active</Select.Option>
+          <Select.Option value={false}>Inactive</Select.Option>
+        </Select>
       </Form.Item>
     </Form>
   );

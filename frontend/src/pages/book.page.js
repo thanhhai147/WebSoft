@@ -165,7 +165,10 @@ export default function BookPage() {
 
   const handleCreateBook = async (values) => {
     try {
-      const response = await BaseAPIInstance.post("/book/new", values);
+      const response = await BaseAPIInstance.post("/book/new", {
+        ...values,
+        active: false,
+      });
       const createdBook = {
         ...response.data,
         key: books.length + 1,
@@ -195,6 +198,7 @@ export default function BookPage() {
       bookName: values.bookName,
       bookTypeId: bookType ? bookType.value : null,
       authorId: author ? author.value : null,
+      active: values.active,
     };
 
     try {

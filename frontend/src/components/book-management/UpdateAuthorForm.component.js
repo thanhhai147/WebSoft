@@ -4,9 +4,11 @@ import { NotificationComponent } from "../common/notification.component";
 import { Form, Input } from "antd";
 
 export default function UpdateAuthorForm({ form, record }) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const newRecord = { ...record };
   useEffect(() => {
-    form.setFieldsValue(record);
-  }, [form, record]);
+    form.setFieldsValue(newRecord);
+  }, [form, newRecord]);
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);

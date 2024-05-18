@@ -12,4 +12,4 @@ class ConsumerMessage():
     MSG1004 = "Số điện thoại đã được đăng ký"
     MSG1005 = "email không đúng định dạng"
     MSG1006 = "email đã được đăng ký"
-    MSG1007 = "Không thể xoá vì có hoá đơn liên quan"
+    MSG1007 = "Không thể xoá vì có hoá đơn hoặc phiếu thu liên quan"

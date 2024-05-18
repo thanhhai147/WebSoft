@@ -7,7 +7,7 @@ import Loading from './components/common/loading.component';
 
 function App() {
   return (
-    <Suspense fallback={<Loading tip="Loading..." size={"large"} />}>
+    <Suspense fallback={<Loading tip="Đang tải..." size={"large"} />}>
       <ConfigProvider locale={vn}>  
         <AppRouter /> 
       </ConfigProvider>         

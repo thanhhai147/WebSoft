@@ -11,7 +11,6 @@ import EditButton from "../components/common/editButton.component";
 import { TITLE, MESSAGE } from "../messages/main.message";
 import { NotificationComponent } from "../components/common/notification.component";
 import BaseAPIInstance from "../api/base.api";
-import UpdateBookForm from "../components/book-management/UpdateBookForm.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -23,6 +22,9 @@ const Table = lazy(() => import("../components/common/table.component"));
 const CreateBookForm = lazy(() =>
   import("../components/book-management/CreateBookForm.component")
 );
+const UpdateBookForm = lazy(() => 
+  import("../components/book-management/UpdateBookForm.component")
+)
 const ModalCreateBook = lazy(() =>
   import("../components/book-management/modalCreateBook.component")
 );

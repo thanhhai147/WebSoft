@@ -465,8 +465,8 @@ class GetMonthDebtReportAPIView(GenericAPIView):
             "Start": startDate,
             "End": endDate,
             "DebtStart": debtStart,
-            "orderNow": debtOrderNow,
-            "paymentNow": debtPaymentNow,
+            "OrderNow": debtOrderNow,
+            "PaymentNow": debtPaymentNow,
             "DebtEnd": debtEnd
 
         }

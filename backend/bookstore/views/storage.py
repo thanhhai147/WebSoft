@@ -349,10 +349,10 @@ class GetMonthReportViewAPI(GenericAPIView):
         data = {
             "Start": startDate,
             "End": endDate,
-            "A": bookInventoryStart,
-            "B": bookInventoryNow,
-            "C": bookOrderNow,
-            "A+B+C": bookInventory,
+            "InventoryStart": bookInventoryStart,
+            "StorageNow": bookInventoryNow,
+            "OrderNow": bookOrderNow,
+            "InventoryEnd": bookInventory,
         }
         return Response({
                 "success": True,

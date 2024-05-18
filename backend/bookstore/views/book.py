@@ -663,8 +663,8 @@ class DeleteBookViewAPI(GenericAPIView):
                 }
             )  
 
-        queryset.Active = False;
-        queryset.save();
+        queryset.Active = False
+        queryset.save()
             
         return Response({
                 "success": True,

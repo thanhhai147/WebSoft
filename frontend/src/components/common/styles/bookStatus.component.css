@@ -1,0 +1,9 @@
+.active-component {
+    color: var(--success-color) !important;
+    font-weight: var(--font-weight-h3);
+}
+
+.inactive-component {
+    color: var(--failed-color) !important;
+    font-weight: var(--font-weight-h3);
+}

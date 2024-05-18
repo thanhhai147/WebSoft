@@ -1,9 +1,18 @@
-import React, { lazy, useContext, useEffect, useState } from "react";
+import React, {
+  lazy,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Form } from "antd";
 import ModalContext from "../contexts/modal.context";
 import EditButton from "../components/common/editButton.component";
-import { TITLE, MESSAGE } from '../messages/main.message'
+import { TITLE, MESSAGE } from "../messages/main.message";
 import { NotificationComponent } from "../components/common/notification.component";
+import CreateAuthorForm from "../components/book-management/CreateAuthorForm.component";
+import BaseAPIInstance from "../api/base.api";
+import UpdateAuthorForm from "../components/book-management/UpdateAuthorForm.component";
 
 const PageTitle = lazy(() =>
   import("../components/common/pageTitle.component")
@@ -18,15 +27,12 @@ const ModalCreateBook = lazy(() =>
 const ModalEditBook = lazy(() =>
   import("../components/book-management/modalEditBook.component")
 );
-const BookAuthorForm = lazy(() =>
-  import("../components/book-management/bookAuthor.component")
-);
 
 const columns = [
   {
     title: "Tác giả",
-    dataIndex: "bookAuthor",
-    key: "bookAuthor",
+    dataIndex: "authorName",
+    key: "authorName",
   },
   {
     title: "Chỉnh sửa",
@@ -35,27 +41,8 @@ const columns = [
   },
 ];
 
-// TODO: convert to state management to fetch data from server
-const data = [
-  {
-    key: "1",
-    bookAuthor: "F. Scott Fitzgerald",
-  },
-  {
-    key: "2",
-    bookAuthor: "George Orwell",
-  },
-  {
-    key: "3",
-    bookAuthor: "Jane Austen",
-  },
-  {
-    key: "4",
-    bookAuthor: "Harper Lee",
-  },
-];
-
 export default function BookAuthorPage() {
+  const [authors, setAuthors] = useState([]);
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
   const {
@@ -64,27 +51,136 @@ export default function BookAuthorPage() {
     showModal,
     closeModal,
     selectedRecord,
+    isDelete,
+    setIsDelete,
+    checkedRows,
+    setCheckedRows,
   } = useContext(ModalContext);
 
+  // fetch all authors
   useEffect(() => {
-    form.setFieldsValue(selectedRecord);
-  }, [form, selectedRecord]);
+    const fetchData = async () => {
+      try {
+        const response = await BaseAPIInstance.get("/author");
+
+        // Add key property to each element in the array
+        const data = response
+          ? response.data.map((item) => ({
+              authorName: item.name,
+              key: item.id,
+            }))
+          : [];
+
+        setAuthors(data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // handle delete authors
+  const handleDeleteAuthor = useCallback(async (authorIdList) => {
+    if (authorIdList.length === 0) {
+      NotificationComponent(
+        "warning",
+        TITLE.WARNING,
+        MESSAGE.NO_RECORD_SELECTED
+      );
+      return;
+    }
+
+    try {
+      const response = await Promise.all(
+        authorIdList.map((id) => BaseAPIInstance.delete(`/author/${id}/delete`))
+      );
+
+      if (response) {
+        NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
+      }
+
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting book types: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isDelete) {
+      const authorIdList = checkedRows.map((row) => row.key);
+      handleDeleteAuthor(authorIdList);
+      setIsDelete(false);
+      setCheckedRows([]);
+    }
+  }, [checkedRows, handleDeleteAuthor, isDelete, setCheckedRows, setIsDelete]);
+
+  const handleCreateAuthor = async (values) => {
+    try {
+      const response = await BaseAPIInstance.post("/author/new", values);
+
+      const newBookType = {
+        ...response.data,
+        key: authors.length + 1,
+      };
+
+      setAuthors([...authors, newBookType]);
+    } catch (error) {
+      console.error("Error creating book type: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  };
+
+  const handleEditAuthor = async (values) => {
+    try {
+      const response = await BaseAPIInstance.put(
+        `/author/${selectedRecord.key}/edit`,
+        values
+      );
+
+      const updatedAuthor = {
+        ...response.data,
+      };
+
+      const updatedData = authors.map((item) =>
+        item.key === selectedRecord.key
+          ? {
+              ...item,
+              authorName: updatedAuthor.authorName,
+            }
+          : item
+      );
+
+      setAuthors(updatedData);
+    } catch (error) {
+      console.error("Error editing book type: ", error);
+      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+    }
+  };
 
   const handleOk = (variant) => {
     form
       .validateFields()
       .then(() => {
         const values = form.getFieldsValue();
-        console.log("🚀 ~ .then ~ values:", values);
-        // TODO: send form values to server
+        if (variant === "create") {
+          handleCreateAuthor(values);
+        } else {
+          handleEditAuthor(values);
+        }
 
         form.resetFields();
-        NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
+        NotificationComponent(
+          "success",
+          TITLE.SUCCESS,
+          variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS
+        );
         closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
-        NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
+        NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
       });
   };
 
@@ -94,17 +190,13 @@ export default function BookAuthorPage() {
   };
 
   const search = (value) => {
-    const filteredData = data.filter((o) =>
+    const filteredData = authors.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
     );
 
     setFilterTable(filteredData);
-  };
-
-  const onChange = (pagination, filters, sorter, extra) => {
-    console.log("params", pagination, filters, sorter, extra);
   };
 
   return (
@@ -118,25 +210,30 @@ export default function BookAuthorPage() {
       />
       <Table
         columns={columns}
-        data={filterTable == null ? data : filterTable}
-        onChange={onChange}
+        data={filterTable == null ? authors : filterTable}
         sticky={true}
       />
 
       <ModalCreateBook
+        variant={"bookAuthor"}
         open={isModalCreateOpen}
         onOk={() => handleOk("create")}
         onCancel={() => handleCancel("create")}
       >
-        <BookAuthorForm variant="create" form={form} />
+        <CreateAuthorForm variant="create" form={form} />
       </ModalCreateBook>
 
       <ModalEditBook
+        variant={"bookAuthor"}
         open={isModalEditOpen}
         onOk={() => handleOk("edit")}
         onCancel={() => handleCancel("edit")}
       >
-        <BookAuthorForm variant="update" form={form} record={selectedRecord} />
+        <UpdateAuthorForm
+          variant="update"
+          form={form}
+          record={selectedRecord}
+        />
       </ModalEditBook>
     </div>
   );

@@ -277,7 +277,7 @@ class AddBookViewAPI(GenericAPIView):
     
     def post(self, request):
         bookData = BookSerializer(data=request.data)
-
+        
         if not bookData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
@@ -287,6 +287,7 @@ class AddBookViewAPI(GenericAPIView):
         bookName = bookData.validated_data['bookName']
         bookTypeId = bookData.validated_data['bookTypeId']
         authorId = bookData.validated_data['authorId']
+        active = bookData.validated_data['active']
         
         if (bookName is None):
             return Response({
@@ -322,7 +323,7 @@ class AddBookViewAPI(GenericAPIView):
                 "message": BookMessage.MSG3010
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        Book(BookName = bookName, BookTypeId = bookType, AuthorId = author).save()
+        Book(BookName = bookName, BookTypeId = bookType, AuthorId = author, Active = active).save()
 
         return Response({
                 "success": True,

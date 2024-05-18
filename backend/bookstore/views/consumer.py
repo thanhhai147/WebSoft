@@ -2,12 +2,15 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.forms.models import model_to_dict
+from django.db.models import Q
 from ..serializers.consumer import ConsumerSerializer
+from ..serializers.storage import DateTimeSerializer
 from ..messages.consumer import ConsumerMessage
 from ..models.consumer import Consumer
 from ..models.parameter import Parameter
 from ..models.payment import Payment
 from ..models.order import Order
+import copy
 
 class CreateConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
@@ -281,3 +284,197 @@ class DeleteConsumerAPIView(GenericAPIView):
                     "message": ConsumerMessage.MSG0004,
                 },status=status.HTTP_404_NOT_FOUND
             )
+        
+
+class GetMonthDebtReportAPIView(GenericAPIView):
+    serializer_class =  DateTimeSerializer
+    def post(seft, request):
+
+        dateData = DateTimeSerializer(data=request.data)
+        if not dateData.is_valid(raise_exception=True):
+            return Response({
+                "success": False,
+                "message": ConsumerMessage.MSG0003
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+        startDate = dateData.validated_data['startDate']
+        endDate = dateData.validated_data['endDate']
+
+        order_start = Order.objects.filter(
+            Q(Created__date__lte=startDate)
+        )
+        order_end = Order.objects.filter(
+            Q(Created__date__gt=startDate) & Q(Created__date__lte=endDate)
+        )
+        payment_start = Payment.objects.filter(
+            Q(Created__date__lte=startDate)
+        )
+        payment_end = Payment.objects.filter(
+            Q(Created__date__gt=startDate) & Q(Created__date__lte=endDate)
+        )
+        
+        # All Order Record from begin to the start date
+        orderStartData = {}
+        for iter, order in enumerate(order_start):
+            orderStartData[f"{iter+1}"] = model_to_dict(order)
+        
+        debtStart = {}
+        for iter, order in enumerate(order_start):
+            orderDict = model_to_dict(order)
+            consumerId = orderDict["ConsumerId"]
+            debt = orderDict["RemainingValue"]
+            created = orderDict["Created"]
+        
+            try:
+                consumer = Consumer.objects.get(pk=consumerId)
+            except Consumer.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG0004
+                    }, status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if consumerId in debtStart:
+                debtStart[consumerId]["Debt"] += debt
+            else:
+                debtStart[consumerId] = {
+                    "ConsumerName": consumer.Name,
+                    "Debt": debt,
+                    "Created": created
+                }
+        
+         # All Payment Record from begin to the start date
+        paymentStartData = {}
+        for iter, payment in enumerate(payment_start):
+            paymentStartData[f"{iter+1}"] = model_to_dict(payment)
+
+        for iter, payment in enumerate(payment_start):
+            paymentDict = model_to_dict(payment)
+            consumerId = paymentDict["ConsumerId"]
+            debt = paymentDict["Value"]
+            created = paymentDict["Created"]
+
+            try:
+                consumer = Consumer.objects.get(pk=consumerId)
+            except Consumer.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG0004
+                    }, status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if consumerId in debtStart:
+                debtStart[consumerId]["Debt"] -= debt
+            else:
+                debtStart[consumerId] = {
+                    "ConsumerName": consumer.Name,
+                    "Debt": debt,
+                    "Created": created
+                }
+            
+        # All Order Record from start to the end date
+        orderEndData = {}
+        for iter, order in enumerate(order_end):
+            orderEndData[f"{iter+1}"] = model_to_dict(order)
+        
+        debtOrderNow ={}
+        for iter, order in enumerate(order_end):
+            orderDict = model_to_dict(order)
+            consumerId = orderDict["ConsumerId"]
+            debt = orderDict["RemainingValue"]
+            created = orderDict["Created"]
+        
+            try:
+                consumer = Consumer.objects.get(pk=consumerId)
+            except Consumer.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG0004
+                    }, status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if consumerId in debtOrderNow:
+                debtOrderNow[consumerId]["Debt"] += debt
+            else:
+                debtOrderNow[consumerId] = {
+                    "ConsumerName": consumer.Name,
+                    "Debt": debt,
+                    "Created": created
+                }
+
+        # All Payment Record from start to the end date
+        paymentEndData = {}
+        for iter, payment in enumerate(payment_end):
+            paymentEndData[f"{iter+1}"] = model_to_dict(payment)
+
+        debtPaymentNow = {}
+        for iter, payment in enumerate(payment_end):
+            paymentDict = model_to_dict(payment)
+            consumerId = paymentDict["ConsumerId"]
+            debt = paymentDict["Value"]
+            created = paymentDict["Created"]
+
+            try:
+                consumer = Consumer.objects.get(pk=consumerId)
+            except Consumer.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG0004
+                    }, status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if consumerId in debtPaymentNow:
+                debtPaymentNow[consumerId]["Debt"] -= debt
+            else:
+                debtPaymentNow[consumerId] = {
+                    "ConsumerName": consumer.Name,
+                    "Debt": -debt,
+                    "Created": created
+                }
+
+        # Total debt difference between the begin-start and start-end book storage
+        debtEnd = copy.deepcopy(debtStart)
+        
+        for consumerId, orderData in debtOrderNow.items():
+            if consumerId in debtEnd:
+                debtEnd[consumerId]["Debt"] += orderData["Debt"]
+            else:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG2003
+                    }
+                )
+
+        for consumerId, paymentData in debtPaymentNow.items():
+            if consumerId in debtEnd:
+                debtEnd[consumerId]["Debt"] += paymentData["Debt"]
+            else:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG2003
+                    }
+                )
+
+        data = {
+            "Start": startDate,
+            "End": endDate,
+            "DebtStart": debtStart,
+            "OrderNow": debtOrderNow,
+            "PaymentNow": debtPaymentNow,
+            "DebtEnd": debtEnd
+
+        }
+        return Response({
+                "success": True,
+                "message": ConsumerMessage.MSG0001,
+                "data": data
+            }, status=status.HTTP_200_OK)
+
+        
+        

@@ -1,0 +1,5 @@
+.ant-spin-fullscreen-show {
+    opacity: 1;
+    visibility: visible;
+    background-color: var(--light-theme-color) !important;
+}

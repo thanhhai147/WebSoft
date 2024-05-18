@@ -1,11 +1,13 @@
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.forms.models import model_to_dict
 from ..serializers.consumer import ConsumerSerializer
 from ..messages.consumer import ConsumerMessage
 from ..models.consumer import Consumer
 from ..models.parameter import Parameter
+from ..models.payment import Payment
+from ..models.order import Order
 
 class CreateConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
@@ -83,18 +85,22 @@ class CreateConsumerAPIView(GenericAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        Consumer(
+        consumer_instance = Consumer(
             Name= consumer_name,
             Address = address,
             Phone = phone,
             Email = email
-            ).save()
+            )
+        consumer_instance.save()
         
         return Response(
             {
                 "success": True,
                 "message": ConsumerMessage.MSG0001,
-                "data": consumer_data.data
+                "data": {
+                            "ConsumerId": consumer_instance.ConsumerId,
+                            **consumer_data.validated_data
+                        }
             },
             status=status.HTTP_200_OK
         )
@@ -104,12 +110,14 @@ class GetAllConsumerDetailAPIView(GenericAPIView):
     def get(self, request):
         try:
             consumers = Consumer.objects.all()
-            consumer_data = ConsumerSerializer(consumers, many=True)
+            consumer_data = {}
+            for consumer in consumers:
+                consumer_data[consumer.ConsumerId] = model_to_dict(consumer)
             return Response(
                 {
                     "success": True,
                     "message": ConsumerMessage.MSG0001,
-                    "data": consumer_data.data
+                    "data": consumer_data
                 },
                 status=status.HTTP_200_OK
                 )
@@ -124,12 +132,11 @@ class GetConsumerDetailAPIView(GenericAPIView):
     def get(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
-            consumer_data = ConsumerSerializer(consumer)
             return Response(
                 {
                     "success": True,
                     "message": ConsumerMessage.MSG0001,
-                    "data": consumer_data.data
+                    "data": model_to_dict(consumer)
                 },
                 status=status.HTTP_200_OK
             )
@@ -145,13 +152,13 @@ class UpdateConsumerAPIView(GenericAPIView):
     def put(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
-            consumer_data = ConsumerSerializer(consumer, data=request.data, partial=True)
+            consumer_data = ConsumerSerializer(data=request.data, partial=True)
             if not consumer_data.is_valid(raise_exception=True):
                 return Response({
                 "success": False,
                 "message": ConsumerMessage.MSG0003
                 }, status=status.HTTP_400_BAD_REQUEST)
-            
+
             consumer_name = consumer_data.data['Name']
             address = consumer_data.data['Address']
             phone = consumer_data.data['Phone']
@@ -166,7 +173,7 @@ class UpdateConsumerAPIView(GenericAPIView):
             maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
 
         # Checking if the consumer already exists
-            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or consumer_name.isalnum():
+            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value):
                 return Response(
                     {
                         "success": False,
@@ -221,19 +228,25 @@ class UpdateConsumerAPIView(GenericAPIView):
             consumer.Phone = phone
             consumer.Email = email
             consumer.save()
-
+            
             return Response(
                 {
                     "success": True,
                     "message": ConsumerMessage.MSG0001,
-                    "data": consumer_data.data
+                    "data": { 
+                            "consumerID": consumer.pk,
+                            **consumer_data.data
+                            }
                 },
                 status=status.HTTP_200_OK
             )
         
         except Consumer.DoesNotExist:
             return Response(
-                {"message": ConsumerMessage.MSG0004},
+                {
+                    "success": False,
+                    "message": ConsumerMessage.MSG0004
+                },
                 status=status.HTTP_404_NOT_FOUND
             )
 
@@ -243,10 +256,28 @@ class DeleteConsumerAPIView(GenericAPIView):
     def delete(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
+            payment = Payment.objects.filter(ConsumerId = pk).exists()
+            order = Order.objects.filter(ConsumerId = pk).exists()
+            if payment or order:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG1007,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             consumer.delete()
-            return Response(status=status.HTTP_200_OK)
+
+            return Response(
+                {
+                    "success": True,
+                    "message": ConsumerMessage.MSG0001,
+                },status=status.HTTP_200_OK)
         except Consumer.DoesNotExist:
             return Response(
-                {"message": ConsumerMessage.MSG0004},
-                status=status.HTTP_404_NOT_FOUND
+                {
+                    "success": False,
+                    "message": ConsumerMessage.MSG0004,
+                },status=status.HTTP_404_NOT_FOUND
             )

@@ -1,0 +1,9 @@
+.ant-notification-notice-message, .ant-notification-success-message, .ant-notification-failed-message, .ant-notification-info-message {
+    font-size: var(--font-size-h3) !important;
+    font-weight: var(--font-weight-h3) !important;
+}
+
+.ant-notification-notice-description, .ant-notification-success-description, .ant-notification-failed-description, .ant-notification-info-description {
+    font-size: var(--font-size-p) !important;
+    font-weight: var(--font-weight-p) !important;
+}

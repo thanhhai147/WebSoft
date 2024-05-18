@@ -1,91 +1,84 @@
-import React from 'react';
-import { Button, Form, Input } from 'antd';
+import React, { lazy } from 'react';
+import { Form, Input } from 'antd';
 import LoginAPI from  "../api/login.api";
 import TokenUtil from '../helpers/token.utils';
+import { NotificationComponent } from '../components/common/notification.component';
+import { TITLE, MESSAGE } from '../messages/main.message'
 import "./styles/login.page.css";
 
+const Button = lazy(() => import("../components/common/button.component"))
 
 export default function Login () {
 
     const onFinish = async (values) => {
         try {
-            console.log(values.username)
             let response = await LoginAPI.handleLogin({
                 "username": values.username,
                 "password": values.password
             })
+
             if(response.success) {
                 TokenUtil.saveToken(response.data.token)
                 TokenUtil.saveUsername(response.data.account)
-                window.location.replace("/book")
+
+                NotificationComponent('success', TITLE.SUCCESS, MESSAGE.SIGN_IN_SUCCESS)
+
+                window.location.assign("/book")
             }
         } catch (err) {
             console.log(err)
+            NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
         }
     };
 
     const onFinishFailed = (errorInfo) => {
         console.log('Failed:', errorInfo);
+        NotificationComponent('warning', TITLE.WARNING, MESSAGE.HAS_AN_ERROR)
     };    
 
     return (
         <>
-            <div className={"container-fluid full-screen"}>
-                <div className={"row align-items-center justify-content-center"}>
-                    <h4>Đăng Nhập</h4>
+            <div className={"container-fluid full-screen d-flex justify-content-center align-items-center"}>
+                <div id='login-form' className={"row d-flex flex-column align-items-center justify-content-center p-5"}>
+                    <h1 className='mb-5'>Đăng Nhập</h1>
                     <Form
                         name="basic"
-                        labelCol={{
-                            span: 8,
-                        }}
-                        wrapperCol={{
-                            span: 16,
-                        }}
-                        style={{
-                            maxWidth: 600,
-                        }}
-                        initialValues={{
-                            remember: true,
-                        }}
+                        layout='vertical'
                         onFinish={onFinish}
                         onFinishFailed={onFinishFailed}
                         autoComplete="off"
+                        requiredMark={false}
+                        scrollToFirstError={true}
                     >
                         <Form.Item
-                            label="Tên đăng nhập"
+                            label={<span>Tài khoản</span>}
                             name="username"
                             rules={[
                                 {
-                                required: true,
-                                message: 'Please input your username!',
+                                    required: true,
+                                    message: 'Vui lòng nhập tên tài khoản!',
                                 },
                             ]}
                         >
-                            <Input/>
+                            <Input id='username-input' placeholder='Nhập tên tài khoản'/>
                         </Form.Item>
-
+                        
                         <Form.Item
-                            label="Mật khẩu"
+                            label={<span >Mật khẩu</span>}
                             name="password"
                             rules={[
                                 {
-                                required: true,
-                                message: 'Please input your password!',
+                                    required: true,
+                                    message: 'Vui lòng nhập mật khẩu!',
                                 },
                             ]}
                         >
-                            <Input.Password/>
+                            <Input.Password placeholder='Nhập mật khẩu'/>
                         </Form.Item>
-
+                
                         <Form.Item
-                            wrapperCol={{
-                                offset: 8,
-                                span: 16,
-                            }}
                         >
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
+                            <Button buttonCase="login" id='login-btn' htmlType="submit" block />
                         </Form.Item>
                     </Form>
                 </div>

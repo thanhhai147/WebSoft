@@ -1,5 +1,7 @@
 import axios from "axios";
 import TokenUtil from "../helpers/token.utils";
+import { NotificationComponent } from '../components/common/notification.component'
+import { TITLE, MESSAGE } from '../messages/main.message'
 
 const BASE_API_URL = process.env.REACT_APP_API_ENDPOINT
 
@@ -10,28 +12,34 @@ class BaseAPI {
     }
 
     queryParams(params) {
+        if(params === null || params === undefined) return
         return Object.keys(params)
                 .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
                 .join("&")
     }
 
     handleResponse(res) {
-        if(res.data.success === false) {
+        if(res?.data?.success === false) {
             // error notification
-            console.log(res.data.message)
+            NotificationComponent("error", TITLE.WARNING, res?.data?.message, 1)
         }
-        return res.data
+        return res?.data
     }
 
     handleError(err) {
         if(!err) return
         // error notification
-        console.log(err.data.message)
+        if (err?.response && typeof(err?.response?.data?.message) == "string") {
+            NotificationComponent("error", TITLE.ERROR, err?.response?.data?.message?.toString(), 1)
+        } else {
+            NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR, 1)
+        }
         // handle token authorization error
-        if(err.status === 401 || err.status === 403) {
+        if(err?.response?.status === 401 || err?.response?.status === 403) {
             // reset authorization token
             TokenUtil.saveToken("")
-            window.location.replace("/")
+            TokenUtil.saveUsername("")
+            window.location.assign("/")
         }
     }
 

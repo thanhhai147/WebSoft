@@ -1,0 +1,13 @@
+.table-container {
+    background-color: var(--foreground-color);
+    border-radius: var(--border-radius-default);
+}
+
+.ant-table-header th {
+    font-size: var(--font-size-p);
+    color: var(--theme-color) !important
+}
+.ant-table-body td {
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
+}

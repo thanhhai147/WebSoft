@@ -1,0 +1,10 @@
+.search-input input {
+    height: 30px;
+    border-radius: var(--border-radius-default) !important;
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
+}
+
+.search-input {
+    width: 100%;
+}

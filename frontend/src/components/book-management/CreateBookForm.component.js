@@ -101,6 +101,12 @@ export default function CreateBookForm({ form }) {
           defaultValue={null}
         />
       </Form.Item>
+      <Form.Item label="Tình trạng" name="active">
+        <Select placeholder="Chọn tình trạng sách">
+          <Select.Option value={true}>Khả dụng</Select.Option>
+          <Select.Option value={false}>Không khả dụng</Select.Option>
+        </Select>
+      </Form.Item>
     </Form>
   );
 }

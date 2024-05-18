@@ -149,19 +149,14 @@ export default function BookPage() {
       return;
     }
 
-    try {
-      const response = await Promise.all([
-        bookIdList.map((id) => BaseAPIInstance.delete(`/book/${id}/delete`)),
-      ]);
+    const response = await Promise.all([
+      bookIdList.map((id) => BaseAPIInstance.delete(`/book/${id}/delete`)),
+    ]);
+    if (response) {
+      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
 
-      if (response) {
-        NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
-      }
-
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting books: ", error);
-      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+      fetchBooks();
+      form.resetFields();
     }
   }, []);
 
@@ -176,21 +171,16 @@ export default function BookPage() {
   const handleCreateBook = async (values) => {
     const response = await BaseAPIInstance.post("/book/new", {
       ...values,
-      active: false,
+      // active: false,
     });
 
     if(response?.success) {
-      NotificationComponent( "success", TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS)
-      const createdBook = {
-        ...response.data,
-        key: books.length + 1,
-      };
-  
-      setBooks((prevBooks) => [...prevBooks, createdBook]);
+      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS)
+
+      fetchBooks()
 
       form.resetFields();
       closeModal("create");
-      // window.location.reload()
     }
   };
 
@@ -208,26 +198,18 @@ export default function BookPage() {
       active: values.active,
     };
 
-    try {
-      const response = await BaseAPIInstance.put(
-        `/book/${selectedRecord.id}/edit`,
-        bookUpdate
-      );
-      const updatedBook = response.data;
+    const response = await BaseAPIInstance.put(
+      `/book/${selectedRecord.id}/edit`,
+      bookUpdate
+    )
 
-      setBooks((prevBooks) =>
-        prevBooks.map((book) =>
-          book.id === updatedBook.id ? updatedBook : book
-        )
-      );
+    if (response?.success) {
+      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.EDIT_SUCCESS)
 
       form.resetFields();
       closeModal("edit");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error updating book: ", error);
 
-      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+      fetchBooks()
     }
   };
 
@@ -242,9 +224,6 @@ export default function BookPage() {
         } else {
           handleEditBook(values);
         }
-
-        // form.resetFields();
-        // closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);

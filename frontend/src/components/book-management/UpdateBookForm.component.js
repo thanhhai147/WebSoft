@@ -87,10 +87,10 @@ export default function UpdateBookForm({ form, record }) {
           options={authors}
         />
       </Form.Item>
-      <Form.Item label="Active" name="active">
+      <Form.Item label="Tình trạng" name="active">
         <Select>
-          <Select.Option value={true}>Active</Select.Option>
-          <Select.Option value={false}>Inactive</Select.Option>
+          <Select.Option value={true}>Khả dụng</Select.Option>
+          <Select.Option value={false}>Không khả dụng</Select.Option>
         </Select>
       </Form.Item>
     </Form>

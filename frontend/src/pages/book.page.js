@@ -30,6 +30,10 @@ const ModalEditBook = lazy(() =>
   import("../components/book-management/modalEditBook.component")
 );
 
+const BookStatusComponent = lazy(() => 
+  import("../components/common/bookStatus.component")
+);
+
 const columns = [
   {
     title: "Tên sách",
@@ -51,6 +55,12 @@ const columns = [
     dataIndex: "quantity",
     key: "quantity",
     sorter: (a, b) => a.quantity - b.quantity,
+  },
+  {
+    title: "Tình trạng",
+    dataIndex: "active",
+    key: "active",
+    render: (text, record, index) => text ? <BookStatusComponent variant={'active'} /> : <BookStatusComponent variant={'inactive'}/>
   },
   {
     title: "Chỉnh sửa",
@@ -164,26 +174,23 @@ export default function BookPage() {
   }, [checkedRows, handleDeleteBooks, isDelete, setIsDelete]);
 
   const handleCreateBook = async (values) => {
-    try {
-      const response = await BaseAPIInstance.post("/book/new", {
-        ...values,
-        active: false,
-      });
+    const response = await BaseAPIInstance.post("/book/new", {
+      ...values,
+      active: false,
+    });
+
+    if(response?.success) {
+      NotificationComponent( "success", TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS)
       const createdBook = {
         ...response.data,
         key: books.length + 1,
       };
-
+  
       setBooks((prevBooks) => [...prevBooks, createdBook]);
 
       form.resetFields();
       closeModal("create");
-
-      window.location.reload();
-    } catch (error) {
-      console.error("Error creating book: ", error);
-
-      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+      // window.location.reload()
     }
   };
 
@@ -236,17 +243,12 @@ export default function BookPage() {
           handleEditBook(values);
         }
 
-        form.resetFields();
-        NotificationComponent(
-          "success",
-          TITLE.SUCCESS,
-          variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS
-        );
-        closeModal(variant);
+        // form.resetFields();
+        // closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
-        NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+        NotificationComponent("error", TITLE.WARNING, MESSAGE.HAS_AN_ERROR);
       });
   };
 

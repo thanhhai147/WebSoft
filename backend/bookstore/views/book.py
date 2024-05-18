@@ -277,7 +277,7 @@ class AddBookViewAPI(GenericAPIView):
     
     def post(self, request):
         bookData = BookSerializer(data=request.data)
-
+        
         if not bookData.is_valid(raise_exception=True):
             return Response({
                 "success": False,
@@ -665,7 +665,8 @@ class DeleteBookViewAPI(GenericAPIView):
             )  
 
         queryset.Active = False
-            
+        queryset.save()
+        
         return Response({
                 "success": True,
                 "message": BookMessage.MSG3007,

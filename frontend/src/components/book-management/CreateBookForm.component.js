@@ -43,7 +43,7 @@ export default function CreateBookForm({ form }) {
   }, []);
 
   return (
-    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
+    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed} initialValues={null}>
       <Form.Item
         label="Tên sách"
         name="bookName"
@@ -60,12 +60,7 @@ export default function CreateBookForm({ form }) {
       <Form.Item
         label="Thể loại"
         name="bookTypeId"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập thể loại",
-          },
-        ]}
+        initialValue={null}
       >
         <Select
           style={{ width: "100%" }}
@@ -81,17 +76,13 @@ export default function CreateBookForm({ form }) {
               .localeCompare((optionB?.label ?? "").toLowerCase())
           }
           options={bookTypes}
+          defaultValue={null}
         />
       </Form.Item>
       <Form.Item
         label="Tác giả"
         name="authorId"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập tác giả",
-          },
-        ]}
+        initialValue={null}
       >
         <Select
           style={{ width: "100%" }}
@@ -107,6 +98,7 @@ export default function CreateBookForm({ form }) {
               .localeCompare((optionB?.label ?? "").toLowerCase())
           }
           options={authors}
+          defaultValue={null}
         />
       </Form.Item>
     </Form>

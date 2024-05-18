@@ -6,6 +6,8 @@ from ..serializers.consumer import ConsumerSerializer
 from ..messages.consumer import ConsumerMessage
 from ..models.consumer import Consumer
 from ..models.parameter import Parameter
+from ..models.payment import Payment
+from ..models.order import Order
 
 class CreateConsumerAPIView(GenericAPIView):
     serializer_class = ConsumerSerializer
@@ -254,7 +256,19 @@ class DeleteConsumerAPIView(GenericAPIView):
     def delete(self, request, pk):
         try:
             consumer = Consumer.objects.get(pk=pk)
+            payment = Payment.objects.filter(ConsumerId = pk).exists()
+            order = Order.objects.filter(ConsumerId = pk).exists()
+            if payment or order:
+                return Response(
+                    {
+                        "success": False,
+                        "message": ConsumerMessage.MSG1007,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             consumer.delete()
+
             return Response(
                 {
                     "success": True,

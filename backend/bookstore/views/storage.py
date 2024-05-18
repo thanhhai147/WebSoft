@@ -3,7 +3,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from django.forms.models import model_to_dict
 from ..serializers.storage import BookStorageSerializer, DateTimeSerializer
-from ..models import Storage, BookStorage, Book, Parameter
+from ..models import Storage, BookStorage, Book, Parameter, BookOrder
 from django.db.models import Q
 import copy
 
@@ -215,6 +215,9 @@ class GetMonthReportViewAPI(GenericAPIView):
         queryset_end = BookStorage.objects.filter(
             Q(Created__date__gt=startDate) & Q(Created__date__lte=endDate)
         )
+        queryset_order = BookOrder.objects.filter(
+            Q(Created__date__gt=startDate) & Q(Created__date__lte=endDate)
+        )
         
         # All Book Storage Record from begin to the start date
         bookStorageStartData = {}
@@ -301,13 +304,55 @@ class GetMonthReportViewAPI(GenericAPIView):
                     'Quantity': quantity,
                     'Created': created,
                 }
+
+        # Book order from the start to the end date
+        bookOrderData = {}
+        for iter, bookOrder in enumerate(queryset_order):
+            bookOrderData[f"{iter+1}"] = model_to_dict(bookOrder)
         
+        bookOrderNow = {}
+        for iter, bookOrder in enumerate(queryset_order):
+            bookOrderDict = model_to_dict(bookOrder)
+            bookId = bookOrderDict['BookId']
+            quantity = bookOrderDict['Quantity']
+            created = bookOrderDict['Created']
+            try:
+                book = Book.objects.get(pk=bookId)
+            except Book.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": StorageMessage.MSG2003 + str(bookId)
+                    }
+                )
+            if bookId in bookOrderNow:
+                bookOrderNow[bookId]["Quantity"] -= quantity
+            else:
+                bookOrderNow[bookId] = {
+                    'BookName': book.BookName,
+                    'Quantity': -quantity,
+                    'Created': created
+                }
+
+        # Subtract the number of books sold in bookOrderNow from bookInventory
+        for bookId, orderData in bookOrderNow.items():
+            if bookId in bookInventory:
+                bookInventory[bookId]["Quantity"] += orderData["Quantity"]
+            else:
+                return Response(
+                    {
+                        "success": False,
+                        "message": StorageMessage.MSG2003 + str(bookId)
+                    }
+                )
+
         data = {
             "Start": startDate,
             "End": endDate,
             "A": bookInventoryStart,
             "B": bookInventoryNow,
-            "A+B": bookInventory,
+            "C": bookOrderNow,
+            "A+B+C": bookInventory,
         }
         return Response({
                 "success": True,

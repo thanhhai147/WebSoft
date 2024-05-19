@@ -44,8 +44,8 @@ class BookOrderAdmin(admin.ModelAdmin):
     search_fields = ['OrderId', 'BookId']
 
 class ParameterAdmin(admin.ModelAdmin):
-    list_display = ('ParameterName', 'Value', 'Created')
-    list_filter = ['Created']
+    list_display = ('ParameterName', 'Value', 'Active', 'Created')
+    list_filter = ['Active', 'Created']
     search_fields = ['ParameterName']
 
 class PaymentAdmin(admin.ModelAdmin):

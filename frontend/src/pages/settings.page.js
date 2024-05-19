@@ -67,7 +67,7 @@ export default function SettingPage () {
     if(isDelete) {
       const parameterNameList = checkedRows.map(row => row.ParameterName)
       deleteSetting(parameterNameList).then(response => {
-        if(response) {
+        if(response.every(value => value !== undefined)) {
           NotificationComponent('success', TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS)
           
           getAllSetting()

@@ -37,10 +37,11 @@ const columns = [
     key: "Email"
   },
   {
-    title: "Công nợ",
+    title: "Công nợ (VND)",
     dataIndex: "Debt",
     key: "Debt",
     sorter: (a, b) => a.quantity - b.quantity,
+    render: (text, record, index) => text.toLocaleString()
   },
   {
     title: "Chỉnh sửa",
@@ -77,7 +78,8 @@ export default function ConsumerPage () {
     if(isDelete) {
       const consumerIdList = checkedRows.map(row => row.ConsumerId)
       deleteConsumer(consumerIdList).then(response => {
-        if(response) {
+        
+        if(response.every(value => value !== undefined)) {
           NotificationComponent('success', TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS)
           getAllConsumer()
           .then(consumerData => setConsumerTable(consumerData))

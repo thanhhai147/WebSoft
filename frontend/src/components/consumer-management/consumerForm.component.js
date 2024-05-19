@@ -12,10 +12,10 @@ export default function ConsumerForm({
   const isCreateForm = variant === "create";
   const { isModalCreateOpen, isModalEditOpen } = useContext(ModalContext)
 
-  if (!isCreateForm && isModalCreateOpen) {
-    form.setFieldsValue(record);
+  if (isCreateForm && isModalCreateOpen) {
+    form.resetFields();
   } else {
-    if (isModalEditOpen) form.resetFields();
+    if (isModalEditOpen) form.setFieldsValue(record);
   }
 
   const onFinishFailed = (errorInfo) => {

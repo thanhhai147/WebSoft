@@ -154,7 +154,7 @@ export default function BookPage() {
     const response = await Promise.all([
       bookIdList.map((id) => BaseAPIInstance.delete(`/book/${id}/delete`)),
     ]);
-    if (response) {
+    if (response.every(value => value !== undefined)) {
       NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
 
       fetchBooks();

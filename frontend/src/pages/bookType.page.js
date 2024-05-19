@@ -96,7 +96,7 @@ export default function BookTypePage() {
         ids.map((id) => BaseAPIInstance.delete(`/book-type/${id}/delete`))
       );
 
-      if (response) {
+      if (response.every(value => value !== undefined)) {
         NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
       }
 

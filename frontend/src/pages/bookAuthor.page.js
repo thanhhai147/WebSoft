@@ -96,7 +96,7 @@ export default function BookAuthorPage() {
         authorIdList.map((id) => BaseAPIInstance.delete(`/author/${id}/delete`))
       );
 
-      if (response) {
+      if (response.every(value => value !== undefined)) {
         NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
       }
 

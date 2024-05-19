@@ -30,9 +30,9 @@ class GetSettingViewAPI(GenericAPIView):
         
 class GetSettingWithNameViewAPI(GenericAPIView):
     serializer_class = SettingSerializer
-    def get(self, request, pk):
+    def get(self, request, parameter_name):
         try:
-            paramter = Parameter.objects.get(pk=pk)
+            paramter = Parameter.objects.get(pk=parameter_name)
             return Response(
                 {
                     "success": True,
@@ -49,9 +49,9 @@ class GetSettingWithNameViewAPI(GenericAPIView):
 
 class EditSettingViewAPI(GenericAPIView):
     serializer_class = SettingSerializer
-    def put(self, request, pk):
+    def put(self, request, parameter_name):
         try:
-            parameter = Parameter.objects.get(pk=pk)
+            parameter = Parameter.objects.get(pk=parameter_name)
             parameter_data = SettingSerializer(data=request.data, partial=True)
             if not parameter_data.is_valid(raise_exception=True):
                 return Response({
@@ -89,9 +89,9 @@ class EditSettingViewAPI(GenericAPIView):
 
 class DeleteSettingViewAPI(GenericAPIView):
     serializer_class = SettingSerializer
-    def delete(self, request, pk):
+    def delete(self, request, parameter_name):
         try:
-            parameter = Parameter.objects.get(pk=pk)
+            parameter = Parameter.objects.get(pk=parameter_name)
             
             parameter.Active = False
             parameter.save()

@@ -60,6 +60,7 @@ export default function ConsumerPage () {
     closeModal,
     selectedRecord,
     isDelete,
+    setIsDelete,
     checkedRows
   } = useContext(ModalContext);
 
@@ -82,6 +83,7 @@ export default function ConsumerPage () {
           .then(consumerData => setConsumerTable(consumerData))
         }
       })
+      setIsDelete(false)
     }
   }, [isDelete, checkedRows])
 

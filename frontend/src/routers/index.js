@@ -10,6 +10,7 @@ const BookPage = lazy(() => import("../pages/book.page"));
 const BookType = lazy(() => import("../pages/bookType.page"));
 const BookAuthor = lazy(() => import("../pages/bookAuthor.page"));
 const ConsumerPage = lazy(() => import("../pages/consumer.page"));
+const PaymentPage = lazy(() => import("../pages/payment.page"))
 const SettingPage = lazy(() => import("../pages/settings.page"));
 const NotFoundPage = lazy(() => import("../pages/404.page"));
 
@@ -67,6 +68,7 @@ export default function AppRouter() {
                 <Route path="/book-type" element={<BookType />} />
                 <Route path="/author" element={<BookAuthor />} />
                 <Route path="/consumer" element={<ConsumerPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
                 <Route path="/settings" element={<SettingPage />} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />

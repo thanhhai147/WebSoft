@@ -3,11 +3,12 @@ from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from django.forms.models import model_to_dict
 from ..serializers.storage import BookStorageSerializer, DateTimeSerializer
-from ..models import Storage, BookStorage, Book, Parameter, BookOrder
+from ..models import Storage, BookStorage, Book, Parameter, BookOrder, Author, BookType
 from django.db.models import Q
 import copy
 
 from ..messages.storage import StorageMessage
+from ..messages.book import BookMessage
     
 class GetBookStorageViewAPI(GenericAPIView):
     serializer_class = BookStorageSerializer
@@ -15,10 +16,40 @@ class GetBookStorageViewAPI(GenericAPIView):
     def get(self, request):
         queryset = BookStorage.objects.all()
 
-        bookStorageData = {}
-        for iter, bookStorage in enumerate(queryset):
-            bookStorageData[f"{iter+1}"] = model_to_dict(bookStorage)
-
+        bookStorageData = []
+        for _, bookStorage in enumerate(queryset):
+            try:
+                author = Author.objects.get(pk=bookStorage.BookId.AuthorId.AuthorId) if bookStorage.BookId.AuthorId != None else None
+            except Author.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": BookMessage.MSG2002
+                    }
+                )
+            try:
+                bookType = BookType.objects.get(pk=bookStorage.BookId.BookTypeId.BookTypeId) if bookStorage.BookId.BookTypeId != None else None
+            except BookType.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": BookMessage.MSG1002
+                    }
+                )
+            unitPrice = bookStorage.UnitPrice
+            quantity = bookStorage.Quantity
+            bookStorageData.append({
+                'StorageId': bookStorage.StorageId.StorageId,
+                'BookId': bookStorage.BookId.BookId,
+                'BookName': bookStorage.BookId.BookName,
+                'BookTypeId': bookType.BookTypeId if bookType != None else None,
+                'BookTypeName': bookType.BookTypeName if bookType != None else None,
+                'AuthorId': author.AuthorId if author != None else None,
+                'AuthorName': author.AuthorName if author != None else None,
+                'Created': bookStorage.Created,
+                'unitPrice': unitPrice,
+                'quantity': quantity
+            })
         return Response({
                 "success": True,
                 "message": StorageMessage.MSG1001,
@@ -50,23 +81,51 @@ class GetStorageViewAPI(GenericAPIView):
     def get(self, request):
         queryset = Storage.objects.all()
         
-        storagesData = {}
+        storagesData = []
 
-        for iter, storageData in enumerate(queryset):
+        for _, storageData in enumerate(queryset):
             storages = BookStorage.objects.filter(StorageId=storageData)
-            if(iter == 0):
-                print(storages)
+            
             thisStorageData = []
             for _, storage in enumerate(storages):
-                bookId = storage.BookId_id
+                try:
+                    author = Author.objects.get(pk=storage.BookId.AuthorId.AuthorId) if storage.BookId.AuthorId != None else None
+                except Author.DoesNotExist:
+                    return Response(
+                        {
+                            "success": False,
+                            "message": BookMessage.MSG2002
+                        }
+                    )
+                try:
+                    bookType = BookType.objects.get(pk=storage.BookId.BookTypeId.BookTypeId) if storage.BookId.BookTypeId != None else None
+                except BookType.DoesNotExist:
+                    return Response(
+                        {
+                            "success": False,
+                            "message": BookMessage.MSG1002
+                        }
+                    )
+                bookId = storage.BookId.BookId
                 unitPrice = storage.UnitPrice
                 quantity = storage.Quantity
-                storageData.append({
-                    'bookId': bookId,
+                thisStorageData.append({
+                    'BookId': bookId,
+                    'BookName': storage.BookId.BookName,
+                    'BookTypeId': bookType.BookTypeId if bookType != None else None,
+                    'BookTypeName': bookType.BookTypeName if bookType != None else None,
+                    'AuthorId': author.AuthorId if author != None else None,
+                    'AuthorName': author.AuthorName if author != None else None,
+                    'Created': storage.Created,
                     'unitPrice': unitPrice,
-                    'quantity': quantity
+                    'quantity': quantity,
                 })
-            storagesData[f"{iter+1}"] = thisStorageData
+                
+            storagesData.append({
+                "storageId": storage.StorageId.StorageId,
+                "storageData":thisStorageData,
+            })
+        
         return Response({
                 "success": True,
                 "message": StorageMessage.MSG1001,
@@ -91,13 +150,37 @@ class GetStorageViewWithIdAPI(GenericAPIView):
         storages = BookStorage.objects.filter(StorageId=queryset)
         storageData = []
         for iter, storage in enumerate(storages):
-            bookId = storage.BookId_id
+            try:
+                author = Author.objects.get(pk=storage.BookId.AuthorId.AuthorId) if storage.BookId.AuthorId != None else None
+            except Author.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": BookMessage.MSG2002
+                    }
+                )
+            try:
+                bookType = BookType.objects.get(pk=storage.BookId.BookTypeId.BookTypeId) if storage.BookId.BookTypeId != None else None
+            except BookType.DoesNotExist:
+                return Response(
+                    {
+                        "success": False,
+                        "message": BookMessage.MSG1002
+                    }
+                )
+            bookId = storage.BookId.BookId
             unitPrice = storage.UnitPrice
             quantity = storage.Quantity
             storageData.append({
-                'bookId': bookId,
+                'BookId': bookId,
+                'BookName': storage.BookId.BookName,
+                'BookTypeId': bookType.BookTypeId if bookType != None else None,
+                'BookTypeName': bookType.BookTypeName if bookType != None else None,
+                'AuthorId': author.AuthorId if author != None else None,
+                'AuthorName': author.AuthorName if author != None else None,
+                'Created': storage.Created,
                 'unitPrice': unitPrice,
-                'quantity': quantity
+                'quantity': quantity,
             })
         return Response({
                 "success": True,

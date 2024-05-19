@@ -231,14 +231,14 @@ class AddBookToStorageViewAPI(GenericAPIView):
             minBook = Parameter.objects.filter(ParameterName='MinBook').first()
             maxBook = Parameter.objects.filter(ParameterName='MaxBook').first()
             
-            if quantity < int(minBook.Value):
+            if (quantity < int(minBook.Value) and minBook.Active == True):
                 return Response(
                     {
                         "success": False,
                         "message": StorageMessage.MSG2004
                     }
                 )
-            if book.Quantity >= int(maxBook.Value):
+            if (book.Quantity >= int(maxBook.Value) and maxBook.Active == True):
                 return Response(
                     {
                         "success": False,

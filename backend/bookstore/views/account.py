@@ -90,39 +90,8 @@ class GetAccessFunctionAPIView(GenericAPIView):
 class LogoutAPIView(APIView):
    
     def put(self, request):
-        # try:
-        #     token = request.headers['Authorization']
-        # except:
-        #     return Response(
-        #         {
-        #             "success": False,
-        #             "message": AccountMessage.MSG1005,
-        #         }, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-        
-        # token = Token.objects.filter(Key=token).first()
-
-        # if token is None:
-        #     return Response({
-        #         "success": False,
-        #         "message": AccountMessage.MSG1006,
-        #     }, status=status.HTTP_401_UNAUTHORIZED)
             
         return Response({
             "success": True,
             "message": AccountMessage.MSG1008,
         }, status=status.HTTP_200_OK)
-
-        # token_expire_time = Parameter.objects.filter(ParameterName='TokenExpireTime').first()
-        # if (token.Created + timedelta(hours=token_expire_time.Value)) < timezone.now():
-        #     return Response({
-        #         "success": False,
-        #         "message": AccountMessage.MSG1007,
-        #     }, status=status.HTTP_403_FORBIDDEN)
-        # else:
-        #     token_expire_bonus_time = Parameter.objects.filter(ParameterName="TokenExpireBonusTime").first()
-        #     token.Created -= timedelta(hours=token_expire_bonus_time.Value)
-        #     token.save()
-        #     return Response({
-        #         "success": True,
-        #         "message": AccountMessage.MSG1008,
-        #     }, status=status.HTTP_200_OK)

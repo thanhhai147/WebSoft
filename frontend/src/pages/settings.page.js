@@ -25,6 +25,7 @@ const columns = [
     title: "Giá trị",
     dataIndex: "Value",
     key: "Value",
+    render: (text, record, index) => text.toLocaleString()
   },
   {
     title: "Tình trạng",
@@ -66,11 +67,9 @@ export default function SettingPage () {
     if(isDelete) {
       const parameterNameList = checkedRows.map(row => row.ParameterName)
       deleteSetting(parameterNameList).then(response => {
-        console.log(response)
         if(response) {
-          console.log(response)
           NotificationComponent('success', TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS)
-          console.log("delete success")
+          
           getAllSetting()
           .then(parameterData => setSettingTable(parameterData))
         }

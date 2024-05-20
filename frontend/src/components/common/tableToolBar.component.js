@@ -10,6 +10,7 @@ export default function TableToolBar({
   placeholder,
   onSearch,
   showModal,
+  deleteButton=true,
   ...props
 }) {
   return (
@@ -35,7 +36,7 @@ export default function TableToolBar({
           style={{ marginRight: "1rem" }}
           onClick={() => showModal("create")}
         />
-        <DeleteButton />
+        {deleteButton ? <DeleteButton /> : null}
       </div>
     </div>
   );

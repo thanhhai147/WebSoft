@@ -104,10 +104,10 @@ export default function ConsumerPage () {
           NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
           getAllConsumer()
           .then(consumerData => setConsumerTable(consumerData))
-        }
 
-        form.resetFields();
-        closeModal(variant);
+          form.resetFields();
+          closeModal(variant);
+        }
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);

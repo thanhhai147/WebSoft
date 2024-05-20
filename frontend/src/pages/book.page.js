@@ -56,6 +56,7 @@ const columns = [
     title: "Số lượng tồn kho",
     dataIndex: "quantity",
     key: "quantity",
+    render: (text, record, index) => text.toLocaleString(),
     sorter: (a, b) => a.quantity - b.quantity,
   },
   {

@@ -28,11 +28,11 @@ const columns = [
     key: "ConsumerName",
   },
   {
-    title: "Số tiền thu (VND)",
+    title: "Số tiền thu",
     dataIndex: "Value",
     key: "Value",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text.toLocaleString()
+    render: (text, record, index) => text.toLocaleString() + ' VND'
   }
 ]
 

@@ -37,7 +37,9 @@ class CreateConsumerAPIView(GenericAPIView):
         maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
 
         # Checking if the consumer already exists
-        if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value) or consumer_name.isalnum():
+        if  (not consumer_name or 
+            (len(consumer_name) < int(minConsumerNameLength.Value) and minConsumerNameLength.Active == True) or 
+            (len(consumer_name) > int(maxConsumerNameLength.Value) and maxConsumerNameLength.Active == True)):
             return Response(
                 {
                      "success": False,
@@ -46,7 +48,9 @@ class CreateConsumerAPIView(GenericAPIView):
                   status=status.HTTP_400_BAD_REQUEST
              )
         
-        if not address or len(address) < int(minAddressLength.Value) or len(address) > int(maxAddressLength.Value):
+        if  (not address or
+            (len(address) < int(minAddressLength.Value) and minAddressLength.Active == True) or
+            (len(address) > int(maxAddressLength.Value) and maxAddressLength.Active == True)):
                 return Response(
                     {
                         "success": False,
@@ -55,7 +59,10 @@ class CreateConsumerAPIView(GenericAPIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
         
-        if not phone or len(phone) > int(maxPhoneLength.Value) or len(phone) <  int(minPhoneLength.Value) or not phone.isdigit():
+        if  (not phone or 
+            (len(phone) > int(maxPhoneLength.Value) and maxPhoneLength.Active == True) or 
+            (len(phone) < int(minPhoneLength.Value) and minPhoneLength.Active == True) or 
+            not phone.isdigit()):
                 return Response(
                     {
                         "success": False,
@@ -71,7 +78,7 @@ class CreateConsumerAPIView(GenericAPIView):
                 }, status=status.HTTP_400_BAD_REQUEST)
         
         if email:
-            if len(email) > int(maxEmailLength.Value) or ' ' in email or '@' not in email:
+            if ((len(email) > int(maxEmailLength.Value) and maxEmailLength.Active == True) or ' ' in email or '@' not in email):
                 return Response(
                     {
                         "success": False,
@@ -175,8 +182,10 @@ class UpdateConsumerAPIView(GenericAPIView):
             minPhoneLength = Parameter.objects.filter(ParameterName='minPhoneLength').first()
             maxEmailLength = Parameter.objects.filter(ParameterName='maxEmailLength').first()
 
-        # Checking if the consumer already exists
-            if not consumer_name or len(consumer_name) < int(minConsumerNameLength.Value) or len(consumer_name) > int(maxConsumerNameLength.Value):
+            # Checking if the consumer already exists
+            if  (not consumer_name or 
+                (len(consumer_name) < int(minConsumerNameLength.Value) and minConsumerNameLength.Active == True) or 
+                (len(consumer_name) > int(maxConsumerNameLength.Value) and maxConsumerNameLength.Active == True)):
                 return Response(
                     {
                         "success": False,
@@ -184,32 +193,38 @@ class UpdateConsumerAPIView(GenericAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        
-            if not address or len(address) < int(minAddressLength.Value) or len(address) > int(maxAddressLength.Value):
-                return Response(
-                    {
-                        "success": False,
-                        "message": ConsumerMessage.MSG1002
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             
-            if not phone or len(phone) > int(maxPhoneLength.Value) or len(phone) <  int(minPhoneLength.Value) or not phone.isdigit():
-                return Response(
-                    {
+            if  (not address or
+                (len(address) < int(minAddressLength.Value) and minAddressLength.Active == True) or
+                (len(address) > int(maxAddressLength.Value) and maxAddressLength.Active == True)):
+                    return Response(
+                        {
+                            "success": False,
+                            "message": ConsumerMessage.MSG1002
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            
+            if  (not phone or 
+                (len(phone) > int(maxPhoneLength.Value) and maxPhoneLength.Active == True) or 
+                (len(phone) < int(minPhoneLength.Value) and minPhoneLength.Active == True) or 
+                not phone.isdigit()):
+                    return Response(
+                        {
+                            "success": False,
+                            "message": ConsumerMessage.MSG1003
+                        },
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+            if Consumer.objects.filter(Phone=phone).exists():
+                    return Response({
                         "success": False,
-                        "message": ConsumerMessage.MSG1003
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            if Consumer.objects.filter(Phone=phone).exclude(pk=pk).exists():
-                return Response({
-                    "success": False,
-                    "message": ConsumerMessage.MSG1004
-                }, status=status.HTTP_400_BAD_REQUEST)
+                        "message": ConsumerMessage.MSG1004
+                    }, status=status.HTTP_400_BAD_REQUEST)
             
             if email:
-                if len(email) > int(maxEmailLength.Value) or ' ' in email or '@' not in email:
+                if ((len(email) > int(maxEmailLength.Value) and maxEmailLength.Active == True) or ' ' in email or '@' not in email):
                     return Response(
                         {
                             "success": False,

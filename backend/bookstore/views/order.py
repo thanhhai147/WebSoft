@@ -65,7 +65,7 @@ class createOrderAPIView(GenericAPIView):
                             }, status = status.HTTP_404_NOT_FOUND)
 
             book.Quantity -= quantity
-            if book.Quantity <= int(minQuantity.Value):
+            if (book.Quantity <= int(minQuantity.Value) and minQuantity.Active == True):
                 order_instance.delete()
                 return Response (
                             {       
@@ -74,8 +74,9 @@ class createOrderAPIView(GenericAPIView):
                             }, status = status.HTTP_400_BAD_REQUEST)
             total_value = 0 
 
-            unitSoldPrice = price.UnitPrice * float(percentPrice.Value)
-            total_value += unitSoldPrice * quantity
+            if (percentPrice.Active == True):
+                unitSoldPrice = price.UnitPrice * float(percentPrice.Value)
+                total_value += unitSoldPrice * quantity
             
             BookOrder.objects.create(
                 OrderId=order_instance,
@@ -100,7 +101,7 @@ class createOrderAPIView(GenericAPIView):
         order_instance.RemainingValue = remainingValue
 
         maxDebt = Parameter.objects.filter(ParameterName='maxDebt').first()
-        if consumer.Debt >= float(maxDebt.Value):
+        if (consumer.Debt >= float(maxDebt.Value) and maxDebt.Active == True):
             order_instance.delete() 
             return Response(
                             {       

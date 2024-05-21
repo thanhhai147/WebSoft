@@ -22,9 +22,9 @@ const Table = lazy(() => import("../components/common/table.component"));
 const CreateBookForm = lazy(() =>
   import("../components/book-management/CreateBookForm.component")
 );
-const UpdateBookForm = lazy(() => 
+const UpdateBookForm = lazy(() =>
   import("../components/book-management/UpdateBookForm.component")
-)
+);
 const ModalCreateBook = lazy(() =>
   import("../components/book-management/modalCreateBook.component")
 );
@@ -32,7 +32,7 @@ const ModalEditBook = lazy(() =>
   import("../components/book-management/modalEditBook.component")
 );
 
-const BookStatusComponent = lazy(() => 
+const BookStatusComponent = lazy(() =>
   import("../components/common/bookStatus.component")
 );
 
@@ -62,7 +62,12 @@ const columns = [
     title: "Tình trạng",
     dataIndex: "active",
     key: "active",
-    render: (text, record, index) => text ? <BookStatusComponent variant={'active'} /> : <BookStatusComponent variant={'inactive'}/>
+    render: (text, record, index) =>
+      text ? (
+        <BookStatusComponent variant={"active"} />
+      ) : (
+        <BookStatusComponent variant={"inactive"} />
+      ),
   },
   {
     title: "Chỉnh sửa",
@@ -141,26 +146,29 @@ export default function BookPage() {
   }, []);
 
   // handle delete books
-  const handleDeleteBooks = useCallback(async (bookIdList) => {
-    if (bookIdList.length === 0) {
-      NotificationComponent(
-        "warning",
-        TITLE.WARNING,
-        MESSAGE.NO_RECORD_SELECTED
-      );
-      return;
-    }
+  const handleDeleteBooks = useCallback(
+    async (bookIdList) => {
+      if (bookIdList.length === 0) {
+        NotificationComponent(
+          "warning",
+          TITLE.WARNING,
+          MESSAGE.NO_RECORD_SELECTED
+        );
+        return;
+      }
 
-    const response = await Promise.all([
-      bookIdList.map((id) => BaseAPIInstance.delete(`/book/${id}/delete`)),
-    ]);
-    if (response.every(value => value !== undefined)) {
-      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
+      const response = await Promise.all([
+        bookIdList.map((id) => BaseAPIInstance.delete(`/book/${id}/delete`)),
+      ]);
+      if (response.every((value) => value !== undefined)) {
+        NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
 
-      fetchBooks();
-      form.resetFields();
-    }
-  }, []);
+        fetchBooks();
+        form.resetFields();
+      }
+    },
+    [fetchBooks, form]
+  );
 
   useEffect(() => {
     if (isDelete) {
@@ -176,10 +184,10 @@ export default function BookPage() {
       // active: false,
     });
 
-    if(response?.success) {
-      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS)
+    if (response?.success) {
+      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS);
 
-      fetchBooks()
+      fetchBooks();
 
       form.resetFields();
       closeModal("create");
@@ -203,15 +211,15 @@ export default function BookPage() {
     const response = await BaseAPIInstance.put(
       `/book/${selectedRecord.id}/edit`,
       bookUpdate
-    )
+    );
 
     if (response?.success) {
-      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.EDIT_SUCCESS)
+      NotificationComponent("success", TITLE.SUCCESS, MESSAGE.EDIT_SUCCESS);
 
       form.resetFields();
       closeModal("edit");
 
-      fetchBooks()
+      fetchBooks();
     }
   };
 

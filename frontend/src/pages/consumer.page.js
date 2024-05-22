@@ -37,11 +37,11 @@ const columns = [
     key: "Email"
   },
   {
-    title: "Công nợ (VND)",
+    title: "Công nợ",
     dataIndex: "Debt",
     key: "Debt",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text.toLocaleString()
+    render: (text, record, index) => text.toLocaleString() + ' VND'
   },
   {
     title: "Chỉnh sửa",
@@ -104,10 +104,10 @@ export default function ConsumerPage () {
           NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
           getAllConsumer()
           .then(consumerData => setConsumerTable(consumerData))
-        }
 
-        form.resetFields();
-        closeModal(variant);
+          form.resetFields();
+          closeModal(variant);
+        }
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);

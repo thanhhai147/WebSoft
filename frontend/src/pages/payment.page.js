@@ -1,4 +1,5 @@
 import React, { lazy, useContext, useEffect, useState } from 'react'
+import PaymentUtil from '../helpers/payment.utils'
 import ConsumerUtil from '../helpers/consumer.utils'
 import { Form } from 'antd'
 import ModalContext from "../contexts/modal.context"
@@ -8,18 +9,18 @@ import { NotificationComponent } from '../components/common/notification.compone
 const PageTitle = lazy(() => import("../components/common/pageTitle.component"))
 const TableToolBar = lazy(() => import("../components/common/tableToolBar.component"))
 const Table = lazy(() => import("../components/common/table.component"))
-const EditButton = lazy(() => import("../components/common/editButton.component"))
-const ConsumerForm = lazy(() => import("../components/consumer-management/consumerForm.component"))
-const ModalCreateConsumer = lazy(() => import("../components/consumer-management/modalCreateConsumer.component"))
-const ModalEditConsumer = lazy(() => import("../components/consumer-management/modalEditConsumer.component"))
+const PaymentForm = lazy(() => import("../components/payment-management/paymentForm.component"))
+const ModalCreatePayment = lazy(() => import("../components/payment-management/modalCreatePayment.component"))
 
-const { getAllConsumer, createConsumer, editConsumer, deleteConsumer } = ConsumerUtil
+const { getAllPayment, createPayment } = PaymentUtil
+const { getConsumerById } = ConsumerUtil
 
 const columns = [
   {
     title: "Ngày thu tiền",
     dataIndex: "Date",
     key: "Date",
+    render: (text, record, index) => new Date(text).toLocaleDateString(['ban', 'id'])
   },
   {
     title: "Tên khách hàng",
@@ -27,32 +28,42 @@ const columns = [
     key: "ConsumerName",
   },
   {
-    title: "Số tiền thu (VND)",
+    title: "Số tiền thu",
     dataIndex: "Value",
     key: "Value",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text.toLocaleString()
-  },
-  {
-    title: "Chỉnh sửa",
-    key: "Edit",  
-    render: (record) => <EditButton record={record} />,
-  },
+    render: (text, record, index) => text.toLocaleString() + ' VND'
+  }
 ]
 
+const getAllPaymentDetail = async () => {
+  let paymentData = await getAllPayment()
+  let uniqueConsumerIdList = [...new Set(paymentData.map(item => item.ConsumerId))]
+  let consumerIdToName = {}
+  const response = await Promise.all(uniqueConsumerIdList.map(consumerId => getConsumerById(consumerId)))
+  if(response.every(value => value !== undefined)) {
+    response.forEach(item => {
+      consumerIdToName[item.ConsumerId] = item.Name
+    })
+
+    paymentData = paymentData.map(item => ({
+      ConsumerName: consumerIdToName[item.ConsumerId],
+      ...item
+    }))
+  }
+  
+  return paymentData
+}
+
 export default function PaymentPage () {
-  const [consumerTable, setConsumerTable] = useState(null)
+  const [paymentTable, setPaymentTable] = useState(null)
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
   const {
     isModalCreateOpen,
-    isModalEditOpen,
     showModal,
     closeModal,
-    selectedRecord,
-    isDelete,
-    setIsDelete,
-    checkedRows
+    selectedRecord
   } = useContext(ModalContext);
 
   useEffect(() => {
@@ -60,44 +71,27 @@ export default function PaymentPage () {
   }, [form, selectedRecord]);
 
   useEffect(() => {
-    getAllConsumer()
-    .then(consumerData => setConsumerTable(consumerData))
+    getAllPaymentDetail()
+    .then(paymentData => setPaymentTable(paymentData))
   }, [])
-
-  useEffect(() => {
-    if(isDelete) {
-      const consumerIdList = checkedRows.map(row => row.ConsumerId)
-      deleteConsumer(consumerIdList).then(response => {
-        
-        if(response.every(value => value !== undefined)) {
-          NotificationComponent('success', TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS)
-          getAllConsumer()
-          .then(consumerData => setConsumerTable(consumerData))
-        }
-      })
-      setIsDelete(false)
-    }
-  }, [isDelete, checkedRows])
-
-  const handleOk = (variant) => {
+  
+  const handleOk = () => {
     form
       .validateFields()
       .then(async () => {
         const values = form.getFieldsValue();
-        let consumerData = values
+        let paymentData = values
 
-        if(consumerData.Email === null || consumerData.Email === undefined) consumerData.Email = ''
+        const response = await createPayment(paymentData)
 
-        const response = variant === "create" ? await createConsumer(consumerData) : await editConsumer(selectedRecord.ConsumerId, consumerData)
+        if(response?.success) {
+          NotificationComponent('success', TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS)
+          getAllPaymentDetail()
+          .then(paymentData => setPaymentTable(paymentData))
 
-        if(response) {
-          NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
-          getAllConsumer()
-          .then(consumerData => setConsumerTable(consumerData))
+          form.resetFields();
+          closeModal('create');
         }
-
-        form.resetFields();
-        closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
@@ -105,13 +99,13 @@ export default function PaymentPage () {
       });
   };
 
-  const handleCancel = (variant) => {
+  const handleCancel = () => {
     form.resetFields();
-    closeModal(variant);
+    closeModal('create');
   };
 
   const search = (value) => {
-    const filteredData = consumerTable.filter((o) =>
+    const filteredData = paymentTable.filter((o) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
       )
@@ -126,34 +120,28 @@ export default function PaymentPage () {
 
   return (
     <div>
-      <PageTitle title={"Tra cứu khách hàng"} />
+      <PageTitle title={"Tra cứu phiếu thu tiền"} />
       <TableToolBar 
         className={'mb-3'} 
-        placeholder={"Tìm kiếm tên khách hàng, địa chỉ, số điện thoại, email"}
+        placeholder={"Tìm ngày thu tiền, tên khách hàng"}
         onSearch={search}
         showModal={showModal}
+        deleteButton={false}
       />
       <Table
         columns={columns}
-        data={filterTable == null ? consumerTable : filterTable}
+        data={filterTable == null ? paymentTable : filterTable}
         onChange={onChange}
         sticky={true}
+        disableRowSelection={true}
       />
-      <ModalCreateConsumer
+      <ModalCreatePayment
         open={isModalCreateOpen}
-        onOk={() => handleOk("create")}
-        onCancel={() => handleCancel("create")}
+        onOk={() => handleOk()}
+        onCancel={() => handleCancel()}
       >
-        <ConsumerForm variant="create" form={form} />
-      </ModalCreateConsumer>
-
-      <ModalEditConsumer
-        open={isModalEditOpen}
-        onOk={() => handleOk("edit")}
-        onCancel={() => handleCancel("edit")}
-      >
-        <ConsumerForm variant="update" form={form} record={selectedRecord} />
-      </ModalEditConsumer>
+        <PaymentForm variant="create" form={form} />
+      </ModalCreatePayment>
     </div>
   );
 };

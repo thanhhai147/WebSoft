@@ -92,10 +92,10 @@ export default function SettingPage () {
           NotificationComponent('success', TITLE.SUCCESS, MESSAGE.EDIT_SUCCESS)
           getAllSetting()
           .then(settingData => setSettingTable(settingData))
-        }
 
-        form.resetFields();
-        closeModal('edit');
+          form.resetFields();
+          closeModal('edit');
+        }
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);

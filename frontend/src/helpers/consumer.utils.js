@@ -13,6 +13,17 @@ export default class ConsumerUtil {
         return consumerData
     }
 
+    static async getConsumerById(consumerId) {
+        const response = await ConsumerAPI.getConsumerById(consumerId)
+
+        if (response === null || response === undefined) return
+
+        let consumerData = response.data
+        consumerData.key = consumerData.ConsumerId
+
+        return consumerData
+    }
+
     static async createConsumer(consumerData) {
         const response = await ConsumerAPI.createConsumer(consumerData)
         return response

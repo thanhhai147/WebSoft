@@ -9,6 +9,7 @@ import { NotificationComponent } from "../components/common/notification.compone
 import { TITLE } from "../messages/main.message";
 import { Form } from "antd";
 import CreateStorageForm from "../components/book-management/CreateStorageForm.component";
+import moment from "moment";
 
 const columns = [
   {
@@ -37,6 +38,13 @@ const columns = [
     dataIndex: "unitPrice",
     key: "unitPrice",
     sorter: (a, b) => a.unitPrice - b.unitPrice,
+    render: (text) => text.toLocaleString("vi-VI") + " VND",
+  },
+  {
+    title: "Ngày nhập",
+    dataIndex: "Created",
+    key: "Created",
+    render: (text) => moment(text).format("DD/MM/YYYY"),
   },
 ];
 
@@ -85,6 +93,21 @@ export default function BookStorage() {
       .then(async () => {
         const values = form.getFieldsValue();
 
+        // Check if there are any duplicate book ids
+        const bookIds = values.bookStorages.map((storage) => storage.bookId);
+        const hasDuplicates = bookIds.some(
+          (id, index) => bookIds.indexOf(id) !== index
+        );
+
+        if (hasDuplicates) {
+          NotificationComponent(
+            "warning",
+            TITLE.WARNING,
+            "Không được trùng mã sách"
+          );
+          return;
+        }
+
         try {
           const response = await BaseAPIInstance.post(
             "/storage/book-storage/new",
@@ -121,14 +144,16 @@ export default function BookStorage() {
       <PageTitle title={"Tra cứu phiếu nhập sách"} />
       <TableToolBar
         className={"mb-3"}
-        placeholder={"Tìm kiếm tên sách, thể loại, tác giả"}
+        placeholder={"Tìm kiếm..."}
         onSearch={search}
         showModal={showModal}
+        deleteButton={false}
       />
       <TableComponent
         columns={columns}
         dataSource={filterTable == null ? bookStorages : filterTable}
         sticky={true}
+        disableRowSelection={true}
       />
 
       <ModalCreateBook

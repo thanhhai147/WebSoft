@@ -1,4 +1,4 @@
-import { Form, Input, Button, Select } from "antd";
+import { Form, Button, Select, InputNumber } from "antd";
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { NotificationComponent } from "../common/notification.component";
 import { MESSAGE, TITLE } from "../../messages/main.message";
@@ -6,16 +6,21 @@ import { useEffect, useState } from "react";
 import BaseAPIInstance from "../../api/base.api";
 
 export default function CreateStorageForm({ form }) {
-  const [bookIds, setBookIds] = useState([]);
-  // fetch all book ids
+  const [books, setBooks] = useState([]);
+
+  // fetch all books
   useEffect(() => {
     const fetchBookIds = async () => {
       try {
         const response = await BaseAPIInstance.get("/book");
 
-        setBookIds([...response.data.map((item) => item.id)]);
+        const booksActive = response.data.filter(
+          (book) => book.active === true
+        );
+
+        setBooks(booksActive);
       } catch (error) {
-        console.log("Failed to fetch book ids: ", error);
+        console.log("Failed to fetch books: ", error);
       }
     };
     fetchBookIds();
@@ -27,7 +32,7 @@ export default function CreateStorageForm({ form }) {
   };
 
   return (
-    <Form form={form} layout="vertical" onFinishFailed={onFinishFailed}>
+    <Form form={form} layout="inline" onFinishFailed={onFinishFailed}>
       <Form.List name="bookStorages">
         {(fields, { add, remove }) => (
           <>
@@ -35,26 +40,36 @@ export default function CreateStorageForm({ form }) {
               <div key={key}>
                 <Form.Item
                   {...restField}
+                  label="Mã sách"
                   name={[name, "bookId"]}
                   rules={[{ required: true, message: "Vui lòng nhập mã sách" }]}
                 >
                   <Select placeholder="Nhập mã sách">
-                    {bookIds.map((bookId, index) => (
-                      <Select.Option key={index} value={bookId}>
-                        {bookId}
+                    {books.map((book, index) => (
+                      <Select.Option key={index} value={book.id}>
+                        {book.id} - {book.bookName}
                       </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
                 <Form.Item
                   {...restField}
+                  label="Giá"
                   name={[name, "unitPrice"]}
                   rules={[{ required: true, message: "Vui lòng nhập giá" }]}
                 >
-                  <Input placeholder="Nhập giá" type="number" />
+                  <InputNumber
+                    placeholder="Nhập giá (VND)"
+                    style={{ width: "100%" }}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                  />
                 </Form.Item>
                 <Form.Item
                   {...restField}
+                  label="Số lượng nhập"
                   style={{ marginBottom: "5px" }}
                   name={[name, "quantity"]}
                   rules={[
@@ -71,7 +86,10 @@ export default function CreateStorageForm({ form }) {
                     }),
                   ]}
                 >
-                  <Input placeholder="Nhập số lượng nhập" type="number" />
+                  <InputNumber
+                    placeholder="Nhập số lượng nhập"
+                    style={{ width: "100%" }}
+                  />
                 </Form.Item>
                 <MinusCircleOutlined
                   style={{ marginBottom: "30px" }}

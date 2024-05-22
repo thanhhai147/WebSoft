@@ -8,7 +8,7 @@ export default function ModalCreatePayment({
 }) {
   return (
     <Modal
-      title="Tạo mới phiếu thu tiền"
+      title="Tạo phiếu thu tiền"
       open={open}
       onOk={onOk}
       onCancel={onCancel}

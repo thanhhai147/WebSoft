@@ -83,3 +83,16 @@ p {
 .ant-modal-footer .ant-btn-primary {
     background-color: var(--theme-color);
 }
+
+.ant-modal-title {
+    font-size: var(--font-size-h3) !important;
+    font-weight: var(--font-weight-h3) !important;
+    color: var(--theme-color) !important;
+}
+.ant-modal-body {
+    margin-top: 1.5rem;
+}
+.ant-form-item-label label {
+    font-size: var(--font-color-p) !important;
+    font-weight: var(--font-weight-p) !important;
+}

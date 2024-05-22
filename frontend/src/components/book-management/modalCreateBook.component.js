@@ -1,4 +1,5 @@
 import { Modal } from "antd";
+import "./styles/modalCreateBook.component.css"
 
 export default function ModalCreateBook({
   open,
@@ -23,6 +24,7 @@ export default function ModalCreateBook({
       onCancel={onCancel}
       centered
       okText={"Tạo mới"}
+      className={`modal-create-${variant}`}
     >
       {children}
     </Modal>

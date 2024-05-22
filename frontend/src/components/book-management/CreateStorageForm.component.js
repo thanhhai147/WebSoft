@@ -4,6 +4,7 @@ import { NotificationComponent } from "../common/notification.component";
 import { MESSAGE, TITLE } from "../../messages/main.message";
 import { useEffect, useState } from "react";
 import BaseAPIInstance from "../../api/base.api";
+import "./styles/CreateStorageForm.component.css"
 
 export default function CreateStorageForm({ form }) {
   const [books, setBooks] = useState([]);
@@ -32,77 +33,85 @@ export default function CreateStorageForm({ form }) {
   };
 
   return (
-    <Form form={form} layout="inline" onFinishFailed={onFinishFailed}>
+    <Form form={form} layout="vertical" size="middle" onFinishFailed={onFinishFailed}>
       <Form.List name="bookStorages">
         {(fields, { add, remove }) => (
           <>
-            {fields.map(({ key, name, ...restField }) => (
-              <div key={key}>
-                <Form.Item
-                  {...restField}
-                  label="Mã sách"
-                  name={[name, "bookId"]}
-                  rules={[{ required: true, message: "Vui lòng nhập mã sách" }]}
-                >
-                  <Select placeholder="Nhập mã sách">
-                    {books.map((book, index) => (
-                      <Select.Option key={index} value={book.id}>
-                        {book.id} - {book.bookName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  label="Giá (VND)"
-                  name={[name, "unitPrice"]}
-                  rules={[{ required: true, message: "Vui lòng nhập giá" }]}
-                >
-                  <InputNumber
-                    placeholder="Nhập giá (VND)"
-                    style={{ width: "100%" }}
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    }
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+            <div className="book-storage-items-container">
+              {fields.map(({ key, name, ...restField }) => (
+                <div className="book-storage-items-wrapper d-flex flex-row align-items-center justify-content-between" key={key}>
+                  <Form.Item
+                    {...restField}
+                    label="Mã sách"
+                    name={[name, "bookId"]}
+                    rules={[{ required: true, message: "Vui lòng nhập mã sách" }]}
+                  >
+                    <Select 
+                      placeholder="Nhập mã sách"
+                      style={{width: "100%"}}
+                    >
+                      {books.map((book, index) => (
+                        <Select.Option key={index} value={book.id} style={{width: "100%"}}>
+                          {book.id} - {book.bookName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    label="Giá (VND)"
+                    name={[name, "unitPrice"]}
+                    rules={[{ required: true, message: "Vui lòng nhập giá" }]}
+                    className="ml-3"
+                  >
+                    <InputNumber
+                      placeholder="Nhập giá (VND)"
+                      style={{ width: "100%" }}
+                      formatter={(value) =>
+                        `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      }
+                      parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    label="Số lượng nhập"
+                    name={[name, "quantity"]}
+                    rules={[
+                      { required: true, message: "Vui lòng nhập số lượng nhập" },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || value >= 150) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Số lượng nhập ít nhất là 150 cuốn")
+                          );
+                        },
+                      }),
+                    ]}
+                    className="ml-3"
+                  >
+                    <InputNumber
+                      placeholder="Nhập số lượng"
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                  <MinusCircleOutlined
+                    id="remove-storage-icon"
+                    onClick={() => remove(name)}
+                    className="ml-3"
                   />
-                </Form.Item>
-                <Form.Item
-                  {...restField}
-                  label="Số lượng nhập"
-                  style={{ marginBottom: "5px" }}
-                  name={[name, "quantity"]}
-                  rules={[
-                    { required: true, message: "Vui lòng nhập số lượng nhập" },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || value >= 150) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(
-                          new Error("Số lượng nhập ít nhất là 150 cuốn")
-                        );
-                      },
-                    }),
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="Nhập số lượng nhập"
-                    style={{ width: "100%" }}
-                  />
-                </Form.Item>
-                <MinusCircleOutlined
-                  style={{ marginBottom: "30px" }}
-                  onClick={() => remove(name)}
-                />
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
             <Form.Item>
               <Button
                 type="dashed"
                 onClick={() => add()}
                 block
                 icon={<PlusOutlined />}
+                className="add-storage-button"
               >
                 Thêm sách
               </Button>
@@ -110,6 +119,6 @@ export default function CreateStorageForm({ form }) {
           </>
         )}
       </Form.List>
-    </Form>
+    </Form>    
   );
 }

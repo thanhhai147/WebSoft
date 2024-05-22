@@ -5,7 +5,7 @@ export default function ModalCreateBook({
   onOk,
   onCancel,
   children,
-  variant = "book" | "bookType" | "bookAuthor",
+  variant = "book" | "bookType" | "bookAuthor" | "bookStorage",
 }) {
   return (
     <Modal
@@ -14,7 +14,9 @@ export default function ModalCreateBook({
           ? "Tạo mới sách"
           : variant === "bookType"
           ? "Thêm thể loại"
-          : "Thêm tác giả"
+          : variant === "bookAuthor"
+          ? "Thêm tác giả"
+          : "Phiếu nhập sách"
       }
       open={open}
       onOk={onOk}

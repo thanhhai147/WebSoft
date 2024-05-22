@@ -58,7 +58,7 @@ export default function BookTypePage() {
   } = useContext(ModalContext);
 
   // fetch all book types
-  const fetchBookTypes = useCallback(async () => {
+  const fetchBookTypes = async () => {
     try {
       const response = await BaseAPIInstance.get("/book-type");
 
@@ -74,11 +74,11 @@ export default function BookTypePage() {
     } catch (error) {
       console.error("Error fetching data: ", error);
     }
-  }, []);
+  };
 
   useEffect(() => {
     fetchBookTypes();
-  }, [fetchBookTypes]);
+  }, []);
 
   // handle delete book types
   const handleDeleteBookTypes = useCallback(async (ids) => {
@@ -96,7 +96,7 @@ export default function BookTypePage() {
         ids.map((id) => BaseAPIInstance.delete(`/book-type/${id}/delete`))
       );
 
-      if (response.every(value => value !== undefined)) {
+      if (response.every((value) => value !== undefined)) {
         NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
       }
 
@@ -125,16 +125,21 @@ export default function BookTypePage() {
   const handleCreateBookType = async (values) => {
     try {
       const response = await BaseAPIInstance.post("/book-type/new", values);
+      if (response.success === false) {
+        NotificationComponent("error", TITLE.ERROR, response.message);
+        return;
+      } else {
+        const newBookType = {
+          ...response.data,
+          key: bookTypes.length + 1,
+        };
 
-      const newBookType = {
-        ...response.data,
-        key: bookTypes.length + 1,
-      };
+        setBookTypes([...bookTypes, newBookType]);
 
-      setBookTypes([...bookTypes, newBookType]);
+        NotificationComponent("success", TITLE.SUCCESS, response.message);
+      }
     } catch (error) {
-      console.error("Error creating book type: ", error);
-      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+      NotificationComponent("error", TITLE.ERROR, error);
     }
   };
 
@@ -145,23 +150,28 @@ export default function BookTypePage() {
         values
       );
 
-      const updatedBookType = {
-        ...response.data,
-      };
+      if (response.success === false) {
+        NotificationComponent("error", TITLE.ERROR, response.message);
+        return;
+      } else {
+        const updatedBookType = {
+          ...response.data,
+        };
 
-      const updatedData = bookTypes.map((item) =>
-        item.key === selectedRecord.key
-          ? {
-              ...item,
-              bookTypeName: updatedBookType.bookTypeName,
-            }
-          : item
-      );
+        const updatedData = bookTypes.map((item) =>
+          item.key === selectedRecord.key
+            ? {
+                ...item,
+                bookTypeName: updatedBookType.bookTypeName,
+              }
+            : item
+        );
 
-      setBookTypes(updatedData);
+        setBookTypes(updatedData);
+        NotificationComponent("success", TITLE.SUCCESS, response.message);
+      }
     } catch (error) {
-      console.error("Error updating book type: ", error);
-      NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
+      NotificationComponent("error", TITLE.ERROR, error);
     }
   };
 
@@ -172,17 +182,13 @@ export default function BookTypePage() {
         const values = form.getFieldsValue();
         if (variant === "create") {
           handleCreateBookType(values);
+          form.resetFields();
+          closeModal(variant);
         } else {
           handleEditBookType(values);
+          form.resetFields();
+          closeModal(variant);
         }
-
-        form.resetFields();
-        NotificationComponent(
-          "success",
-          TITLE.SUCCESS,
-          variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS
-        );
-        closeModal(variant);
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);

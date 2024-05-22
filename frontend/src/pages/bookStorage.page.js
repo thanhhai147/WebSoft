@@ -9,7 +9,6 @@ import { NotificationComponent } from "../components/common/notification.compone
 import { TITLE } from "../messages/main.message";
 import { Form } from "antd";
 import CreateStorageForm from "../components/book-management/CreateStorageForm.component";
-import moment from "moment";
 
 const columns = [
   {
@@ -44,7 +43,8 @@ const columns = [
     title: "Ngày nhập",
     dataIndex: "Created",
     key: "Created",
-    render: (text) => moment(text).format("DD/MM/YYYY"),
+    render: (text) => new Date(text).toLocaleDateString(['ban', 'id']),
+    sorter: (a, b) => Date.parse(a.Created) - Date.parse(b.Created)
   },
 ];
 

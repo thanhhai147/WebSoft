@@ -54,7 +54,7 @@ export default function CreateStorageForm({ form }) {
                 </Form.Item>
                 <Form.Item
                   {...restField}
-                  label="Giá"
+                  label="Giá (VND)"
                   name={[name, "unitPrice"]}
                   rules={[{ required: true, message: "Vui lòng nhập giá" }]}
                 >

@@ -1,12 +1,12 @@
 import { Modal } from "antd";
-import "./styles/modalCreateBook.component.css"
+import "./styles/modalCreateBook.component.css";
 
 export default function ModalCreateBook({
   open,
   onOk,
   onCancel,
   children,
-  variant = "book" | "bookType" | "bookAuthor" | "bookStorage",
+  variant = "book" | "bookType" | "bookAuthor" | "bookStorage" | "order",
 }) {
   return (
     <Modal
@@ -17,7 +17,9 @@ export default function ModalCreateBook({
           ? "Thêm thể loại"
           : variant === "bookAuthor"
           ? "Thêm tác giả"
-          : "Phiếu nhập sách"
+          : variant === "bookStorage"
+          ? "Tạo phiếu nhập sách"
+          : "Tạo hóa đơn"
       }
       open={open}
       onOk={onOk}

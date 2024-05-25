@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:8000",
   "dependencies": {
+    "@ant-design/charts": "^2.1.1",
     "@ant-design/icons": "^5.3.6",
     "@tanstack/react-query": "^5.35.5",
     "@testing-library/jest-dom": "^5.17.0",
@@ -14,6 +15,7 @@
     "bootstrap": "^4.6.2",
     "moment": "^2.30.1",
     "react": "^18.2.0",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1",

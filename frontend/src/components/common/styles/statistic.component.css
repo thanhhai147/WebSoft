@@ -1,0 +1,5 @@
+.ant-statistic-title {
+    font-size: var(--font-size-p) !important;
+    font-weight: var(--font-weight-h3) !important;
+    color: var(--theme-color) !important
+}

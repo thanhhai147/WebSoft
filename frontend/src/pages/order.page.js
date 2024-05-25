@@ -25,6 +25,8 @@ const columns = [
     title: "Ngày tạo",
     dataIndex: "Date",
     key: "Date",
+    render: (text) => new Date(text).toLocaleDateString(["ban", "id"]),
+    sorter: (a, b) => Date.parse(a.Date) - Date.parse(b.Date),
   },
   {
     title: "Tổng tiền (VND)",
@@ -78,6 +80,7 @@ export default function Order() {
       .validateFields()
       .then(async () => {
         const values = form.getFieldsValue();
+        console.log("🚀 ~ .then ~ values:", values);
 
         // Check if there are any duplicate book ids
         const bookIds = values.BookOrder.map((book) => book.BookId);

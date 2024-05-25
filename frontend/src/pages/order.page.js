@@ -80,7 +80,6 @@ export default function Order() {
       .validateFields()
       .then(async () => {
         const values = form.getFieldsValue();
-        console.log("🚀 ~ .then ~ values:", values);
 
         // Check if there are any duplicate book ids
         const bookIds = values.BookOrder.map((book) => book.BookId);

@@ -1,26 +1,40 @@
-import React, { lazy, useContext, useEffect, useState } from 'react'
-import PaymentUtil from '../helpers/payment.utils'
-import ConsumerUtil from '../helpers/consumer.utils'
-import { Form } from 'antd'
-import ModalContext from "../contexts/modal.context"
-import { TITLE, MESSAGE } from '../messages/main.message'
-import { NotificationComponent } from '../components/common/notification.component'
+import React, { lazy, useContext, useEffect, useState } from "react";
+import PaymentUtil from "../helpers/payment.utils";
+import ConsumerUtil from "../helpers/consumer.utils";
+import { Form } from "antd";
+import ModalContext from "../contexts/modal.context";
+import { TITLE, MESSAGE } from "../messages/main.message";
+import { NotificationComponent } from "../components/common/notification.component";
 
-const PageTitle = lazy(() => import("../components/common/pageTitle.component"))
-const TableToolBar = lazy(() => import("../components/common/tableToolBar.component"))
-const Table = lazy(() => import("../components/common/table.component"))
-const PaymentForm = lazy(() => import("../components/payment-management/paymentForm.component"))
-const ModalCreatePayment = lazy(() => import("../components/payment-management/modalCreatePayment.component"))
+const PageTitle = lazy(() =>
+  import("../components/common/pageTitle.component")
+);
+const TableToolBar = lazy(() =>
+  import("../components/common/tableToolBar.component")
+);
+const Table = lazy(() => import("../components/common/table.component"));
+const PaymentForm = lazy(() =>
+  import("../components/payment-management/paymentForm.component")
+);
+const ModalCreatePayment = lazy(() =>
+  import("../components/payment-management/modalCreatePayment.component")
+);
 
-const { getAllPayment, createPayment } = PaymentUtil
-const { getConsumerById } = ConsumerUtil
+const { getAllPayment, createPayment } = PaymentUtil;
+const { getConsumerById } = ConsumerUtil;
 
 const columns = [
+  {
+    title: "Mã phiếu thu",
+    dataIndex: "PaymentId",
+    key: "PaymentId",
+  },
   {
     title: "Ngày thu tiền",
     dataIndex: "Date",
     key: "Date",
-    render: (text, record, index) => new Date(text).toLocaleDateString(['ban', 'id'])
+    render: (text, record, index) =>
+      new Date(text).toLocaleDateString(["ban", "id"]),
   },
   {
     title: "Tên khách hàng",
@@ -32,76 +46,80 @@ const columns = [
     dataIndex: "Value",
     key: "Value",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text.toLocaleString() + ' VND'
-  }
-]
+    render: (text, record, index) => text.toLocaleString() + " VND",
+  },
+];
 
 const getAllPaymentDetail = async () => {
-  let paymentData = await getAllPayment()
-  let uniqueConsumerIdList = [...new Set(paymentData.map(item => item.ConsumerId))]
-  let consumerIdToName = {}
-  const response = await Promise.all(uniqueConsumerIdList.map(consumerId => getConsumerById(consumerId)))
-  if(response.every(value => value !== undefined)) {
-    response.forEach(item => {
-      consumerIdToName[item.ConsumerId] = item.Name
-    })
+  let paymentData = await getAllPayment();
+  let uniqueConsumerIdList = [
+    ...new Set(paymentData.map((item) => item.ConsumerId)),
+  ];
+  let consumerIdToName = {};
+  const response = await Promise.all(
+    uniqueConsumerIdList.map((consumerId) => getConsumerById(consumerId))
+  );
+  if (response.every((value) => value !== undefined)) {
+    response.forEach((item) => {
+      consumerIdToName[item.ConsumerId] = item.Name;
+    });
 
-    paymentData = paymentData.map(item => ({
+    paymentData = paymentData.map((item) => ({
       ConsumerName: consumerIdToName[item.ConsumerId],
-      ...item
-    }))
+      ...item,
+    }));
   }
-  
-  return paymentData
-}
 
-export default function PaymentPage () {
-  const [paymentTable, setPaymentTable] = useState(null)
+  return paymentData;
+};
+
+export default function PaymentPage() {
+  const [paymentTable, setPaymentTable] = useState(null);
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
-  const {
-    isModalCreateOpen,
-    showModal,
-    closeModal,
-    selectedRecord
-  } = useContext(ModalContext);
+  const { isModalCreateOpen, showModal, closeModal, selectedRecord } =
+    useContext(ModalContext);
 
   useEffect(() => {
     form.setFieldsValue(selectedRecord);
   }, [form, selectedRecord]);
 
   useEffect(() => {
-    getAllPaymentDetail()
-    .then(paymentData => setPaymentTable(paymentData))
-  }, [])
-  
+    getAllPaymentDetail().then((paymentData) => setPaymentTable(paymentData));
+  }, []);
+
   const handleOk = () => {
     form
       .validateFields()
       .then(async () => {
         const values = form.getFieldsValue();
-        let paymentData = values
+        let paymentData = values;
 
-        const response = await createPayment(paymentData)
+        const response = await createPayment(paymentData);
 
-        if(response?.success) {
-          NotificationComponent('success', TITLE.SUCCESS, MESSAGE.CREATE_SUCCESS)
-          getAllPaymentDetail()
-          .then(paymentData => setPaymentTable(paymentData))
+        if (response?.success) {
+          NotificationComponent(
+            "success",
+            TITLE.SUCCESS,
+            MESSAGE.CREATE_SUCCESS
+          );
+          getAllPaymentDetail().then((paymentData) =>
+            setPaymentTable(paymentData)
+          );
 
           form.resetFields();
-          closeModal('create');
+          closeModal("create");
         }
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
-        NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
+        NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
       });
   };
 
   const handleCancel = () => {
     form.resetFields();
-    closeModal('create');
+    closeModal("create");
   };
 
   const search = (value) => {
@@ -121,8 +139,8 @@ export default function PaymentPage () {
   return (
     <div>
       <PageTitle title={"Tra cứu phiếu thu tiền"} />
-      <TableToolBar 
-        className={'mb-3'} 
+      <TableToolBar
+        className={"mb-3"}
         placeholder={"Tìm ngày thu tiền, tên khách hàng"}
         onSearch={search}
         showModal={showModal}
@@ -144,4 +162,4 @@ export default function PaymentPage () {
       </ModalCreatePayment>
     </div>
   );
-};
+}

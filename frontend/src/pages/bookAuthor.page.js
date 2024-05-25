@@ -30,6 +30,11 @@ const ModalEditBook = lazy(() =>
 
 const columns = [
   {
+    title: "Mã tác giả",
+    dataIndex: "id",
+    key: "id",
+  },
+  {
     title: "Tác giả",
     dataIndex: "authorName",
     key: "authorName",
@@ -66,6 +71,7 @@ export default function BookAuthorPage() {
         // Add key property to each element in the array
         const data = response
           ? response.data.map((item) => ({
+              ...item,
               authorName: item.name,
               key: item.id,
             }))
@@ -96,7 +102,7 @@ export default function BookAuthorPage() {
         authorIdList.map((id) => BaseAPIInstance.delete(`/author/${id}/delete`))
       );
 
-      if (response.every(value => value !== undefined)) {
+      if (response.every((value) => value !== undefined)) {
         NotificationComponent("success", TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS);
       }
 

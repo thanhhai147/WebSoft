@@ -1,21 +1,39 @@
-import React, { lazy, useContext, useEffect, useState } from 'react'
-import ConsumerUtil from '../helpers/consumer.utils'
-import { Form } from 'antd'
-import ModalContext from "../contexts/modal.context"
-import { TITLE, MESSAGE } from '../messages/main.message'
-import { NotificationComponent } from '../components/common/notification.component'
+import React, { lazy, useContext, useEffect, useState } from "react";
+import ConsumerUtil from "../helpers/consumer.utils";
+import { Form } from "antd";
+import ModalContext from "../contexts/modal.context";
+import { TITLE, MESSAGE } from "../messages/main.message";
+import { NotificationComponent } from "../components/common/notification.component";
 
-const PageTitle = lazy(() => import("../components/common/pageTitle.component"))
-const TableToolBar = lazy(() => import("../components/common/tableToolBar.component"))
-const Table = lazy(() => import("../components/common/table.component"))
-const EditButton = lazy(() => import("../components/common/editButton.component"))
-const ConsumerForm = lazy(() => import("../components/consumer-management/consumerForm.component"))
-const ModalCreateConsumer = lazy(() => import("../components/consumer-management/modalCreateConsumer.component"))
-const ModalEditConsumer = lazy(() => import("../components/consumer-management/modalEditConsumer.component"))
+const PageTitle = lazy(() =>
+  import("../components/common/pageTitle.component")
+);
+const TableToolBar = lazy(() =>
+  import("../components/common/tableToolBar.component")
+);
+const Table = lazy(() => import("../components/common/table.component"));
+const EditButton = lazy(() =>
+  import("../components/common/editButton.component")
+);
+const ConsumerForm = lazy(() =>
+  import("../components/consumer-management/consumerForm.component")
+);
+const ModalCreateConsumer = lazy(() =>
+  import("../components/consumer-management/modalCreateConsumer.component")
+);
+const ModalEditConsumer = lazy(() =>
+  import("../components/consumer-management/modalEditConsumer.component")
+);
 
-const { getAllConsumer, createConsumer, editConsumer, deleteConsumer } = ConsumerUtil
+const { getAllConsumer, createConsumer, editConsumer, deleteConsumer } =
+  ConsumerUtil;
 
 const columns = [
+  {
+    title: "Mã khách hàng",
+    dataIndex: "ConsumerId",
+    key: "ConsumerId",
+  },
   {
     title: "Tên khách hàng",
     dataIndex: "Name",
@@ -34,24 +52,24 @@ const columns = [
   {
     title: "Email (nếu có)",
     dataIndex: "Email",
-    key: "Email"
+    key: "Email",
   },
   {
     title: "Công nợ",
     dataIndex: "Debt",
     key: "Debt",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text.toLocaleString() + ' VND'
+    render: (text, record, index) => text.toLocaleString() + " VND",
   },
   {
     title: "Chỉnh sửa",
-    key: "Edit",  
+    key: "Edit",
     render: (record) => <EditButton record={record} />,
   },
-]
+];
 
-export default function ConsumerPage () {
-  const [consumerTable, setConsumerTable] = useState(null)
+export default function ConsumerPage() {
+  const [consumerTable, setConsumerTable] = useState(null);
   const [filterTable, setFilterTable] = useState(null);
   const [form] = Form.useForm();
   const {
@@ -62,48 +80,60 @@ export default function ConsumerPage () {
     selectedRecord,
     isDelete,
     setIsDelete,
-    checkedRows
+    checkedRows,
   } = useContext(ModalContext);
 
-  useEffect(() => {
-    form.setFieldsValue(selectedRecord);
-  }, [form, selectedRecord]);
+  // useEffect(() => {
+  //   form.setFieldsValue(selectedRecord);
+  // }, [form, selectedRecord]);
 
   useEffect(() => {
-    getAllConsumer()
-    .then(consumerData => setConsumerTable(consumerData))
-  }, [])
+    getAllConsumer().then((consumerData) => setConsumerTable(consumerData));
+  }, []);
 
   useEffect(() => {
-    if(isDelete) {
-      const consumerIdList = checkedRows.map(row => row.ConsumerId)
-      deleteConsumer(consumerIdList).then(response => {
-        
-        if(response.every(value => value !== undefined)) {
-          NotificationComponent('success', TITLE.SUCCESS, MESSAGE.DELETE_SUCCESS)
-          getAllConsumer()
-          .then(consumerData => setConsumerTable(consumerData))
+    if (isDelete) {
+      const consumerIdList = checkedRows.map((row) => row.ConsumerId);
+      deleteConsumer(consumerIdList).then((response) => {
+        if (response.every((value) => value !== undefined)) {
+          NotificationComponent(
+            "success",
+            TITLE.SUCCESS,
+            MESSAGE.DELETE_SUCCESS
+          );
+          getAllConsumer().then((consumerData) =>
+            setConsumerTable(consumerData)
+          );
         }
-      })
-      setIsDelete(false)
+      });
+      setIsDelete(false);
     }
-  }, [isDelete, checkedRows])
+  }, [isDelete, checkedRows, setIsDelete]);
 
   const handleOk = (variant) => {
     form
       .validateFields()
       .then(async () => {
         const values = form.getFieldsValue();
-        let consumerData = values
+        let consumerData = values;
 
-        if(consumerData.Email === null || consumerData.Email === undefined) consumerData.Email = ''
+        if (consumerData.Email === null || consumerData.Email === undefined)
+          consumerData.Email = "";
 
-        const response = variant === "create" ? await createConsumer(consumerData) : await editConsumer(selectedRecord.ConsumerId, consumerData)
+        const response =
+          variant === "create"
+            ? await createConsumer(consumerData)
+            : await editConsumer(selectedRecord.ConsumerId, consumerData);
 
-        if(response) {
-          NotificationComponent('success', TITLE.SUCCESS, variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS)
-          getAllConsumer()
-          .then(consumerData => setConsumerTable(consumerData))
+        if (response) {
+          NotificationComponent(
+            "success",
+            TITLE.SUCCESS,
+            variant === "create" ? MESSAGE.CREATE_SUCCESS : MESSAGE.EDIT_SUCCESS
+          );
+          getAllConsumer().then((consumerData) =>
+            setConsumerTable(consumerData)
+          );
 
           form.resetFields();
           closeModal(variant);
@@ -111,7 +141,7 @@ export default function ConsumerPage () {
       })
       .catch((errorInfo) => {
         console.log("Validate Failed:", errorInfo);
-        NotificationComponent('error', TITLE.ERROR, MESSAGE.HAS_AN_ERROR)
+        NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);
       });
   };
 
@@ -137,8 +167,8 @@ export default function ConsumerPage () {
   return (
     <div>
       <PageTitle title={"Tra cứu khách hàng"} />
-      <TableToolBar 
-        className={'mb-3'} 
+      <TableToolBar
+        className={"mb-3"}
         placeholder={"Tìm kiếm tên khách hàng, địa chỉ, số điện thoại, email"}
         onSearch={search}
         showModal={showModal}
@@ -166,4 +196,4 @@ export default function ConsumerPage () {
       </ModalEditConsumer>
     </div>
   );
-};
+}

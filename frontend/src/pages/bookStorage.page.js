@@ -12,6 +12,11 @@ import CreateStorageForm from "../components/book-management/CreateStorageForm.c
 
 const columns = [
   {
+    title: "Mã phiếu",
+    dataIndex: "StorageId",
+    key: "StorageId",
+  },
+  {
     title: "Tên sách",
     dataIndex: "BookName",
     key: "BookName",
@@ -43,8 +48,8 @@ const columns = [
     title: "Ngày nhập",
     dataIndex: "Created",
     key: "Created",
-    render: (text) => new Date(text).toLocaleDateString(['ban', 'id']),
-    sorter: (a, b) => Date.parse(a.Created) - Date.parse(b.Created)
+    render: (text) => new Date(text).toLocaleDateString(["ban", "id"]),
+    sorter: (a, b) => Date.parse(a.Created) - Date.parse(b.Created),
   },
 ];
 

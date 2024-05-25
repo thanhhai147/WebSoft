@@ -38,6 +38,11 @@ const BookStatusComponent = lazy(() =>
 
 const columns = [
   {
+    title: "Mã sách",
+    dataIndex: "id",
+    key: "id",
+  },
+  {
     title: "Tên sách",
     dataIndex: "bookName",
     key: "bookName",

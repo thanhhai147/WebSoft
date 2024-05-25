@@ -30,6 +30,11 @@ const ModalEditBook = lazy(() =>
 
 const columns = [
   {
+    title: "Mã thể loại",
+    dataIndex: "id",
+    key: "id",
+  },
+  {
     title: "Thể loại",
     dataIndex: "bookTypeName",
     key: "bookTypeName",
@@ -65,6 +70,7 @@ export default function BookTypePage() {
       // Add key property to each element in the array
       const data = response
         ? response.data.map((item) => ({
+            ...item,
             bookTypeName: item.name,
             key: item.id,
           }))

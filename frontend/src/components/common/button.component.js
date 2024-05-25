@@ -5,6 +5,7 @@ import {
   DeleteOutlined,
   LogoutOutlined,
   EditOutlined,
+  DownloadOutlined
 } from "@ant-design/icons";
 import "./styles/button.component.css";
 
@@ -92,6 +93,21 @@ export default function ButtonComponent({
           {/* Sửa */}
         </Button>
       );
+    case "download":
+      return (
+        <Button
+          className={
+            "btn-component btn-theme-color d-flex align-items-center justify-content-center" +
+            " " +
+            className
+          }
+          type="primary"
+          icon={<DownloadOutlined />}
+          {...props}
+        >
+          Tải về
+        </Button>
+      )
     default:
       return (
         <Button

@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import "./styles/modalCreateBook.component.css";
+import "./styles/modal.component.css";
 
 export default function ModalCreateBook({
   open,

@@ -60,7 +60,7 @@ export default function OrderForm({ form }) {
           if (book) {
             return {
               ...bookOrder,
-              price: bookOrder.Quantity * book.price,
+              price: book.price,
             };
           }
         }
@@ -70,7 +70,7 @@ export default function OrderForm({ form }) {
       // Calculate total value
       const totalValue = updatedBookOrder.reduce((acc, curr) => {
         if (curr && curr.Quantity && curr.price) {
-          return acc + curr.price; // curr.price is already Quantity * price
+          return acc + curr.Quantity * curr.price; // curr.price is already Quantity * price
         }
         return acc;
       }, 0);
@@ -152,7 +152,7 @@ export default function OrderForm({ form }) {
                     min={1}
                   />
                 </Form.Item>
-                <Form.Item {...restField} label="Giá" name={[name, "price"]}>
+                <Form.Item {...restField} label="Đơn giá" name={[name, "price"]}>
                   {/* Auto calculate price based on quantity books */}
                   <InputNumber className="w-100" disabled />
                 </Form.Item>
@@ -176,11 +176,13 @@ export default function OrderForm({ form }) {
         )}
       </Form.List>
 
-      <div style={{ display: "flex", gap: "10px" }}>
+      <div 
+        className="d-flex flex-row align-items-center justify-content-between"
+      >
         <Form.Item label="Tổng tiền" name="TotalValue">
           <InputNumber
             className="w-100"
-            placeholder="tổng tiền (VND)"
+            placeholder="Tổng tiền (VND)"
             disabled
             min={0}
           />
@@ -194,7 +196,7 @@ export default function OrderForm({ form }) {
         >
           <InputNumber
             className="w-100"
-            placeholder="tiền đã trả (VND)"
+            placeholder="Tiền đã trả (VND)"
             min={0}
           />
         </Form.Item>
@@ -202,7 +204,7 @@ export default function OrderForm({ form }) {
           <InputNumber
             min={0}
             className="w-100"
-            placeholder="tiền còn lại (VND)"
+            placeholder="Tiền còn lại (VND)"
             disabled
           />
         </Form.Item>

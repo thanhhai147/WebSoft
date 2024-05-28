@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+import dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -124,7 +128,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-import os
 
 # The absolute path to the directory where static files will be collected.
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -142,3 +145,8 @@ CORS_ORIGIN_WHITELIST = [
      'http://localhost:3000',
      'https://web-soft.vercel.app'
 ]
+
+
+DATABASES = {
+    'default': dj_database_url.config(default='sqlite:///db.sqlite3')
+}

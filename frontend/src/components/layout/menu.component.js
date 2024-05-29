@@ -16,10 +16,10 @@ const pathToSelectedKey = {
   "/book/storage": "1d",
   "/book/report": "1e",
   "/consumer": "2a",
-  "/order": "3a",
-  "/payment": "3b",
-  "/payment/report": "3c",
-  "/settings": "4",
+  "/order": "2b",
+  "/payment": "2c",
+  "/payment/report": "2d",
+  "/settings": "3",
 };
 
 const menuItems = [
@@ -43,20 +43,15 @@ const menuItems = [
     key: "2",
     icon: <TeamOutlined />,
     label: "Quản lí khách hàng",
-    submenu: [{ key: "2a", label: "Tra cứu khách hàng", path: "/consumer" }],
-  },
-  {
-    key: "3",
-    icon: <BankOutlined />,
-    label: "Quản lí dòng tiền",
     submenu: [
-      { key: "3a", label: "Tra cứu hóa đơn bán sách", path: "/order" },
-      { key: "3b", label: "Tra cứu phiếu thu tiền", path: "/payment" },
-      { key: "3c", label: "Lập báo cáo công nợ", path: "/payment/report" },
+      { key: "2a", label: "Tra cứu khách hàng", path: "/consumer" },
+      { key: "2b", label: "Tra cứu hóa đơn bán sách", path: "/order" },
+      { key: "2c", label: "Tra cứu phiếu thu tiền", path: "/payment" },
+      { key: "2d", label: "Lập báo cáo công nợ", path: "/payment/report" },
     ],
   },
   {
-    key: "4",
+    key: "3",
     icon: <ToolOutlined />,
     label: "Tùy chỉnh",
     path: "/settings",

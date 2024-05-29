@@ -282,7 +282,7 @@ class GetMonthReportViewAPI(GenericAPIView):
             }, status=status.HTTP_200_OK)
 
     def post(self, request):
-        dateData = DateTimeSerializer(data=request.data)
+        dateData = DateTimeSerializer(data=request.data)       
         if not dateData.is_valid(raise_exception=True):
             return Response({
                 "success": False,

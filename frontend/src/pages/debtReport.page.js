@@ -16,40 +16,40 @@ const { getStorageReport } = ReportUtil
 
 const columns = [
   {
-    title: "Mã sách",
-    dataIndex: "BookId",
-    key: "BookId",
+    title: "Mã khách hàng",
+    dataIndex: "ConsumerId",
+    key: "ConsumerId",
   },
   {
-    title: "Tên sách",
-    dataIndex: "BookName",
-    key: "BookName",
+    title: "Khách hàng",
+    dataIndex: "ConsumerName",
+    key: "ConsumerName",
   },
   {
-    title: "Tồn đầu",
-    dataIndex: "InventoryStart",
-    key: "InventoryStart",
+    title: "Nợ đầu",
+    dataIndex: "DebtStart",
+    key: "DebtStart",
     sorter: (a, b) => a - b,
     render: (text, record, index) => text ? text.toLocaleString() : 0
   },
   {
-    title: "Phát sinh nhập",
-    dataIndex: "StorageNow",
-    key: "StorageNow",
+    title: "Phát sinh thu",
+    dataIndex: "PaymentNow",
+    key: "PaymentNow",
     sorter: (a, b) => a - b,
     render: (text, record, index) => text ? <ReportStatus variant={'add'} data={text.toLocaleString()} /> : 0
   },
   {
-    title: "Phát sinh bán",
+    title: "Phát sinh mua",
     dataIndex: "OrderNow",
     key: "OrderNow",
     sorter: (a, b) => a - b,
     render: (text, record, index) => text ? <ReportStatus variant={'subtract'} data={text.toLocaleString()} /> : 0
   },
   {
-    title: "Tồn cuối",
-    dataIndex: "InventoryEnd",
-    key: "InventoryEnd",
+    title: "Nợ cuối cuối",
+    dataIndex: "DebtEnd",
+    key: "DebtEnd",
     sorter: (a, b) => a - b,
     render: (text, record, index) => text ? text.toLocaleString() : 0
   },
@@ -100,7 +100,7 @@ const chartOptions = {
     },
     title: {
       display: true,
-      text: 'Thống kê tồn kho qua các ngày',
+      text: 'Thống kê nợ công qua các ngày',
       font: {
         family: "'Nunito', sans-serif",
         size: 20,
@@ -244,7 +244,7 @@ export default function BookStorageReportPage () {
 
   return (
     <div className='d-flex flex-column'>
-      <PageTitle title="Lập báo cáo tồn kho" />
+      <PageTitle title="Lập báo cáo nợ công" />
       <div className='report-filter-container mb-3 p-3 d-flex flex-row align-items-center'>
         <DatePicker 
           variant='range' 
@@ -264,16 +264,16 @@ export default function BookStorageReportPage () {
       <div className='report-container d-flex flex-row'>
         <div className='statistic-container col-2'>
             <div>
-                <Statistic title={"Tổng tồn đầu"} value={statistic?.InventoryStart} />
+                <Statistic title={"Tổng nợ đầu"} value={statistic?.InventoryStart} />
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng phát sinh nhập"} value={statistic?.StorageNow} variant={"import"}/>
+                <Statistic title={"Tổng phát sinh thu"} value={statistic?.StorageNow} variant={"import"}/>
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng phát sinh bán"} value={statistic?.OrderNow} variant={"export"} />
+                <Statistic title={"Tổng phát sinh mua"} value={statistic?.OrderNow} variant={"export"} />
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng tồn cuối"} value={statistic?.InventoryEnd} />
+                <Statistic title={"Tổng nợ cuối"} value={statistic?.InventoryEnd} />
             </div>
         </div>
         <div className='visualization-container col-10'>

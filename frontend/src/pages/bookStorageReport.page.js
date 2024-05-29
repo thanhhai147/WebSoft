@@ -10,6 +10,7 @@ const DatePicker = lazy(() => import("../components/common/datePicker.component"
 const LineChart = lazy(() => import("../components/common/lineChart.component"))
 const Table = lazy(() => import("../components/common/table.component"))
 const Button = lazy(() => import("../components/common/button.component"))
+const ReportStatus = lazy(() => import("../components/common/reportStatus.component"))
 
 const { getStorageReport } = ReportUtil
 
@@ -36,14 +37,14 @@ const columns = [
     dataIndex: "StorageNow",
     key: "StorageNow",
     sorter: (a, b) => a - b,
-    render: (text, record, index) => text ? text.toLocaleString() : 0
+    render: (text, record, index) => text ? <ReportStatus variant={'add'} data={text.toLocaleString()} /> : 0
   },
   {
     title: "Phát sinh bán",
     dataIndex: "OrderNow",
     key: "OrderNow",
     sorter: (a, b) => a - b,
-    render: (text, record, index) => text ? text.toLocaleString() : 0
+    render: (text, record, index) => text ? <ReportStatus variant={'subtract'} data={text.toLocaleString()} /> : 0
   },
   {
     title: "Tồn cuối",
@@ -251,8 +252,9 @@ export default function BookStorageReportPage () {
           defaultValue={rangeDate}
           onChange={onDatePickerChange}
         />
-        <Button buttonCase="download" className="ml-auto mr-3" />
+        {/* <Button buttonCase="download" className="ml-auto mr-3" /> */}
         <Select 
+          className='ml-auto'
           options={options}
           defaultValue='summarize'
           size='large'

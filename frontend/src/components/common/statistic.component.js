@@ -1,6 +1,6 @@
 import React from "react";
 import { Statistic, Card } from "antd"
-import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons"
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons"
 import CountUp from 'react-countup';
 import "./styles/statistic.component.css"
 
@@ -23,11 +23,11 @@ export default function StatisticComponent ({
             break
         case "import":
             color = "var(--success-color)"
-            icon = <PlusCircleOutlined />
+            icon = <PlusOutlined />
             break
         case "export":
             color = "var(--failed-color)"
-            icon = <MinusCircleOutlined />
+            icon = <MinusOutlined />
             break
         default:
             color = "var(--font-color-default)"

@@ -217,7 +217,7 @@ class UpdateConsumerAPIView(GenericAPIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 
-            if Consumer.objects.filter(Phone=phone).exists():
+            if Consumer.objects.filter(Phone=phone).exclude(pk=pk).exists():
                     return Response({
                         "success": False,
                         "message": ConsumerMessage.MSG1004
@@ -461,7 +461,7 @@ class GetMonthDebtReportAPIView(GenericAPIView):
                 return Response(
                     {
                         "success": False,
-                        "message": ConsumerMessage.MSG2003
+                        "message": ConsumerMessage.MSG0004
                     }
                 )
 
@@ -472,7 +472,7 @@ class GetMonthDebtReportAPIView(GenericAPIView):
                 return Response(
                     {
                         "success": False,
-                        "message": ConsumerMessage.MSG2003
+                        "message": ConsumerMessage.MSG0004
                     }
                 )
 

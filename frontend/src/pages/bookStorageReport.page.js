@@ -1,8 +1,6 @@
 import React, { lazy, useState, useEffect } from 'react'
 import { Select } from 'antd'
 import dayjs from 'dayjs'
-import { TITLE, MESSAGE } from '../messages/main.message'
-import { NotificationComponent } from '../components/common/notification.component'
 import ReportUtil from '../helpers/report.utils'
 import "./styles/report.page.css"
 
@@ -73,6 +71,7 @@ const setInitialRangeDate = () => [
 ]
 
 const DATE_FORMAT = "YYYY-MM-DD"
+const DATE_FORMAT_LOCAL = "DD/MM/YYYY"
 const DATE_BINS = 8
 
 const totalReduce = (total, item) => total + item.Quantity
@@ -92,7 +91,59 @@ const splitDateRange = (startDate, endDate, bins) => {
   return dateSplit
 }
 
-export default function ConsumerPage () {
+const chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false
+    },
+    title: {
+      display: true,
+      text: 'Thống kế tồn kho qua các ngày',
+      font: {
+        family: "'Nunito', sans-serif",
+        size: 20,
+        weight: 'bold',
+      },
+      color: 'rgb(30, 60, 114)'
+    },
+    datalabels: {
+      display: true,
+      align: 'top',
+      font: {
+        family: "'Nunito', sans-serif",
+        weight: 'bold',
+        size: 14
+      }
+    },
+  },
+  scales: {
+    x: {
+      ticks: {
+        font: {
+          family: "'Nunito', sans-serif",
+          weight: 'normal',
+        },
+      },
+      grid: {
+        display: true
+      }
+    },
+    y: {
+      ticks: {
+        font: {
+          family: "'Nunito', sans-serif",
+          weight: 'normal',
+        }
+      },
+      grid: {
+        display: true
+      }
+    }
+  }
+};
+
+export default function BookStorageReportPage () {
   const [mode, setMode] = useState('summarize')
   const [rangeDate, setRangeDate] = useState(setInitialRangeDate)
   const [report, setReport] = useState(null)
@@ -127,10 +178,10 @@ export default function ConsumerPage () {
     if (report === null || report === undefined) return
     // Summarize data for statistic cars
     setStatistic({
-      InventoryStart: (report.InventoryStart ? Object.values(report.InventoryStart) : []).reduce(totalReduce, 0),
-      InventoryEnd: (report.InventoryEnd ? Object.values(report.InventoryEnd) : []).reduce(totalReduce, 0),
-      StorageNow: (report.StorageNow ? Object.values(report.StorageNow) : []).reduce(totalReduce, 0),
-      OrderNow: (report.OrderNow ? Object.values(report.OrderNow) : []).reduce(totalReduce, 0)
+      InventoryStart: Math.abs((report.InventoryStart ? Object.values(report.InventoryStart) : []).reduce(totalReduce, 0)),
+      InventoryEnd: Math.abs((report.InventoryEnd ? Object.values(report.InventoryEnd) : []).reduce(totalReduce, 0)),
+      StorageNow: Math.abs((report.StorageNow ? Object.values(report.StorageNow) : []).reduce(totalReduce, 0)),
+      OrderNow: Math.abs((report.OrderNow ? Object.values(report.OrderNow) : []).reduce(totalReduce, 0))
     })
     // Summarize data for detailed table
     let bookObj = {}
@@ -155,17 +206,14 @@ export default function ConsumerPage () {
     const dateBins = splitDateRange(dayjs(report.Start, DATE_FORMAT), dayjs(report.End, DATE_FORMAT), DATE_BINS)
     let storageByDate = []
 
-    for (let idx in dateBins) {
-      storageByDate.push({
-        date: dateBins[idx],
-        quantity: statistic?.InventoryStart
-      })
+    for (let _ in dateBins) {
+      storageByDate.push(statistic?.InventoryStart ? statistic?.InventoryStart : 0)
     }
 
     if(report?.StorageNow) {
       Object.values(report.StorageNow).forEach(item => {
         for (let idx in storageByDate) {
-          if (item?.Created <= storageByDate[idx].date) storageByDate[idx].quantity += item.Quantity
+          if (item?.Created <= dateBins[idx]) storageByDate[idx] += item.Quantity
         }
       })
     }
@@ -173,13 +221,23 @@ export default function ConsumerPage () {
     if(report?.OrderNow) {
       Object.values(report.OrderNow).forEach(item => {
         for (let idx in storageByDate) {
-          if (item?.Created <= storageByDate[idx].date) storageByDate[idx].quantity -= item.Quantity
+          if (item?.Created <= dateBins[idx]) storageByDate[idx] -= item.Quantity
         }
       })
     }
 
-    setReportChart(storageByDate)
-    console.log(storageByDate)
+    setReportChart({
+      labels: dateBins.map(date => dayjs(date, DATE_FORMAT).format(DATE_FORMAT_LOCAL)),
+      datasets: [
+        {
+          data: storageByDate,
+          borderColor: 'rgba(63, 131, 255, 0.5)',
+          backgroundColor: 'rgb(30, 60, 114)',
+          borderWidth: 3
+        }
+      ]
+    })
+
   }, [report])
 
 
@@ -207,10 +265,10 @@ export default function ConsumerPage () {
                 <Statistic title={"Tổng tồn đầu"} value={statistic?.InventoryStart} />
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng phát sinh nhập"} value={statistic?.StorageNow} variant={"positive"}/>
+                <Statistic title={"Tổng phát sinh nhập"} value={statistic?.StorageNow} variant={"import"}/>
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng phát sinh bán"} value={statistic?.OrderNow} variant={"negative"} />
+                <Statistic title={"Tổng phát sinh bán"} value={statistic?.OrderNow} variant={"export"} />
             </div>
             <div className='mt-5'>
                 <Statistic title={"Tổng tồn cuối"} value={statistic?.InventoryEnd} />
@@ -219,7 +277,7 @@ export default function ConsumerPage () {
         <div className='visualization-container col-10'>
           {
             mode === 'summarize' ?
-            <LineChart data={reportChart} xField={'date'} yField={'quantity'} /> :
+            (reportChart ? <LineChart data={reportChart} options={chartOptions} /> : null) :
             <Table 
               columns={columns}
               data={reportTable}

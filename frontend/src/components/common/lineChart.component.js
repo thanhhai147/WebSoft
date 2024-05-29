@@ -1,20 +1,15 @@
 import React from 'react';
-import { Line } from '@ant-design/charts';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {Chart, registerables} from 'chart.js'; 
+import { Line } from 'react-chartjs-2';
 
-export default function LineChart({ data, xField, yField }) {
+Chart.register(...registerables, ChartDataLabels);
 
+export default function LineChartComponent({ data, ...props }) {
   return (
-    <Line 
+    <Line
       data={data}
-      height={600}
-      xField={xField}
-      yField={yField}
-      point={{
-        size: 5,
-        shape: 'circle'
-      }} 
-      tooltip={false}
-      
+      {...props}
     />
-  );
+  )
 };

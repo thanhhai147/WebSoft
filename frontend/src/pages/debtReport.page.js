@@ -12,7 +12,7 @@ const Table = lazy(() => import("../components/common/table.component"))
 const Button = lazy(() => import("../components/common/button.component"))
 const ReportStatus = lazy(() => import("../components/common/reportStatus.component"))
 
-const { getStorageReport } = ReportUtil
+const { getDebtReport } = ReportUtil
 
 const columns = [
   {
@@ -144,7 +144,7 @@ const chartOptions = {
   }
 };
 
-export default function BookStorageReportPage () {
+export default function BookPaymentReportPage () {
   const [mode, setMode] = useState('summarize')
   const [rangeDate, setRangeDate] = useState(setInitialRangeDate)
   const [report, setReport] = useState(null)
@@ -159,7 +159,7 @@ export default function BookStorageReportPage () {
   const getReportData = async () => {
     if (rangeDate === null || rangeDate === undefined) return
 
-    const reportData = await getStorageReport({
+    const reportData = await getDebtReport({
       startDate: rangeDate[0].format(DATE_FORMAT),
       endDate: rangeDate[1].format(DATE_FORMAT)
     })
@@ -177,19 +177,19 @@ export default function BookStorageReportPage () {
 
   useEffect(() => {
     if (report === null || report === undefined) return
-    // Summarize data for statistic cars
+    // Summarize data for statistic cards
     setStatistic({
-      InventoryStart: Math.abs((report.InventoryStart ? Object.values(report.InventoryStart) : []).reduce(totalReduce, 0)),
-      InventoryEnd: Math.abs((report.InventoryEnd ? Object.values(report.InventoryEnd) : []).reduce(totalReduce, 0)),
-      StorageNow: Math.abs((report.StorageNow ? Object.values(report.StorageNow) : []).reduce(totalReduce, 0)),
+      DebtStart: Math.abs((report.DebtStart ? Object.values(report.DebtStart) : []).reduce(totalReduce, 0)),
+      DebtEnd: Math.abs((report.DebtEnd ? Object.values(report.DebtEnd) : []).reduce(totalReduce, 0)),
+      PaymentNow: Math.abs((report.PaymentNow ? Object.values(report.PaymentNow) : []).reduce(totalReduce, 0)),
       OrderNow: Math.abs((report.OrderNow ? Object.values(report.OrderNow) : []).reduce(totalReduce, 0))
     })
     // Summarize data for detailed table
     let bookObj = {}
 
-    if(report.InventoryStart) Object.entries(report.InventoryStart).forEach(item => bookObj[item[0]] = item[1].BookName)
-    if(report.InventoryEnd) Object.entries(report.InventoryEnd).forEach(item => bookObj[item[0]] = item[1].BookName)
-    if(report.StorageNow) Object.entries(report.StorageNow).forEach(item => bookObj[item[0]] = item[1].BookName)
+    if(report.DebtStart) Object.entries(report.DebtStart).forEach(item => bookObj[item[0]] = item[1].BookName)
+    if(report.DebtEnd) Object.entries(report.DebtEnd).forEach(item => bookObj[item[0]] = item[1].BookName)
+    if(report.PaymentNow) Object.entries(report.PaymentNow).forEach(item => bookObj[item[0]] = item[1].BookName)
     if(report.OrderNow) Object.entries(report.OrderNow).forEach(item => bookObj[item[0]] = item[1].BookName) 
       
     
@@ -197,32 +197,32 @@ export default function BookStorageReportPage () {
       key: bookId,
       BookId: bookId,
       BookName: bookObj[bookId],
-      InventoryStart: report?.InventoryStart?.[bookId]?.Quantity,
-      InventoryEnd: report.InventoryEnd?.[bookId]?.Quantity,
-      StorageNow: report.StorageNow?.[bookId]?.Quantity,
+      DebtStart: report?.DebtStart?.[bookId]?.Quantity,
+      DebtEnd: report.DebtEnd?.[bookId]?.Quantity,
+      PaymentNow: report.PaymentNow?.[bookId]?.Quantity,
       OrderNow: report.OrderNow?.[bookId]?.Quantity
     })))
 
     // Summarize data for chart
     const dateBins = splitDateRange(dayjs(report.Start, DATE_FORMAT), dayjs(report.End, DATE_FORMAT), DATE_BINS)
-    let storageByDate = []
+    let debtByDate = []
 
     for (let _ in dateBins) {
-      storageByDate.push(statistic?.InventoryStart ? statistic?.InventoryStart : 0)
+      debtByDate.push(statistic?.DebtStart ? statistic?.DebtStart : 0)
     }
 
-    if(report?.StorageNow) {
-      Object.values(report.StorageNow).forEach(item => {
-        for (let idx in storageByDate) {
-          if (item?.Created <= dateBins[idx]) storageByDate[idx] += item.Quantity
+    if(report?.PaymentNow) {
+      Object.values(report.PaymentNow).forEach(item => {
+        for (let idx in debtByDate) {
+          if (item?.Created <= dateBins[idx]) debtByDate[idx] += item.Quantity
         }
       })
     }
 
     if(report?.OrderNow) {
       Object.values(report.OrderNow).forEach(item => {
-        for (let idx in storageByDate) {
-          if (item?.Created <= dateBins[idx]) storageByDate[idx] -= item.Quantity
+        for (let idx in debtByDate) {
+          if (item?.Created <= dateBins[idx]) debtByDate[idx] -= item.Quantity
         }
       })
     }
@@ -231,7 +231,7 @@ export default function BookStorageReportPage () {
       labels: dateBins.map(date => dayjs(date, DATE_FORMAT).format(DATE_FORMAT_LOCAL)),
       datasets: [
         {
-          data: storageByDate,
+          data: debtByDate,
           borderColor: 'rgba(63, 131, 255, 0.5)',
           backgroundColor: 'rgb(30, 60, 114)',
           borderWidth: 3
@@ -264,16 +264,16 @@ export default function BookStorageReportPage () {
       <div className='report-container d-flex flex-row'>
         <div className='statistic-container col-2'>
             <div>
-                <Statistic title={"Tổng nợ đầu"} value={statistic?.InventoryStart} />
+                <Statistic title={"Tổng nợ đầu"} value={statistic?.DebtStart} />
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng phát sinh thu"} value={statistic?.StorageNow} variant={"import"}/>
+                <Statistic title={"Tổng phát sinh thu"} value={statistic?.PaymentNow} variant={"import"}/>
             </div>
             <div className='mt-5'>
                 <Statistic title={"Tổng phát sinh mua"} value={statistic?.OrderNow} variant={"export"} />
             </div>
             <div className='mt-5'>
-                <Statistic title={"Tổng nợ cuối"} value={statistic?.InventoryEnd} />
+                <Statistic title={"Tổng nợ cuối"} value={statistic?.DebtEnd} />
             </div>
         </div>
         <div className='visualization-container col-10'>

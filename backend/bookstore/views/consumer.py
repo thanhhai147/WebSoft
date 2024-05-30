@@ -461,7 +461,7 @@ class GetMonthDebtReportAPIView(GenericAPIView):
                 return Response(
                     {
                         "success": False,
-                        "message": ConsumerMessage.MSG0004
+                        "message": ConsumerMessage.MSG1008
                     }
                 )
 
@@ -472,7 +472,7 @@ class GetMonthDebtReportAPIView(GenericAPIView):
                 return Response(
                     {
                         "success": False,
-                        "message": ConsumerMessage.MSG0004
+                        "message": ConsumerMessage.MSG1009
                     }
                 )
 

@@ -9,4 +9,13 @@ export default class ReportUtil {
         const reportData = response.data
         return reportData
     }
+
+    static async getDebtReport(dateData) {
+        const response = await ReportAPI.getDebtReport(dateData)
+
+        if (response === null || response === undefined) return
+
+        const reportData = response.data
+        return reportData
+    }
 }

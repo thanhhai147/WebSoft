@@ -75,7 +75,7 @@ const DATE_FORMAT = "YYYY-MM-DD"
 const DATE_FORMAT_LOCAL = "DD/MM/YYYY"
 const DATE_BINS = 8
 
-const totalReduce = (total, item) => total + item.Quantity
+const totalReduce = (total, item) => total + item.Debt
 
 const splitDateRange = (startDate, endDate, bins) => {
   if (startDate >= endDate || bins === 0) return
@@ -106,7 +106,10 @@ const chartOptions = {
         size: 20,
         weight: 'bold',
       },
-      color: 'rgb(30, 60, 114)'
+      color: 'rgb(30, 60, 114)',
+      padding: {
+        bottom: 30
+      }
     },
     datalabels: {
       display: true,
@@ -185,22 +188,22 @@ export default function BookPaymentReportPage () {
       OrderNow: Math.abs((report.OrderNow ? Object.values(report.OrderNow) : []).reduce(totalReduce, 0))
     })
     // Summarize data for detailed table
-    let bookObj = {}
+    let consumerObj = {}
 
-    if(report.DebtStart) Object.entries(report.DebtStart).forEach(item => bookObj[item[0]] = item[1].BookName)
-    if(report.DebtEnd) Object.entries(report.DebtEnd).forEach(item => bookObj[item[0]] = item[1].BookName)
-    if(report.PaymentNow) Object.entries(report.PaymentNow).forEach(item => bookObj[item[0]] = item[1].BookName)
-    if(report.OrderNow) Object.entries(report.OrderNow).forEach(item => bookObj[item[0]] = item[1].BookName) 
+    if(report.DebtStart) Object.entries(report.DebtStart).forEach(item => consumerObj[item[0]] = item[1].ConsumerName)
+    if(report.DebtEnd) Object.entries(report.DebtEnd).forEach(item => consumerObj[item[0]] = item[1].ConsumerName)
+    if(report.PaymentNow) Object.entries(report.PaymentNow).forEach(item => consumerObj[item[0]] = item[1].ConsumerName)
+    if(report.OrderNow) Object.entries(report.OrderNow).forEach(item => consumerObj[item[0]] = item[1].ConsumerName) 
       
     
-    setReportTable(Object.keys(bookObj).map(bookId => ({
-      key: bookId,
-      BookId: bookId,
-      BookName: bookObj[bookId],
-      DebtStart: report?.DebtStart?.[bookId]?.Quantity,
-      DebtEnd: report.DebtEnd?.[bookId]?.Quantity,
-      PaymentNow: report.PaymentNow?.[bookId]?.Quantity,
-      OrderNow: report.OrderNow?.[bookId]?.Quantity
+    setReportTable(Object.keys(consumerObj).map(consumerId => ({
+      key: consumerId,
+      ConsumerId: consumerId,
+      ConsumerName: consumerObj[consumerId],
+      DebtStart: report?.DebtStart?.[consumerId]?.Debt,
+      DebtEnd: report.DebtEnd?.[consumerId]?.Debt,
+      PaymentNow: report.PaymentNow?.[consumerId]?.Debt,
+      OrderNow: report.OrderNow?.[consumerId]?.Debt
     })))
 
     // Summarize data for chart
@@ -214,7 +217,7 @@ export default function BookPaymentReportPage () {
     if(report?.PaymentNow) {
       Object.values(report.PaymentNow).forEach(item => {
         for (let idx in debtByDate) {
-          if (item?.Created <= dateBins[idx]) debtByDate[idx] += item.Quantity
+          if (item?.Created <= dateBins[idx]) debtByDate[idx] += item.Debt
         }
       })
     }
@@ -222,7 +225,7 @@ export default function BookPaymentReportPage () {
     if(report?.OrderNow) {
       Object.values(report.OrderNow).forEach(item => {
         for (let idx in debtByDate) {
-          if (item?.Created <= dateBins[idx]) debtByDate[idx] -= item.Quantity
+          if (item?.Created <= dateBins[idx]) debtByDate[idx] -= item.Debt
         }
       })
     }

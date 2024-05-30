@@ -106,7 +106,10 @@ const chartOptions = {
         size: 20,
         weight: 'bold',
       },
-      color: 'rgb(30, 60, 114)'
+      color: 'rgb(30, 60, 114)',
+      padding: {
+        bottom: 30
+      }
     },
     datalabels: {
       display: true,

@@ -457,24 +457,22 @@ class GetMonthDebtReportAPIView(GenericAPIView):
         for consumerId, orderData in debtOrderNow.items():
             if consumerId in debtEnd:
                 debtEnd[consumerId]["Debt"] += orderData["Debt"]
-            else:
-                return Response(
-                    {
-                        "success": False,
-                        "message": ConsumerMessage.MSG1008
-                    }
-                )
+            else:                
+                debtEnd[consumerId] = {
+                    "ConsumerName": consumer.Name,
+                    "Debt": orderData["Debt"],
+                    "Created": created
+                }
 
         for consumerId, paymentData in debtPaymentNow.items():
             if consumerId in debtEnd:
                 debtEnd[consumerId]["Debt"] += paymentData["Debt"]
             else:
-                return Response(
-                    {
-                        "success": False,
-                        "message": ConsumerMessage.MSG1009
-                    }
-                )
+                debtEnd[consumerId] = {
+                    "ConsumerName": consumer.Name,
+                    "Debt": paymentData["Debt"],
+                    "Created": created
+                }
 
         data = {
             "Start": startDate,

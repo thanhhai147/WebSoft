@@ -13,5 +13,3 @@ class ConsumerMessage():
     MSG1005 = "email không đúng định dạng"
     MSG1006 = "email đã được đăng ký"
     MSG1007 = "Không thể xoá vì có hoá đơn hoặc phiếu thu liên quan"
-    MSG1008 = "không tìm thấy hoá đơn"
-    MSG1009 = "Không tìm thấy phiếu thu tiền"

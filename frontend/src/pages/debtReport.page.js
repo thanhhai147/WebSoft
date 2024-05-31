@@ -180,6 +180,7 @@ export default function BookPaymentReportPage () {
 
   useEffect(() => {
     if (report === null || report === undefined) return
+    console.log(report)
     // Summarize data for statistic cards
     setStatistic({
       DebtStart: (report.DebtStart ? Object.values(report.DebtStart) : []).reduce(totalReduce, 0) * -1,
@@ -202,7 +203,7 @@ export default function BookPaymentReportPage () {
       ConsumerName: consumerObj[consumerId],
       DebtStart: report?.DebtStart?.[consumerId]?.Debt * -1,
       DebtEnd: report.DebtEnd?.[consumerId]?.Debt * -1,
-      PaymentNow: report.PaymentNow?.[consumerId]?.Debt,
+      PaymentNow: report.PaymentNow?.[consumerId]?.Debt * -1,
       OrderNow: report.OrderNow?.[consumerId]?.Debt * -1
     })))
     console.log(report)
@@ -217,7 +218,7 @@ export default function BookPaymentReportPage () {
     if(report?.PaymentNow) {
       Object.values(report.PaymentNow).forEach(item => {
         for (let idx in debtByDate) {
-          if (item?.Created <= dateBins[idx]) debtByDate[idx] += item.Debt
+          if (dayjs(item?.Created).format(DATE_FORMAT) <= dateBins[idx]) debtByDate[idx] -= item.Debt
         }
       })
     }
@@ -225,7 +226,7 @@ export default function BookPaymentReportPage () {
     if(report?.OrderNow) {
       Object.values(report.OrderNow).forEach(item => {
         for (let idx in debtByDate) {
-          if (item?.Created <= dateBins[idx]) debtByDate[idx] -= item.Debt
+          if (dayjs(item?.Created).format(DATE_FORMAT) <= dateBins[idx]) debtByDate[idx] -= item.Debt
         }
       })
     }

@@ -217,7 +217,7 @@ export default function BookStorageReportPage () {
     if(report?.StorageNow) {
       Object.values(report.StorageNow).forEach(item => {
         for (let idx in storageByDate) {
-          if (item?.Created <= dateBins[idx]) storageByDate[idx] += item.Quantity
+          if (dayjs(item?.Created).format(DATE_FORMAT) <= dateBins[idx]) storageByDate[idx] += item.Quantity
         }
       })
     }
@@ -225,7 +225,7 @@ export default function BookStorageReportPage () {
     if(report?.OrderNow) {
       Object.values(report.OrderNow).forEach(item => {
         for (let idx in storageByDate) {
-          if (item?.Created <= dateBins[idx]) storageByDate[idx] -= item.Quantity
+          if (dayjs(item?.Created).format(DATE_FORMAT) <= dateBins[idx]) storageByDate[idx] -= item.Quantity
         }
       })
     }

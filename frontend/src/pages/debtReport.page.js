@@ -47,7 +47,7 @@ const columns = [
     render: (text, record, index) => text ? <ReportStatus variant={'subtract'} data={text.toLocaleString()} /> : 0
   },
   {
-    title: "Nợ cuối cuối",
+    title: "Nợ cuối",
     dataIndex: "DebtEnd",
     key: "DebtEnd",
     sorter: (a, b) => a - b,
@@ -182,10 +182,10 @@ export default function BookPaymentReportPage () {
     if (report === null || report === undefined) return
     // Summarize data for statistic cards
     setStatistic({
-      DebtStart: Math.abs((report.DebtStart ? Object.values(report.DebtStart) : []).reduce(totalReduce, 0)),
-      DebtEnd: Math.abs((report.DebtEnd ? Object.values(report.DebtEnd) : []).reduce(totalReduce, 0)),
-      PaymentNow: Math.abs((report.PaymentNow ? Object.values(report.PaymentNow) : []).reduce(totalReduce, 0)),
-      OrderNow: Math.abs((report.OrderNow ? Object.values(report.OrderNow) : []).reduce(totalReduce, 0))
+      DebtStart: (report.DebtStart ? Object.values(report.DebtStart) : []).reduce(totalReduce, 0) * -1,
+      DebtEnd: (report.DebtEnd ? Object.values(report.DebtEnd) : []).reduce(totalReduce, 0) * -1,
+      PaymentNow: (report.PaymentNow ? Object.values(report.PaymentNow) : []).reduce(totalReduce, 0) * -1,
+      OrderNow: (report.OrderNow ? Object.values(report.OrderNow) : []).reduce(totalReduce, 0)
     })
     // Summarize data for detailed table
     let consumerObj = {}
@@ -200,12 +200,12 @@ export default function BookPaymentReportPage () {
       key: consumerId,
       ConsumerId: consumerId,
       ConsumerName: consumerObj[consumerId],
-      DebtStart: report?.DebtStart?.[consumerId]?.Debt,
-      DebtEnd: report.DebtEnd?.[consumerId]?.Debt,
+      DebtStart: report?.DebtStart?.[consumerId]?.Debt * -1,
+      DebtEnd: report.DebtEnd?.[consumerId]?.Debt * -1,
       PaymentNow: report.PaymentNow?.[consumerId]?.Debt,
-      OrderNow: report.OrderNow?.[consumerId]?.Debt
+      OrderNow: report.OrderNow?.[consumerId]?.Debt * -1
     })))
-
+    console.log(report)
     // Summarize data for chart
     const dateBins = splitDateRange(dayjs(report.Start, DATE_FORMAT), dayjs(report.End, DATE_FORMAT), DATE_BINS)
     let debtByDate = []

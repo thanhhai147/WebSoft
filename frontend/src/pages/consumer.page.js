@@ -55,11 +55,11 @@ const columns = [
     key: "Email",
   },
   {
-    title: "Công nợ",
+    title: "Công nợ (VND)",
     dataIndex: "Debt",
     key: "Debt",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text.toLocaleString() + " VND",
+    render: (text, record, index) => "-" + text.toLocaleString(),
   },
   {
     title: "Chỉnh sửa",

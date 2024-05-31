@@ -32,16 +32,22 @@ const columns = [
     title: "Tổng tiền (VND)",
     dataIndex: "TotalValue",
     key: "TotalValue",
+    sorter: (a, b) => a.quantity - b.quantity,
+    render: (text, record, index) => text.toLocaleString(),
   },
   {
-    title: "Đã thanh toán",
+    title: "Đã thanh toán (VND)",
     dataIndex: "PaidValue",
     key: "PaidValue",
+    sorter: (a, b) => a.quantity - b.quantity,
+    render: (text, record, index) => text.toLocaleString(),
   },
   {
-    title: "Còn lại",
+    title: "Còn lại (VND)",
     dataIndex: "RemainingValue",
     key: "RemainingValue",
+    sorter: (a, b) => a.quantity - b.quantity,
+    render: (text, record, index) => text.toLocaleString(),
   },
 ];
 

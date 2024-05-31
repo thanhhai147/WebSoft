@@ -118,6 +118,9 @@ const chartOptions = {
         family: "'Nunito', sans-serif",
         weight: 'bold',
         size: 14
+      },
+      formatter: function(value, context) {
+        return value.toLocaleString();
       }
     },
   },

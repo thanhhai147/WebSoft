@@ -118,6 +118,11 @@ const chartOptions = {
         family: "'Nunito', sans-serif",
         weight: 'bold',
         size: 14
+      },
+      formatter: function(value, context) {
+        // if (Math.abs(value) < 1000000) return value.toLocaleString()
+        const formatter = Intl.NumberFormat('en-US', { notation:'compact', maximumSignificantDigits: 3})
+        return formatter.format(value)
       }
     },
   },
@@ -180,7 +185,6 @@ export default function BookPaymentReportPage () {
 
   useEffect(() => {
     if (report === null || report === undefined) return
-    console.log(report)
     // Summarize data for statistic cards
     setStatistic({
       DebtStart: (report.DebtStart ? Object.values(report.DebtStart) : []).reduce(totalReduce, 0) * -1,
@@ -206,7 +210,6 @@ export default function BookPaymentReportPage () {
       PaymentNow: report.PaymentNow?.[consumerId]?.Debt * -1,
       OrderNow: report.OrderNow?.[consumerId]?.Debt * -1
     })))
-    console.log(report)
     // Summarize data for chart
     const dateBins = splitDateRange(dayjs(report.Start, DATE_FORMAT), dayjs(report.End, DATE_FORMAT), DATE_BINS)
     let debtByDate = []

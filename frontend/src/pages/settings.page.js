@@ -130,6 +130,7 @@ export default function SettingPage () {
         placeholder={"Tìm kiếm tên, giá trị và tình trạng tham số"}
         onSearch={search}
         showModal={showModal}
+        createButton={false}
       />
       <Table
         columns={columns}

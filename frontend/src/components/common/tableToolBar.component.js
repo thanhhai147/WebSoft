@@ -10,6 +10,7 @@ export default function TableToolBar({
   placeholder,
   onSearch,
   showModal,
+  createButton=true,
   deleteButton=true,
   ...props
 }) {
@@ -31,11 +32,15 @@ export default function TableToolBar({
         className="btn-wrapper d-flex align-items-center justify-content-end"
         style={{ width: "30%" }}
       >
-        <Button
-          buttonCase="create"
-          style={{ marginRight: "1rem" }}
-          onClick={() => showModal("create")}
-        />
+        {
+          createButton ?
+          <Button
+            buttonCase="create"
+            style={{ marginRight: "1rem" }}
+            onClick={() => showModal("create")}
+          /> :
+          null
+        }
         {deleteButton ? <DeleteButton /> : null}
       </div>
     </div>

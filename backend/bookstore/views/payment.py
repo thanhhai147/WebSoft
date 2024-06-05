@@ -4,6 +4,7 @@ from rest_framework import status
 from django.forms.models import model_to_dict
 from ..models.payment import Payment
 from ..models.consumer import Consumer
+from ..models.parameter import Parameter
 from ..serializers.payment import PaymentSerializers
 from ..messages.payment import PaymentMessage
 
@@ -37,7 +38,8 @@ class CreatePaymentAPIView(GenericAPIView):
                                 "message": PaymentMessage.MSG1003
                             }, status=status.HTTP_400_BAD_REQUEST)
         
-        if value > consumer.Debt:
+        checkPaymentConditition = Parameter.objects.filter(ParameterName='checkPaymentConditition').first()
+        if (value > consumer.Debt and checkPaymentConditition.Active == True):
                 return Response(
                             {
                                 "success": False,

@@ -45,7 +45,7 @@ const menuItems = [
     label: "Quản lí khách hàng",
     submenu: [
       { key: "2a", label: "Tra cứu khách hàng", path: "/consumer" },
-      { key: "2b", label: "Tra cứu hóa đơn bán sách", path: "/order" },
+      { key: "2b", label: "Tra cứu hóa đơn", path: "/order" },
       { key: "2c", label: "Tra cứu phiếu thu tiền", path: "/payment" },
       { key: "2d", label: "Lập báo cáo công nợ", path: "/payment/report" },
     ],

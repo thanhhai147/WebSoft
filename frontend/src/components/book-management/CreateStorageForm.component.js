@@ -4,7 +4,7 @@ import { NotificationComponent } from "../common/notification.component";
 import { MESSAGE, TITLE } from "../../messages/main.message";
 import { useEffect, useState } from "react";
 import BaseAPIInstance from "../../api/base.api";
-import "./styles/CreateStorageForm.component.css"
+import "./styles/CreateStorageForm.component.css";
 
 export default function CreateStorageForm({ form }) {
   const [books, setBooks] = useState([]);
@@ -33,25 +33,39 @@ export default function CreateStorageForm({ form }) {
   };
 
   return (
-    <Form form={form} layout="vertical" size="middle" onFinishFailed={onFinishFailed}>
+    <Form
+      form={form}
+      layout="vertical"
+      size="middle"
+      onFinishFailed={onFinishFailed}
+    >
       <Form.List name="bookStorages">
         {(fields, { add, remove }) => (
           <>
             <div className="book-storage-items-container">
               {fields.map(({ key, name, ...restField }) => (
-                <div className="book-storage-items-wrapper d-flex flex-row align-items-center justify-content-between" key={key}>
+                <div
+                  className="book-storage-items-wrapper d-flex flex-row align-items-center justify-content-between"
+                  key={key}
+                >
                   <Form.Item
                     {...restField}
                     label="Mã sách"
                     name={[name, "bookId"]}
-                    rules={[{ required: true, message: "Vui lòng nhập mã sách" }]}
+                    rules={[
+                      { required: true, message: "Vui lòng nhập mã sách" },
+                    ]}
                   >
-                    <Select 
+                    <Select
                       placeholder="Nhập mã sách"
-                      style={{width: "100%"}}
+                      style={{ width: "100%" }}
                     >
                       {books.map((book, index) => (
-                        <Select.Option key={index} value={book.id} style={{width: "100%"}}>
+                        <Select.Option
+                          key={index}
+                          value={book.id}
+                          style={{ width: "100%" }}
+                        >
                           {book.id} - {book.bookName}
                         </Select.Option>
                       ))}
@@ -61,7 +75,19 @@ export default function CreateStorageForm({ form }) {
                     {...restField}
                     label="Giá (VND)"
                     name={[name, "unitPrice"]}
-                    rules={[{ required: true, message: "Vui lòng nhập giá" }]}
+                    rules={[
+                      { required: true, message: "Vui lòng nhập giá" },
+                      ({ getFieldValue }) => ({
+                        validator(_, value) {
+                          if (!value || value >= 1000) {
+                            return Promise.resolve();
+                          }
+                          return Promise.reject(
+                            new Error("Giá sách ít nhất là 1000 VND")
+                          );
+                        },
+                      }),
+                    ]}
                     className="ml-3"
                   >
                     <InputNumber
@@ -78,7 +104,10 @@ export default function CreateStorageForm({ form }) {
                     label="Số lượng nhập"
                     name={[name, "quantity"]}
                     rules={[
-                      { required: true, message: "Vui lòng nhập số lượng nhập" },
+                      {
+                        required: true,
+                        message: "Vui lòng nhập số lượng nhập",
+                      },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           if (!value || value >= 150) {
@@ -119,6 +148,6 @@ export default function CreateStorageForm({ form }) {
           </>
         )}
       </Form.List>
-    </Form>    
+    </Form>
   );
 }

@@ -4,6 +4,7 @@ import PageTitle from "../components/common/pageTitle.component";
 import TableComponent from "../components/common/table.component";
 import TableToolBar from "../components/common/tableToolBar.component";
 import ModalContext from "../contexts/modal.context";
+import OrderDetail from "../components/book-management/OrderDetail.component";
 import { NotificationComponent } from "../components/common/notification.component";
 import { TITLE } from "../messages/main.message";
 import BaseAPIInstance from "../api/base.api";
@@ -53,8 +54,9 @@ const columns = [
 
 export default function Order() {
   const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [filterTable, setFilterTable] = useState(null);
-  const { showModal, isModalCreateOpen, closeModal } = useContext(ModalContext);
+  const { showModal, isModalCreateOpen, isModalEditOpen, closeModal } = useContext(ModalContext);
   const [form] = Form.useForm();
 
   const fetchOrders = async () => {
@@ -140,6 +142,13 @@ export default function Order() {
     setFilterTable(filteredData);
   };
 
+  const onRowClick = async (record, index, event) => {
+    const response = await BaseAPIInstance.get(`/order/${record.OrderId}/detail`);
+    const orderDetail = response.data
+    showModal("edit")
+    setSelectedOrder(orderDetail)
+  }
+
   return (
     <div>
       <PageTitle title={"Tra cứu hóa đơn"} />
@@ -155,8 +164,8 @@ export default function Order() {
         dataSource={filterTable == null ? orders : filterTable}
         sticky={true}
         disableRowSelection={true}
+        onClick={onRowClick}
       />
-
       <ModalCreateBook
         variant={"order"}
         open={isModalCreateOpen}
@@ -164,6 +173,13 @@ export default function Order() {
         onCancel={() => handleCancel("create")}
       >
         <OrderForm form={form} />
+      </ModalCreateBook>
+      <ModalCreateBook
+        variant={"order_detail"}
+        open={isModalEditOpen}
+        onCancel={() => handleCancel("edit")}
+      >
+        <OrderDetail data={selectedOrder} />
       </ModalCreateBook>
     </div>
   );

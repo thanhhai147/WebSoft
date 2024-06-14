@@ -4,7 +4,7 @@ import "./styles/table.component.css";
 import ModalContext from "../../contexts/modal.context";
 import EmptyComponent from "./empty.component";
 
-export default function TableComponent({ columns, data, disableRowSelection = false, ...props }) {
+export default function TableComponent({ columns, data, disableRowSelection = false, onClick, ...props }) {
   const { setCheckedRows } = useContext(ModalContext);
 
   const handleOnSelect = (record, selected, selectedRows, nativeEvent) => {
@@ -32,6 +32,11 @@ export default function TableComponent({ columns, data, disableRowSelection = fa
         }
         locale={{
           emptyText: EmptyComponent,
+        }}
+        onRow={(record, index) => {
+          return ({
+            onClick: (event) => onClick(record, index, event)
+          })
         }}
         {...props}
       />

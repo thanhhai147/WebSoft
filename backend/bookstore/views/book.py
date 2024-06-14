@@ -461,9 +461,7 @@ class EditAuthorViewAPI(GenericAPIView):
         return Response({
                 "success": True,
                 "message": BookMessage.MSG2005,
-                "data": {
-                    "authorName": authorName
-                }
+                "data": authorData
             }, status=status.HTTP_200_OK)
     
 class EditBookViewAPI(GenericAPIView):

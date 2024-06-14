@@ -332,7 +332,7 @@ class AddBookViewAPI(GenericAPIView):
             }, status=status.HTTP_200_OK)
 
 class EditBookTypeViewAPI(GenericAPIView):
-    serializer_class = AuthorSerializer
+    serializer_class = BookTypeSerializer
     queryset = BookType.objects.all()
 
     def get(self, request, id):
@@ -461,7 +461,7 @@ class EditAuthorViewAPI(GenericAPIView):
         return Response({
                 "success": True,
                 "message": BookMessage.MSG2005,
-                "data": authorData
+                "data": authorData.data
             }, status=status.HTTP_200_OK)
     
 class EditBookViewAPI(GenericAPIView):

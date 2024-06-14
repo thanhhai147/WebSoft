@@ -62,27 +62,27 @@ export default function BookAuthorPage() {
     setCheckedRows,
   } = useContext(ModalContext);
 
+  const fetchData = async () => {
+    try {
+      const response = await BaseAPIInstance.get("/author");
+
+      // Add key property to each element in the array
+      const data = response
+        ? response.data.map((item) => ({
+            ...item,
+            authorName: item.name,
+            key: item.id,
+          }))
+        : [];
+
+      setAuthors(data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
+
   // fetch all authors
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await BaseAPIInstance.get("/author");
-
-        // Add key property to each element in the array
-        const data = response
-          ? response.data.map((item) => ({
-              ...item,
-              authorName: item.name,
-              key: item.id,
-            }))
-          : [];
-
-        setAuthors(data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -126,12 +126,14 @@ export default function BookAuthorPage() {
     try {
       const response = await BaseAPIInstance.post("/author/new", values);
 
-      const newBookType = {
+      const newAuthor = {
         ...response.data,
         key: authors.length + 1,
       };
 
-      setAuthors([...authors, newBookType]);
+      setAuthors([...authors, newAuthor]);
+
+      fetchData();
     } catch (error) {
       console.error("Error creating book type: ", error);
       NotificationComponent("error", TITLE.ERROR, MESSAGE.HAS_AN_ERROR);

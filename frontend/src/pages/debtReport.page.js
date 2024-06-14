@@ -2,6 +2,9 @@ import React, { lazy, useState, useEffect } from 'react'
 import { Select } from 'antd'
 import dayjs from 'dayjs'
 import ReportUtil from '../helpers/report.utils'
+import { CSVLink } from "react-csv";
+import { TITLE } from "../messages/main.message";
+import { NotificationComponent } from "../components/common/notification.component";
 import "./styles/report.page.css"
 
 const PageTitle = lazy(() => import("../components/common/pageTitle.component"))
@@ -120,7 +123,6 @@ const chartOptions = {
         size: 14
       },
       formatter: function(value, context) {
-        // if (Math.abs(value) < 1000000) return value.toLocaleString()
         const formatter = Intl.NumberFormat('en-US', { notation:'compact', maximumSignificantDigits: 3})
         return formatter.format(value)
       }
@@ -157,7 +159,7 @@ export default function BookPaymentReportPage () {
   const [rangeDate, setRangeDate] = useState(setInitialRangeDate)
   const [report, setReport] = useState(null)
   const [statistic, setStatistic] = useState(null)
-  const [reportTable, setReportTable] = useState(null)
+  const [reportTable, setReportTable] = useState([])
   const [reportChart, setReportChart] = useState(null)
 
   const onDatePickerChange = (dates, dateStrings) => {
@@ -259,9 +261,23 @@ export default function BookPaymentReportPage () {
           defaultValue={rangeDate}
           onChange={onDatePickerChange}
         />
-        {/* <Button buttonCase="download" className="ml-auto mr-3" /> */}
+        <CSVLink
+          data={reportTable}
+          target="_blank"
+          filename={"DebtReport.csv"}
+          className="ml-auto mr-3" 
+          asyncOnClick={true}
+          onClick={() => {
+            if(!reportTable || reportTable.length === 0) {
+              NotificationComponent("error", TITLE.WARNING, "Dữ liệu đang được chuẩn bị. Vui lòng thử lại sau!")
+              return false
+            }
+            return true
+          }}
+        >
+          <Button buttonCase="download"/>
+        </CSVLink>
         <Select 
-          className='ml-auto'
           options={options}
           defaultValue='summarize'
           size='large'

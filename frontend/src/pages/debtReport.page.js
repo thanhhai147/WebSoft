@@ -32,28 +32,28 @@ const columns = [
     title: "Nợ đầu",
     dataIndex: "DebtStart",
     key: "DebtStart",
-    sorter: (a, b) => a - b,
+    sorter: (a, b) => a.DebtStart - b.DebtStart,
     render: (text, record, index) => text ? text.toLocaleString() : 0
   },
   {
     title: "Phát sinh thu",
     dataIndex: "PaymentNow",
     key: "PaymentNow",
-    sorter: (a, b) => a - b,
+    sorter: (a, b) => a.PaymentNow - b.PaymentNow,
     render: (text, record, index) => text ? <ReportStatus variant={'add'} data={text.toLocaleString()} /> : 0
   },
   {
     title: "Phát sinh mua",
     dataIndex: "OrderNow",
     key: "OrderNow",
-    sorter: (a, b) => a - b,
+    sorter: (a, b) => a.OrderNow - b.OrderNow,
     render: (text, record, index) => text ? <ReportStatus variant={'subtract'} data={text.toLocaleString()} /> : 0
   },
   {
     title: "Nợ cuối",
     dataIndex: "DebtEnd",
     key: "DebtEnd",
-    sorter: (a, b) => a - b,
+    sorter: (a, b) => a.DebtEnd - b.DebtEnd,
     render: (text, record, index) => text ? text.toLocaleString() : 0
   },
 ]

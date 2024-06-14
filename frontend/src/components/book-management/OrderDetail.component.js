@@ -17,21 +17,21 @@ const columns = [
         title: "Số lượng",
         dataIndex: "Quantity",
         key: "Quantity",
-        sorter: (a, b) => a.quantity - b.quantity,
+        sorter: (a, b) => a.Quantity - b.Quantity,
         render: (text, record, index) => text.toLocaleString(),
     },
     {
         title: "Đơn giá bán (VND)",
         dataIndex: "UnitSoldPrice",
         key: "UnitSoldPrice",
-        sorter: (a, b) => a.quantity - b.quantity,
+        sorter: (a, b) => a.UnitSoldPrice - b.UnitSoldPrice,
         render: (text, record, index) => text.toLocaleString(),
     },
     {
         title: "Thành tiền (VND)",
         dataIndex: "SoldPrice",
         key: "SoldPrice",
-        sorter: (a, b) => a.quantity - b.quantity,
+        sorter: (a, b) => a.SoldPrice - b.SoldPrice,
         render: (text, record, index) => text.toLocaleString(),
     }
 ];

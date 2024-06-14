@@ -58,7 +58,7 @@ const columns = [
     title: "Công nợ (VND)",
     dataIndex: "Debt",
     key: "Debt",
-    sorter: (a, b) => a.quantity - b.quantity,
+    sorter: (a, b) => a.Debt - b.Debt,
     render: (text, record, index) => "-" + text.toLocaleString(),
   },
   {

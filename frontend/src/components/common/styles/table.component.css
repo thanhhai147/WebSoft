@@ -7,7 +7,15 @@
     font-size: var(--font-size-p);
     color: var(--theme-color) !important
 }
+.ant-table-thead th {
+    font-size: var(--font-size-p);
+    color: var(--theme-color) !important
+}
 .ant-table-body td {
+    font-size: var(--font-size-p);
+    font-weight: var(--font-weight-p);
+}
+.ant-table-tbody td {
     font-size: var(--font-size-p);
     font-weight: var(--font-weight-p);
 }

@@ -455,6 +455,7 @@ class EditAuthorViewAPI(GenericAPIView):
                 "message": BookMessage.MSG2010
             }, status=status.HTTP_400_BAD_REQUEST)
         
+        queryset.AuthorName = authorName
         queryset.save()
             
         return Response({

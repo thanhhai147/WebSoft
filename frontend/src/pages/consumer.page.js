@@ -59,7 +59,7 @@ const columns = [
     dataIndex: "Debt",
     key: "Debt",
     sorter: (a, b) => a.quantity - b.quantity,
-    render: (text, record, index) => text == "0" ? "0" : "-" + text.toLocaleString(),
+    render: (text, record, index) => "-" + text.toLocaleString(),
   },
   {
     title: "Chỉnh sửa",

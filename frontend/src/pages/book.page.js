@@ -171,6 +171,7 @@ export default function BookPage() {
 
         fetchBooks();
         form.resetFields();
+        window.location.reload();
       }
     },
     [fetchBooks, form]

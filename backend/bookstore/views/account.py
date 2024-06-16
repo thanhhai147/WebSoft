@@ -49,6 +49,7 @@ class LoginAPIView(GenericAPIView):
                 "message": "",
                 "data": {
                     "account": username,
+                    "role": account.Role,
                     "token": key
                 }
             }, status=status.HTTP_200_OK)

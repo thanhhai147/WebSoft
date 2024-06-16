@@ -4,9 +4,9 @@ from .models import account, book, consumer, order, parameter, payment, storage
 
 # Register your models here.
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('AccountId', 'AccountName', 'Password', 'Created')
-    list_filter = ['Created']
-    search_fields = ['AccountName', 'AccountId']
+    list_display = ('AccountId', 'AccountName', 'Role', 'Password', 'Created')
+    list_filter = ['Created', 'Role']
+    search_fields = ['AccountName', 'AccountId', 'Role']
 
 class TokenAdmin(admin.ModelAdmin):
     list_display = ('Key', 'AccountId', 'Created')

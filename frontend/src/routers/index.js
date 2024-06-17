@@ -4,6 +4,8 @@ import TokenUtil from "../helpers/token.utils";
 import UserContext from "../contexts/user.context";
 import MainLayout from "../components/layout/main.layout";
 import BookContext from "../contexts/modal.context";
+import NotAuthorization from "../pages/unauthorization.page";
+import ProtectedRoute from "../helpers/protectedRoutes.utils";
 
 const LoginPage = lazy(() => import("../pages/login.page"));
 const BookPage = lazy(() => import("../pages/book.page"));
@@ -14,13 +16,16 @@ const OrderPage = lazy(() => import("../pages/order.page"));
 const PaymentPage = lazy(() => import("../pages/payment.page"));
 const SettingPage = lazy(() => import("../pages/settings.page"));
 const BookStorage = lazy(() => import("../pages/bookStorage.page"));
-const BookStorageReportPage = lazy(() => import("../pages/bookStorageReport.page"))
-const DebtReportPage = lazy(() => import("../pages/debtReport.page"))
+const BookStorageReportPage = lazy(() =>
+  import("../pages/bookStorageReport.page")
+);
+const DebtReportPage = lazy(() => import("../pages/debtReport.page"));
 const NotFoundPage = lazy(() => import("../pages/404.page"));
 
 export default function AppRouter() {
   const [token] = useState(() => TokenUtil.getToken());
   const [username] = useState(() => TokenUtil.getUsername());
+  const role = TokenUtil.getRole();
   const [isModalCreateOpen, setIsModalCreateOpen] = useState(false);
   const [isModalEditOpen, setIsModalEditOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -34,6 +39,7 @@ export default function AppRouter() {
   let userContextValue = {
     token: token,
     username: username,
+    role: role,
   };
 
   const showModal = (variant) => {
@@ -68,18 +74,89 @@ export default function AppRouter() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<MainLayout />}>
-                <Route path="/book" element={<BookPage />} />
-                <Route path="/book-type" element={<BookType />} />
-                <Route path="/author" element={<BookAuthor />} />
-                <Route path="/consumer" element={<ConsumerPage />} />
-                <Route path="/order" element={<OrderPage />} />
-                <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/settings" element={<SettingPage />} />
-                <Route path="/book/storage" element={<BookStorage />} />
-                <Route path="/book/report" element={<BookStorageReportPage />} />
-                <Route path="/payment/report" element={<DebtReportPage />} />
+                <Route
+                  path="/book"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                      <BookPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/book-type"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                      <BookType />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/author"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                      <BookAuthor />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/consumer"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SM"]}>
+                      <ConsumerPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/order"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SM"]}>
+                      <OrderPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/payment"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SM"]}>
+                      <PaymentPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute allowedRoles={["A"]}>
+                      <SettingPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/book/storage"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                      <BookStorage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/book/report"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                      <BookStorageReportPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/payment/report"
+                  element={
+                    <ProtectedRoute allowedRoles={["A", "SM"]}>
+                      <DebtReportPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFoundPage />} />
+                <Route path="/not-authorized" element={<NotAuthorization />} />
               </Route>
-              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </BrowserRouter>
         </BookContext.Provider>

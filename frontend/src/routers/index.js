@@ -77,7 +77,7 @@ export default function AppRouter() {
                 <Route
                   path="/book"
                   element={
-                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                    <ProtectedRoute allowedRoles={["A", "SE", "SM"]}>
                       <BookPage />
                     </ProtectedRoute>
                   }
@@ -85,7 +85,7 @@ export default function AppRouter() {
                 <Route
                   path="/book-type"
                   element={
-                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                    <ProtectedRoute allowedRoles={["A", "SE", "SM"]}>
                       <BookType />
                     </ProtectedRoute>
                   }
@@ -93,7 +93,7 @@ export default function AppRouter() {
                 <Route
                   path="/author"
                   element={
-                    <ProtectedRoute allowedRoles={["A", "SE"]}>
+                    <ProtectedRoute allowedRoles={["A", "SE", "SM"]}>
                       <BookAuthor />
                     </ProtectedRoute>
                   }
@@ -149,7 +149,7 @@ export default function AppRouter() {
                 <Route
                   path="/payment/report"
                   element={
-                    <ProtectedRoute allowedRoles={["A", "SM"]}>
+                    <ProtectedRoute allowedRoles={["A"]}>
                       <DebtReportPage />
                     </ProtectedRoute>
                   }
